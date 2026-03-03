@@ -103,6 +103,10 @@ document.addEventListener('DOMContentLoaded', () => {
         closeConfirm();
     });
 
+    // Activity Log toggle button (sidebar bottom)
+    const alBtn = document.getElementById('activityLogToggleBtn');
+    if (alBtn) alBtn.addEventListener('click', openActivityLog);
+
     // ── New Project Form ─────────────────────────────────────────
     document.getElementById('newProjectForm').addEventListener('submit', handleNewProjectSubmit);
 
@@ -1629,4 +1633,228 @@ function setupGalleryUploadZone() {
             });
         updateGalleryPreview();
     });
+}
+
+// ─── Activity Log Drawer ───────────────────────────────────────
+
+const ACTION_CFG = {
+    CREATE: { color: '#2ecc71', dot: '#2ecc71', label: 'Added' },
+    UPDATE: { color: '#f39c12', dot: '#f39c12', label: 'Updated' },
+    DELETE: { color: '#e74c3c', dot: '#e74c3c', label: 'Deleted' },
+    REORDER: { color: '#7ec8e3', dot: '#7ec8e3', label: 'Reordered' },
+};
+const TYPE_LABEL_EN = {
+    diary: 'Field Diary',
+    report: 'Activity Report',
+    gallery: 'Photo Gallery',
+    interview: 'Member Voice',
+    history: 'History',
+    'global-stats': 'Global Stats',
+    stats: 'Project Stats',
+    card: 'Project Card',
+    project: 'Project',
+};
+
+function fmtDateTime(iso) {
+    const d = new Date(iso);
+    const p = n => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}  ${p(d.getHours())}:${p(d.getMinutes())}`;
+}
+function fmtDateOnly(iso) {
+    const d = new Date(iso);
+    const p = n => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
+}
+function capFirst(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : s; }
+
+function openActivityLog() {
+    const drawer = document.getElementById('activityLogDrawer');
+    const overlay = document.getElementById('activityLogOverlay');
+    drawer.style.display = 'flex';
+    overlay.style.display = 'block';
+    // Trigger animation on next frame
+    requestAnimationFrame(() => {
+        drawer.style.transform = 'translateX(0)';
+    });
+    loadActivityLog();
+}
+
+function closeActivityLog() {
+    const drawer = document.getElementById('activityLogDrawer');
+    const overlay = document.getElementById('activityLogOverlay');
+    drawer.style.transform = 'translateX(-100%)';
+    setTimeout(() => {
+        drawer.style.display = 'none';
+        overlay.style.display = 'none';
+        // Reset detail view
+        const detail = document.getElementById('activityLogDetail');
+        if (detail) detail.style.display = 'none';
+    }, 300);
+}
+
+function showActivityDetail(entry) {
+    const detail = document.getElementById('activityLogDetail');
+    const detailBody = document.getElementById('activityLogDetailBody');
+    const cfg = ACTION_CFG[entry.action] || { color: '#aaa', label: entry.action };
+    const type = TYPE_LABEL_EN[entry.type] || entry.type;
+    const proj = entry.project === 'global' ? 'Global' : capFirst(entry.project);
+
+    detailBody.innerHTML = `
+        <div style="margin-bottom:20px">
+            <span style="display:inline-block;background:${cfg.color}22;border:1px solid ${cfg.color}55;color:${cfg.color};border-radius:20px;padding:3px 12px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em">${cfg.label}</span>
+        </div>
+        <table style="width:100%;border-collapse:collapse;font-size:13px">
+            <tr style="border-bottom:1px solid rgba(255,255,255,0.06)">
+                <td style="padding:10px 0;color:rgba(255,255,255,0.4);width:110px">Date & Time</td>
+                <td style="padding:10px 0;color:#fff">${fmtDateTime(entry.timestamp)}</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(255,255,255,0.06)">
+                <td style="padding:10px 0;color:rgba(255,255,255,0.4)">Project</td>
+                <td style="padding:10px 0;color:#fff">${escHtml(proj)}</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(255,255,255,0.06)">
+                <td style="padding:10px 0;color:rgba(255,255,255,0.4)">Section</td>
+                <td style="padding:10px 0;color:#fff">${escHtml(type)}</td>
+            </tr>
+            <tr style="border-bottom:1px solid rgba(255,255,255,0.06)">
+                <td style="padding:10px 0;color:rgba(255,255,255,0.4)">Action</td>
+                <td style="padding:10px 0;color:${cfg.color};font-weight:600">${cfg.label}</td>
+            </tr>
+            ${entry.title ? `<tr>
+                <td style="padding:10px 0;color:rgba(255,255,255,0.4);vertical-align:top">Item</td>
+                <td style="padding:10px 0;color:#fff;word-break:break-word">${escHtml(entry.title)}</td>
+            </tr>` : ''}
+        </table>
+    `;
+    detail.style.display = 'flex';
+}
+
+async function loadActivityLog() {
+    const container = document.getElementById('activityLogList');
+    if (!container) return;
+
+    container.innerHTML = '<div style="padding:24px;text-align:center;color:rgba(255,255,255,0.3)">Loading…</div>';
+
+    try {
+        const res = await authFetch('/api/activity-log');
+        if (!res.ok) throw new Error();
+        const log = await res.json();
+
+        // Update badge count
+        const badge = document.getElementById('activityLogBadge');
+        if (badge) {
+            if (log.length > 0) {
+                badge.textContent = log.length > 99 ? '99+' : log.length;
+                badge.style.display = 'inline-block';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+
+        if (!log.length) {
+            container.innerHTML = `<div style="padding:40px 20px;text-align:center;color:rgba(255,255,255,0.3)">
+                <div style="font-size:40px;margin-bottom:12px">📋</div>
+                <p style="font-size:13px">No activity recorded yet.</p>
+            </div>`;
+            return;
+        }
+
+        // Group entries by date
+        const grouped = {};
+        log.forEach(e => {
+            const d = fmtDateOnly(e.timestamp);
+            if (!grouped[d]) grouped[d] = [];
+            grouped[d].push(e);
+        });
+
+        let html = '';
+        Object.entries(grouped).forEach(([date, entries]) => {
+            html += `<div style="padding:6px 16px 4px;font-size:11px;font-weight:700;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:.08em">${date}</div>`;
+            entries.forEach((e, i) => {
+                const cfg = ACTION_CFG[e.action] || { color: '#aaa', label: e.action };
+                const type = TYPE_LABEL_EN[e.type] || e.type;
+                const proj = e.project === 'global' ? 'Global' : capFirst(e.project);
+                const time = new Date(e.timestamp);
+                const timeStr = `${String(time.getHours()).padStart(2, '0')}:${String(time.getMinutes()).padStart(2, '0')}`;
+                const dataIdx = log.indexOf(e);
+
+                html += `
+                <div class="al-row" data-idx="${dataIdx}"
+                    style="display:flex;align-items:center;gap:10px;padding:9px 16px;transition:background .15s;border-radius:0;${e.undone ? 'opacity:.45' : ''}"
+                    onmouseover="this.style.background='rgba(255,255,255,0.04)'"
+                    onmouseout="this.style.background='transparent'">
+                    <div style="width:8px;height:8px;border-radius:50%;background:${cfg.color};flex-shrink:0;margin-top:1px"></div>
+                    <div style="flex:1;min-width:0;cursor:pointer" onclick="_alShowDetail(${dataIdx})">
+                        <div style="font-size:12px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
+                            <span style="color:${cfg.color};font-weight:700">${e.undone ? '<s>' + cfg.label + '</s>' : cfg.label}</span>
+                            <span style="color:rgba(255,255,255,0.5);margin:0 4px">·</span>
+                            <span style="color:rgba(255,255,255,0.8)">${escHtml(proj)} — ${escHtml(type)}</span>
+                            ${e.undone ? '<span style="color:rgba(255,255,255,0.3);font-size:10px;margin-left:4px">Undone</span>' : ''}
+                        </div>
+                        ${e.title ? `<div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escHtml(e.title)}</div>` : ''}
+                    </div>
+                    <div style="flex-shrink:0;font-size:11px;color:rgba(255,255,255,0.3)">${timeStr}</div>
+                    ${(!e.undone && e.snapshot && e.action !== 'UNDO' && e.action !== 'REORDER') ? `
+                    <button onclick="event.stopPropagation();_alUndoEntry('${e.id}',this)"
+                        title="Undo this action"
+                        style="flex-shrink:0;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.55);border-radius:5px;padding:3px 9px;font-size:11px;cursor:pointer;transition:all .2s;white-space:nowrap"
+                        onmouseover="this.style.background='rgba(231,76,60,0.25)';this.style.borderColor='rgba(231,76,60,0.5)';this.style.color='#ff7f7f'"
+                        onmouseout="this.style.background='rgba(255,255,255,0.06)';this.style.borderColor='rgba(255,255,255,0.12)';this.style.color='rgba(255,255,255,0.55)'">Undo</button>` : `<div style="width:42px;flex-shrink:0"></div>`}
+                </div>`;
+            });
+        });
+
+        if (log.length >= 50) {
+            html += `<div style="padding:12px 16px;text-align:center;font-size:11px;color:rgba(255,255,255,0.25)">Showing ${log.length} of up to 200 entries</div>`;
+        }
+
+        container.innerHTML = html;
+
+        // Store log for detail lookup
+        container._logData = log;
+
+    } catch {
+        container.innerHTML = '<div style="padding:24px;text-align:center;color:#e74c3c;font-size:13px">⚠ Failed to load activity log.</div>';
+    }
+}
+
+// Called from inline onclick — must be global
+function _alShowDetail(idx) {
+    const container = document.getElementById('activityLogList');
+    const log = container?._logData;
+    if (!log || !log[idx]) return;
+    showActivityDetail(log[idx]);
+}
+
+async function _alUndoEntry(logId, btn) {
+    if (!logId) return;
+    const original = btn.textContent;
+    btn.textContent = '…';
+    btn.disabled = true;
+
+    try {
+        const res = await authFetch(`/api/activity-log/${logId}/undo`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        });
+        const data = await res.json();
+        if (!res.ok) {
+            btn.textContent = original;
+            btn.disabled = false;
+            btn.title = data.error || 'Undo failed';
+            btn.style.color = '#e74c3c';
+            btn.style.borderColor = 'rgba(231,76,60,0.5)';
+            setTimeout(() => {
+                btn.textContent = original;
+                btn.style.color = '';
+                btn.style.borderColor = '';
+            }, 2500);
+            return;
+        }
+        // Success — reload the list
+        await loadActivityLog();
+    } catch {
+        btn.textContent = original;
+        btn.disabled = false;
+    }
 }

@@ -1,0 +1,52 @@
+[
+  {
+    "id": "1772563053649-korw",
+    "timestamp": "2026-03-03T18:37:33.649Z",
+    "action": "CREATE",
+    "type": "history",
+    "project": "global",
+    "title": "2026 — Undo Testing Entry",
+    "snapshot": {
+      "index": 5,
+      "item": {
+        "year": "2026",
+        "title": "Undo Testing Entry",
+        "body": "Testing the undo button in Activity Log."
+      }
+    },
+    "undone": true
+  },
+  {
+    "id": "1772562735329-1to0",
+    "timestamp": "2026-03-03T18:32:15.329Z",
+    "action": "CREATE",
+    "type": "history",
+    "project": "global",
+    "title": "2025 — Undo Test Entry",
+    "snapshot": {
+      "index": 5,
+      "item": {
+        "year": "2025",
+        "title": "Undo Test Entry",
+        "body": "testing undo"
+      }
+    },
+    "undone": true
+  },
+  {
+    "id": "1772561977298-oxey",
+    "timestamp": "2026-03-03T18:19:37.298Z",
+    "action": "DELETE",
+    "type": "gallery",
+    "project": "mongolia",
+    "title": "2026-03-04"
+  },
+  {
+    "id": "1772561936149-qvig",
+    "timestamp": "2026-03-03T18:18:56.149Z",
+    "action": "CREATE",
+    "type": "gallery",
+    "project": "mongolia",
+    "title": "1 photo (2026-03-04)"
+  }
+]

@@ -105,7 +105,155 @@ function writeProject(id, data) {
     );
 }
 
-// ─── Routes ───────────────────────────────────────────────────
+// ─── Activity Log helpers ──────────────────────────────────────
+const ACTIVITY_LOG_FILE = path.join(__dirname, 'data', 'activity-log.json');
+
+function readActivityLog() {
+    if (!fs.existsSync(ACTIVITY_LOG_FILE)) return [];
+    try { return JSON.parse(fs.readFileSync(ACTIVITY_LOG_FILE, 'utf8')); } catch { return []; }
+}
+
+/**
+ * Append one event to the activity log.
+ * @param {'CREATE'|'UPDATE'|'DELETE'|'REORDER'|'UNDO'} action
+ * @param {string} type   e.g. 'diary', 'gallery', 'history', 'stats'
+ * @param {string} project  e.g. 'mongolia', 'global'
+ * @param {string} title  human-readable identifier for the affected item
+ * @param {object|null} snapshot  data needed to undo this action
+ */
+function appendLog(action, type, project, title = '', snapshot = null) {
+    try {
+        const log = readActivityLog();
+        log.unshift({
+            id: `${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+            timestamp: new Date().toISOString(),
+            action,
+            type,
+            project,
+            title: String(title).slice(0, 120),
+            snapshot,       // null when not undoable
+            undone: false
+        });
+        // Keep only the latest 200 entries
+        const trimmed = log.slice(0, 200);
+        fs.writeFileSync(ACTIVITY_LOG_FILE, JSON.stringify(trimmed, null, 2), 'utf8');
+    } catch { /* never crash the main request because of logging */ }
+}
+
+// GET /api/activity-log — admin only
+app.get('/api/activity-log', requireAuth, (_req, res) => {
+    res.json(readActivityLog());
+});
+
+// POST /api/activity-log/:logId/undo — admin only
+app.post('/api/activity-log/:logId/undo', requireAuth, (req, res) => {
+    const log = readActivityLog();
+    const entryIdx = log.findIndex(e => e.id === req.params.logId);
+    if (entryIdx === -1) return res.status(404).json({ error: 'Log entry not found' });
+
+    const entry = log[entryIdx];
+    if (entry.undone) return res.status(400).json({ error: 'Already undone' });
+    if (!entry.snapshot) return res.status(400).json({ error: 'This action cannot be undone (no snapshot)' });
+
+    const { action, type, project, snapshot } = entry;
+
+    try {
+        // ── Project-level items (diary, report, gallery, interview) ────
+        const PROJECT_TYPES = ['diary', 'report', 'gallery', 'interview'];
+        if (PROJECT_TYPES.includes(type)) {
+            const keyMap = { diary: 'diary', report: 'reports', gallery: 'gallery', interview: 'interviews' };
+            const key = keyMap[type];
+            const data = readProject(project);
+            if (!data) return res.status(404).json({ error: `Project '${project}' not found` });
+            data[key] = data[key] || [];
+
+            if (action === 'DELETE') {
+                // Re-insert item at its original index
+                const insertAt = Math.min(snapshot.index, data[key].length);
+                data[key].splice(insertAt, 0, snapshot.item);
+                writeProject(project, data);
+                appendLog('UNDO', type, project, `Restored: ${entry.title}`);
+            } else if (action === 'CREATE') {
+                // Remove the first matching item
+                const removeAt = snapshot.index !== undefined
+                    ? snapshot.index
+                    : data[key].findIndex(item => JSON.stringify(item) === JSON.stringify(snapshot.item));
+                if (removeAt < 0 || removeAt >= data[key].length)
+                    return res.status(400).json({ error: 'Cannot find the item to undo creation' });
+                data[key].splice(removeAt, 1);
+                writeProject(project, data);
+                appendLog('UNDO', type, project, `Removed: ${entry.title}`);
+            } else if (action === 'UPDATE') {
+                const idx = snapshot.index;
+                if (idx === undefined || idx < 0 || idx >= data[key].length)
+                    return res.status(400).json({ error: 'Index out of range' });
+                data[key][idx] = snapshot.prev;
+                writeProject(project, data);
+                appendLog('UNDO', type, project, `Reverted: ${entry.title}`);
+            } else {
+                return res.status(400).json({ error: 'Undo not supported for this action' });
+            }
+
+            // ── History ───────────────────────────────────────────────────
+        } else if (type === 'history') {
+            const items = readHistory();
+            if (action === 'DELETE') {
+                const insertAt = Math.min(snapshot.index, items.length);
+                items.splice(insertAt, 0, snapshot.item);
+                writeHistory(items);
+                appendLog('UNDO', type, project, `Restored: ${entry.title}`);
+            } else if (action === 'CREATE') {
+                // Remove the last item (history items are push()ed)
+                const removeAt = snapshot.index !== undefined ? snapshot.index : items.length - 1;
+                if (removeAt < 0 || removeAt >= items.length)
+                    return res.status(400).json({ error: 'Cannot find the item' });
+                items.splice(removeAt, 1);
+                writeHistory(items);
+                appendLog('UNDO', type, project, `Removed: ${entry.title}`);
+            } else if (action === 'UPDATE') {
+                items[snapshot.index] = snapshot.prev;
+                writeHistory(items);
+                appendLog('UNDO', type, project, `Reverted: ${entry.title}`);
+            } else if (action === 'REORDER') {
+                writeHistory(snapshot.prevOrder);
+                appendLog('UNDO', type, project, 'Reverted reorder');
+            } else {
+                return res.status(400).json({ error: 'Undo not supported' });
+            }
+
+            // ── Global Stats ──────────────────────────────────────────────
+        } else if (type === 'global-stats') {
+            if (action === 'UPDATE' && snapshot.prev) {
+                writeGlobalStats(snapshot.prev);
+                appendLog('UNDO', type, project, 'Reverted Global Stats');
+            } else {
+                return res.status(400).json({ error: 'Undo not supported' });
+            }
+
+            // ── Project Stats / Card ──────────────────────────────────────
+        } else if (type === 'stats' || type === 'card') {
+            if (action === 'UPDATE' && snapshot.prev) {
+                const data = readProject(project);
+                if (!data) return res.status(404).json({ error: 'Project not found' });
+                data[type === 'stats' ? 'stats' : 'card'] = snapshot.prev;
+                writeProject(project, data);
+                appendLog('UNDO', type, project, `Reverted ${type === 'stats' ? 'Project Stats' : 'Project Card'}`);
+            } else {
+                return res.status(400).json({ error: 'Undo not supported' });
+            }
+        } else {
+            return res.status(400).json({ error: 'Undo not supported for this type' });
+        }
+
+        // Mark the original entry as undone
+        log[entryIdx].undone = true;
+        fs.writeFileSync(ACTIVITY_LOG_FILE, JSON.stringify(log, null, 2), 'utf8');
+        res.json({ ok: true });
+    } catch (err) {
+        console.error('Undo error:', err);
+        res.status(500).json({ error: 'Internal error during undo: ' + err.message });
+    }
+});
 
 // GET /api/projects-index — public, used by map + cards
 app.get('/api/projects-index', (_req, res) => {
@@ -277,6 +425,7 @@ app.post('/api/projects/:id/diary',
         data.diary = data.diary || [];
         data.diary.unshift(entry);
         writeProject(req.params.id, data);
+        appendLog('CREATE', 'diary', req.params.id, entry.title || entry.date, { index: 0, item: entry });
         res.status(201).json(entry);
     }
 );
@@ -309,6 +458,7 @@ app.post('/api/projects/:id/report',
         data.reports = data.reports || [];
         data.reports.unshift(report);
         writeProject(req.params.id, data);
+        appendLog('CREATE', 'report', req.params.id, report.title || report.period, { index: 0, item: report });
         res.status(201).json(report);
     }
 );
@@ -337,6 +487,7 @@ app.post('/api/projects/:id/gallery',
             const item = { ...baseItem, image: '' };
             data.gallery.unshift(item);
             writeProject(req.params.id, data);
+            appendLog('CREATE', 'gallery', req.params.id, item.caption || item.date, { index: 0, item });
             return res.status(201).json([item]);
         }
 
@@ -349,6 +500,9 @@ app.post('/api/projects/:id/gallery',
         // Prepend newest first
         data.gallery.unshift(...items);
         writeProject(req.params.id, data);
+        appendLog('CREATE', 'gallery', req.params.id,
+            `${items.length} photo${items.length > 1 ? 's' : ''} (${baseItem.date || 'no date'})`,
+            { index: 0, count: items.length, items });
         res.status(201).json(items);
     }
 );
@@ -376,6 +530,8 @@ app.post('/api/projects/:id/interview',
         data.interviews = data.interviews || [];
         data.interviews.push(interview);
         writeProject(req.params.id, data);
+        appendLog('CREATE', 'interview', req.params.id, interview.name || interview.year,
+            { index: data.interviews.length - 1, item: interview });
         res.status(201).json(interview);
     }
 );
@@ -391,6 +547,7 @@ app.patch('/api/projects/:id/diary/:index',
         if (isNaN(idx) || !data.diary || idx < 0 || idx >= data.diary.length)
             return res.status(400).json({ error: 'Invalid index' });
 
+        const prevEntry = JSON.parse(JSON.stringify(data.diary[idx]));
         const entry = data.diary[idx];
         if (req.body.date !== undefined) entry.date = req.body.date;
         if (req.body.location !== undefined) entry.location = req.body.location;
@@ -403,6 +560,8 @@ app.patch('/api/projects/:id/diary/:index',
             );
         }
         writeProject(req.params.id, data);
+        appendLog('UPDATE', 'diary', req.params.id, entry.title || entry.date,
+            { index: idx, prev: prevEntry });
         res.json(entry);
     }
 );
@@ -418,6 +577,7 @@ app.patch('/api/projects/:id/reports/:index',
         if (isNaN(idx) || !data.reports || idx < 0 || idx >= data.reports.length)
             return res.status(400).json({ error: 'Invalid index' });
 
+        const prevReport = JSON.parse(JSON.stringify(data.reports[idx]));
         const report = data.reports[idx];
         if (req.body.title !== undefined) report.title = req.body.title;
         if (req.body.period !== undefined) report.period = req.body.period;
@@ -432,6 +592,8 @@ app.patch('/api/projects/:id/reports/:index',
         }
         if (req.file) report.pdf = `data/uploads/${req.file.filename}`;
         writeProject(req.params.id, data);
+        appendLog('UPDATE', 'report', req.params.id, report.title || report.period,
+            { index: idx, prev: prevReport });
         res.json(report);
     }
 );
@@ -447,6 +609,7 @@ app.patch('/api/projects/:id/gallery/:index',
         if (isNaN(idx) || !data.gallery || idx < 0 || idx >= data.gallery.length)
             return res.status(400).json({ error: 'Invalid index' });
 
+        const prevGallery = JSON.parse(JSON.stringify(data.gallery[idx]));
         const item = data.gallery[idx];
         if (req.body.date !== undefined) item.date = req.body.date;
         if (req.body.location !== undefined) item.location = req.body.location;
@@ -454,6 +617,8 @@ app.patch('/api/projects/:id/gallery/:index',
         if (req.body.caption !== undefined) item.caption = req.body.caption;
         if (req.file) item.image = `data/uploads/${req.file.filename}`;
         writeProject(req.params.id, data);
+        appendLog('UPDATE', 'gallery', req.params.id, item.caption || item.date,
+            { index: idx, prev: prevGallery });
         res.json(item);
     }
 );
@@ -469,6 +634,7 @@ app.patch('/api/projects/:id/interviews/:index',
         if (isNaN(idx) || !data.interviews || idx < 0 || idx >= data.interviews.length)
             return res.status(400).json({ error: 'Invalid index' });
 
+        const prevInterview = JSON.parse(JSON.stringify(data.interviews[idx]));
         const interview = data.interviews[idx];
         if (req.body.name !== undefined) interview.name = req.body.name;
         if (req.body.year !== undefined) interview.year = req.body.year;
@@ -480,6 +646,8 @@ app.patch('/api/projects/:id/interviews/:index',
         }
         if (req.file) interview.photo = `data/uploads/${req.file.filename}`;
         writeProject(req.params.id, data);
+        appendLog('UPDATE', 'interview', req.params.id, interview.name || interview.year,
+            { index: idx, prev: prevInterview });
         res.json(interview);
     }
 );
@@ -497,8 +665,12 @@ app.delete('/api/projects/:id/:type/:index', requireAuth, (req, res) => {
         return res.status(400).json({ error: 'Invalid type or index' });
     }
 
+    const deletedItem = data[key][idx];
+    const deletedTitle = deletedItem.title || deletedItem.caption || deletedItem.name || deletedItem.date || String(idx);
     data[key].splice(idx, 1);
     writeProject(req.params.id, data);
+    appendLog('DELETE', req.params.type, req.params.id, deletedTitle,
+        { index: idx, item: deletedItem });
     res.json({ ok: true });
 });
 
@@ -538,13 +710,13 @@ app.get('/api/global-stats', (_req, res) => {
 
 // Auth-protected write
 app.patch('/api/global-stats', requireAuth, (req, res) => {
-    const gs = readGlobalStats();
+    const prevGs = readGlobalStats();
+    const gs = { ...prevGs };
     const fields = ['yearsOfService', 'yearsOfServiceSuffix', 'activeCountries',
         'activeCountriesSuffix', 'treesPlanted', 'treesPlantedSuffix',
         'label_years', 'label_countries', 'label_trees'];
     fields.forEach(k => {
         if (req.body[k] !== undefined) {
-            // numeric fields: store as number when possible
             const numFields = ['yearsOfService', 'activeCountries', 'treesPlanted'];
             gs[k] = numFields.includes(k) && !isNaN(Number(req.body[k]))
                 ? Number(req.body[k])
@@ -552,6 +724,7 @@ app.patch('/api/global-stats', requireAuth, (req, res) => {
         }
     });
     writeGlobalStats(gs);
+    appendLog('UPDATE', 'global-stats', 'global', 'Global Stats', { prev: prevGs });
     res.json({ ok: true, stats: gs });
 });
 
@@ -560,6 +733,7 @@ app.patch('/api/projects/:id/stats', requireAuth, (req, res) => {
     const data = readProject(req.params.id);
     if (!data) return res.status(404).json({ error: 'Not found' });
 
+    const prevStats = JSON.parse(JSON.stringify(data.stats || {}));
     const { since, totalTrips, treesPlanted, label_trips, label_metric } = req.body;
     data.stats = data.stats || {};
     if (since !== undefined) data.stats.since = since;
@@ -569,6 +743,7 @@ app.patch('/api/projects/:id/stats', requireAuth, (req, res) => {
     if (label_metric !== undefined) data.stats.label_metric = label_metric;
 
     writeProject(req.params.id, data);
+    appendLog('UPDATE', 'stats', req.params.id, 'Project Stats', { prev: prevStats });
     res.json({ ok: true, stats: data.stats });
 });
 
@@ -585,16 +760,15 @@ app.patch('/api/projects/:id/card', requireAuth, (req, res) => {
     const data = readProject(req.params.id);
     if (!data) return res.status(404).json({ error: 'Not found' });
 
+    const prevCard = JSON.parse(JSON.stringify(data.card || {}));
     const card = data.card || {};
     const fields = ['tag', 'slogan_line1', 'slogan_line2', 'lead', 'body',
         'instagram_handle', 'instagram_url'];
     fields.forEach(k => { if (req.body[k] !== undefined) card[k] = req.body[k]; });
 
-    // meta is an array of {label, value} — sent as JSON string
     if (req.body.meta !== undefined) {
         try { card.meta = JSON.parse(req.body.meta); } catch { }
     }
-    // Also accept individual meta fields meta_0_label, meta_0_value, etc.
     if (req.body.meta_0_label !== undefined) {
         card.meta = card.meta || [{}, {}, {}];
         [0, 1, 2].forEach(i => {
@@ -606,6 +780,7 @@ app.patch('/api/projects/:id/card', requireAuth, (req, res) => {
 
     data.card = card;
     writeProject(req.params.id, data);
+    appendLog('UPDATE', 'card', req.params.id, 'Project Card', { prev: prevCard });
     res.json({ ok: true, card });
 });
 
@@ -628,9 +803,11 @@ app.get('/api/history', (_req, res) => {
 
 // Auth-protected: replace entire array (used for reorder)
 app.patch('/api/history', requireAuth, (req, res) => {
+    const prevOrder = readHistory();
     const items = req.body;
     if (!Array.isArray(items)) return res.status(400).json({ error: 'Body must be an array' });
     writeHistory(items);
+    appendLog('REORDER', 'history', 'global', `${items.length} items reordered`, { prevOrder });
     res.json({ ok: true, items });
 });
 
@@ -642,6 +819,8 @@ app.post('/api/history/items', requireAuth, (req, res) => {
     const newItem = { year: String(year), title: String(title), body: String(body || '') };
     items.push(newItem);
     writeHistory(items);
+    appendLog('CREATE', 'history', 'global', `${newItem.year} — ${newItem.title}`,
+        { index: items.length - 1, item: newItem });
     res.status(201).json({ ok: true, item: newItem, index: items.length - 1 });
 });
 
@@ -651,11 +830,14 @@ app.patch('/api/history/items/:index', requireAuth, (req, res) => {
     const items = readHistory();
     if (isNaN(idx) || idx < 0 || idx >= items.length)
         return res.status(400).json({ error: 'Invalid index' });
+    const prevHistItem = JSON.parse(JSON.stringify(items[idx]));
     const { year, title, body } = req.body || {};
     if (year !== undefined) items[idx].year = String(year);
     if (title !== undefined) items[idx].title = String(title);
     if (body !== undefined) items[idx].body = String(body);
     writeHistory(items);
+    appendLog('UPDATE', 'history', 'global', `${items[idx].year} — ${items[idx].title}`,
+        { index: idx, prev: prevHistItem });
     res.json({ ok: true, item: items[idx] });
 });
 
@@ -665,8 +847,11 @@ app.delete('/api/history/items/:index', requireAuth, (req, res) => {
     const items = readHistory();
     if (isNaN(idx) || idx < 0 || idx >= items.length)
         return res.status(400).json({ error: 'Invalid index' });
+    const deletedHistory = items[idx];
     items.splice(idx, 1);
     writeHistory(items);
+    appendLog('DELETE', 'history', 'global', `${deletedHistory.year} — ${deletedHistory.title}`,
+        { index: idx, item: deletedHistory });
     res.json({ ok: true });
 });
 
