@@ -1,0 +1,11 @@
+{
+  "yearsOfService": 26,
+  "yearsOfServiceSuffix": "",
+  "activeCountries": 3,
+  "activeCountriesSuffix": "",
+  "treesPlanted": 1150,
+  "treesPlantedSuffix": "+",
+  "label_years": "Years of Service",
+  "label_countries": "Active Countries",
+  "label_trees": "Trees Planted"
+}

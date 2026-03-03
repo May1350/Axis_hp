@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Axis — Project</title>
+    <meta name="description" content="Axis project detail page.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200..800&family=Inter:wght@300..700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="project.css">
+    <link rel="stylesheet" href="admin.css">
+</head>
+
+<body>
+
+    <!-- ═══════════════════════════════════════
+         NAVIGATION
+    ═══════════════════════════════════════ -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-inner">
+            <a href="index.html" class="nav-logo">
+                <img src="input_file_1.png" alt="Axis Logo">
+                <span>AXIS</span>
+            </a>
+            <a href="index.html#projects" class="nav-back" id="navBack">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+                Back to Projects
+            </a>
+        </div>
+    </nav>
+
+    <!-- ═══════════════════════════════════════
+         PROJECT HERO
+    ═══════════════════════════════════════ -->
+    <section class="project-hero" id="projectHero">
+        <div class="project-hero-bg" id="heroBg">
+            <div class="project-hero-bg-placeholder" id="heroBgPlaceholder"></div>
+        </div>
+        <div class="project-hero-content">
+            <div class="project-hero-tag">
+                <span id="heroTag">—</span>
+                <span id="heroSince" style="color:rgba(255,255,255,0.5);font-weight:400;font-size:13px;"></span>
+            </div>
+            <h1 id="heroName">Loading…</h1>
+            <p class="project-hero-slogan" id="heroSlogan"></p>
+        </div>
+        <img src="" alt="" class="project-hero-seal" id="heroSeal">
+    </section>
+
+    <!-- ═══════════════════════════════════════
+         STATS BAR
+    ═══════════════════════════════════════ -->
+    <div class="stats-bar">
+        <div class="stats-bar-inner">
+            <div class="stats-bar-item">
+                <span class="stats-bar-num" id="statSince">—</span>
+                <span class="stats-bar-label">Active Since</span>
+            </div>
+            <div class="stats-bar-item">
+                <span class="stats-bar-num" id="statTrips">—</span>
+                <span class="stats-bar-label" id="statTripsLabel">Total Trips</span>
+            </div>
+            <div class="stats-bar-item">
+                <span class="stats-bar-num" id="statMetric">—</span>
+                <span class="stats-bar-label" id="statMetricLabel">Key Metric</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════
+         TAB NAVIGATION
+    ═══════════════════════════════════════ -->
+    <div class="tab-nav">
+        <div class="tab-nav-inner">
+            <button class="tab-btn active" data-tab="diary">Field Diary</button>
+            <button class="tab-btn" data-tab="reports">Activity Reports</button>
+            <button class="tab-btn" data-tab="gallery">Photo Gallery</button>
+            <button class="tab-btn" data-tab="interviews">Member Voices</button>
+            <button class="tab-btn admin-open-btn" id="adminFab" title="Admin Panel"
+                aria-label="Open Admin Panel">＋</button>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════
+         TAB 1 — FIELD DIARY
+    ═══════════════════════════════════════ -->
+    <div class="tab-content active" id="tab-diary">
+        <span class="section-label">Field Diary</span>
+        <h2 class="section-title">From the Field</h2>
+        <div class="diary-list" id="diaryList">
+            <div class="empty-state">
+                <div class="empty-icon">📓</div>
+                <h3>Loading diary…</h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════
+         TAB 2 — ACTIVITY REPORTS
+    ═══════════════════════════════════════ -->
+    <div class="tab-content" id="tab-reports">
+        <span class="section-label">Activity Reports</span>
+        <h2 class="section-title">Official Field Reports</h2>
+        <div class="report-list" id="reportList">
+            <div class="empty-state">
+                <div class="empty-icon">📋</div>
+                <h3>Loading reports…</h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════
+         TAB 3 — PHOTO GALLERY
+    ═══════════════════════════════════════ -->
+    <div class="tab-content" id="tab-gallery">
+        <span class="section-label">Photo Gallery</span>
+        <h2 class="section-title">Moments from the Ground</h2>
+
+        <div class="gallery-grid" id="galleryGrid">
+            <div class="empty-state">
+                <div class="empty-icon">📷</div>
+                <h3>Loading gallery…</h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════
+         TAB 4 — MEMBER INTERVIEWS
+    ═══════════════════════════════════════ -->
+    <div class="tab-content" id="tab-interviews">
+        <span class="section-label">Member Voices</span>
+        <h2 class="section-title">Stories from Our Members</h2>
+        <div class="interview-grid" id="interviewGrid">
+            <div class="empty-state">
+                <div class="empty-icon">🎙️</div>
+                <h3>Loading interviews…</h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════
+         LIGHTBOX
+    ═══════════════════════════════════════ -->
+    <div class="lightbox" id="lightbox">
+        <div class="lightbox-inner">
+            <img src="" alt="" class="lightbox-img" id="lightboxImg">
+            <p class="lightbox-caption" id="lightboxCaption"></p>
+        </div>
+        <button class="lightbox-close" id="lightboxClose">✕</button>
+    </div>
+
+    <!-- ═══════════════════════════════════════
+         FOOTER
+    ═══════════════════════════════════════ -->
+    <footer class="p-footer">
+        <div class="p-footer-inner">
+            <div class="p-footer-logo">
+                <img src="input_file_1.png" alt="Axis Logo">
+                AXIS
+            </div>
+            <span class="p-footer-copy">© 2024 Axis — Association of Exchange and International Service</span>
+            <a href="admin.html"
+                style="font-size:12px;color:rgba(255,255,255,0.2);text-decoration:none;margin-left:12px;">Admin
+                Panel</a>
+        </div>
+    </footer>
+
+
+    <!-- ═══════════════════════════════════════
+         ADMIN PASSWORD MODAL
+    ═══════════════════════════════════════ -->
+    <div id="adminPwModal" class="admin-modal-overlay hidden">
+        <div class="admin-modal-card">
+            <h3 class="admin-modal-title">Admin Access</h3>
+            <p class="admin-modal-sub">Enter the admin password to manage content</p>
+            <form id="adminPwForm">
+                <div class="field">
+                    <label>Password</label>
+                    <input type="password" id="adminPwInput" placeholder="Password" autocomplete="current-password"
+                        required>
+                </div>
+                <div class="admin-modal-actions">
+                    <button type="button" class="btn btn--outline" id="adminPwCancel">Cancel</button>
+                    <button type="submit" class="btn btn--gold" id="adminPwSubmit">Sign In</button>
+                </div>
+                <p class="admin-modal-error" id="adminPwError"></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════
+         ADMIN DRAWER
+    ═══════════════════════════════════════ -->
+    <div id="adminDrawer" class="admin-drawer hidden">
+        <!-- Drawer Header -->
+        <div class="admin-drawer-header">
+            <div class="admin-drawer-title">
+                <span class="admin-drawer-badge">Admin</span>
+                <span id="adminDrawerProject"></span>
+                <a href="admin.html" class="global-admin-link"
+                    style="margin-left:12px;font-size:11px;color:var(--gold);text-decoration:none;border:1px solid var(--gold);padding:2px 8px;border-radius:4px;opacity:0.8;transition:opacity 0.2s;">Global
+                    Dashboard</a>
+            </div>
+            <button class="admin-drawer-close" id="adminDrawerClose" title="Close">✕</button>
+        </div>
+
+        <!-- Drawer Tabs -->
+        <div class="admin-drawer-tabs">
+            <button class="admin-drawer-tab active" data-atab="diary">Diary</button>
+            <button class="admin-drawer-tab" data-atab="reports">Reports</button>
+            <button class="admin-drawer-tab" data-atab="gallery">Gallery</button>
+            <button class="admin-drawer-tab" data-atab="interviews">Voices</button>
+            <button class="admin-drawer-tab" data-atab="stats">Stats</button>
+        </div>
+
+        <!-- Drawer Content -->
+        <div class="admin-drawer-body">
+
+            <!-- ── DIARY ── -->
+            <div id="atab-diary" class="admin-drawer-panel active">
+                <div class="add-form-panel">
+                    <div class="form-title">New Diary Entry</div>
+                    <form id="aForm-diary">
+                        <div class="form-grid">
+                            <div class="field"><label>Date *</label><input type="date" name="date" required></div>
+                            <div class="field"><label>Location *</label><input type="text" name="location"
+                                    placeholder="e.g. Darkhan, Mongolia" required></div>
+                            <div class="field form-col-full"><label>Title *</label><input type="text" name="title"
+                                    placeholder="e.g. Day 5 — 植林作業、本格化" required></div>
+                            <div class="field form-col-full">
+                                <label>Body *</label>
+                                <div class="rte-toolbar">
+                                    <button type="button" class="rte-btn" data-cmd="bold" title="Bold"><b>B</b></button>
+                                    <button type="button" class="rte-btn" data-cmd="strikeThrough"
+                                        title="Strikethrough"><s>S</s></button>
+                                    <span class="rte-sep"></span>
+                                    <button type="button" class="rte-btn" data-cmd="fontSize" data-val="2"
+                                        title="Small">A<sub>s</sub></button>
+                                    <button type="button" class="rte-btn" data-cmd="fontSize" data-val="3"
+                                        title="Normal">A</button>
+                                    <button type="button" class="rte-btn" data-cmd="fontSize" data-val="5"
+                                        title="Large">A<sup>+</sup></button>
+                                </div>
+                                <div class="rte-content" id="aDiaryRte" contenteditable="true"
+                                    data-placeholder="Write the diary entry here..."></div>
+                                <input type="hidden" name="body" id="aDiaryBodyHidden">
+                            </div>
+                            <div class="field form-col-full">
+                                <label>Photos (up to 10)</label>
+                                <div class="upload-zone">
+                                    <input type="file" name="images" accept="image/*" multiple id="aDiaryImgInput">
+                                    <div class="upload-icon">+</div>
+                                    <p>Click or drop images — <strong>JPG, PNG, WebP</strong></p>
+                                </div>
+                                <div class="img-previews" id="aDiaryImgPreviews"></div>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn--gold">Add Entry</button>
+                            <span class="form-status" id="aDiaryStatus"></span>
+                        </div>
+                    </form>
+                </div>
+                <div class="entries-section">
+                    <div class="entries-header">Existing Entries</div>
+                    <div class="entries-list" id="aList-diary"></div>
+                </div>
+            </div>
+
+            <!-- ── REPORTS ── -->
+            <div id="atab-reports" class="admin-drawer-panel">
+                <div class="add-form-panel">
+                    <div class="form-title">New Report</div>
+                    <form id="aForm-reports">
+                        <div class="form-grid">
+                            <div class="field form-col-full"><label>Title *</label><input type="text" name="title"
+                                    placeholder="e.g. 第13回 モンゴル派遣 活動報告書" required></div>
+                            <div class="field"><label>Period</label><input type="text" name="period"
+                                    placeholder="e.g. 2023.08.10 – 08.20"></div>
+                            <div class="field"><label>Date</label><input type="date" name="date"></div>
+                            <div class="field"><label>Members</label><input type="number" name="members" placeholder="8"
+                                    min="1"></div>
+                            <div class="field form-col-full">
+                                <label>PDF Report File</label>
+                                <div class="upload-zone">
+                                    <input type="file" name="pdf" accept=".pdf,application/pdf" id="aReportPdfInput">
+                                    <div class="upload-icon">PDF</div>
+                                    <p>Click or drop — <strong>PDF only</strong></p>
+                                </div>
+                                <div class="pdf-preview" id="aReportPdfPreview"></div>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn--gold">Add Report</button>
+                            <span class="form-status" id="aReportStatus"></span>
+                        </div>
+                    </form>
+                </div>
+                <div class="entries-section">
+                    <div class="entries-header">Existing Reports</div>
+                    <div class="entries-list" id="aList-reports"></div>
+                </div>
+            </div>
+
+            <!-- ── GALLERY ── -->
+            <div id="atab-gallery" class="admin-drawer-panel">
+                <div class="add-form-panel">
+                    <div class="form-title">Add Photo</div>
+                    <form id="aForm-gallery">
+                        <div class="form-grid">
+                            <div class="field"><label>Date *</label><input type="date" name="date" required></div>
+                            <div class="field"><label>Location</label><input type="text" name="location"
+                                    placeholder="e.g. Darkhan"></div>
+                            <div class="field"><label>Trip</label><input type="text" name="trip"
+                                    placeholder="e.g. 第13回モンゴル派遣"></div>
+                            <div class="field"><label>Caption</label><input type="text" name="caption"
+                                    placeholder="Short description"></div>
+                            <div class="field form-col-full">
+                                <label>Photo *</label>
+                                <div class="upload-zone">
+                                    <input type="file" name="image" accept="image/*" id="aGalleryImgInput" required>
+                                    <div class="upload-icon">IMG</div>
+                                    <p>Click or drop — <strong>JPG, PNG, WebP</strong></p>
+                                </div>
+                                <div class="img-previews" id="aGalleryImgPreview"></div>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn--gold">Upload Photo</button>
+                            <span class="form-status" id="aGalleryStatus"></span>
+                        </div>
+                    </form>
+                </div>
+                <div class="entries-section">
+                    <div class="entries-header">Gallery Items</div>
+                    <div class="entries-list" id="aList-gallery"></div>
+                </div>
+            </div>
+
+            <!-- ── INTERVIEWS ── -->
+            <div id="atab-interviews" class="admin-drawer-panel">
+                <div class="add-form-panel">
+                    <div class="form-title">New Interview</div>
+                    <form id="aForm-interviews">
+                        <div class="form-grid">
+                            <div class="field"><label>Name *</label><input type="text" name="name"
+                                    placeholder="e.g. 田中太郎" required></div>
+                            <div class="field"><label>Year / Affiliation</label><input type="text" name="year"
+                                    placeholder="e.g. 慶應 経済学部 3年"></div>
+                            <div class="field form-col-full"><label>Trips (comma separated)</label><input type="text"
+                                    name="trips" placeholder="e.g. 第13回モンゴル, 第14回モンゴル"></div>
+                            <div class="field form-col-full">
+                                <label>Profile Photo</label>
+                                <div class="upload-zone">
+                                    <input type="file" name="photo" accept="image/*" id="aInterviewPhotoInput">
+                                    <div class="upload-icon">+</div>
+                                    <p>Click to upload profile photo</p>
+                                </div>
+                                <div class="img-previews" id="aInterviewPhotoPreview"></div>
+                            </div>
+                        </div>
+                        <div style="margin-top:16px">
+                            <label
+                                style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-sub);display:block;margin-bottom:8px">Q
+                                &amp; A</label>
+                            <div class="dynamic-group" id="aQandaItems"></div>
+                            <button type="button" class="add-dynamic-btn" id="aAddQaBtn">+ Add Q&amp;A Pair</button>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn--gold">Add Interview</button>
+                            <span class="form-status" id="aInterviewStatus"></span>
+                        </div>
+                    </form>
+                </div>
+                <div class="entries-section">
+                    <div class="entries-header">Existing Interviews</div>
+                    <div class="entries-list" id="aList-interviews"></div>
+                </div>
+            </div>
+
+            <!-- ── STATS ── -->
+            <div id="atab-stats" class="admin-drawer-panel">
+                <div class="add-form-panel">
+                    <div class="form-title">Project Stats</div>
+                    <p style="font-size:13px;color:var(--text-sub);margin-bottom:20px">Changes are saved and reflected
+                        on the page immediately.</p>
+                    <form id="aForm-stats">
+                        <div class="form-grid">
+                            <div class="field">
+                                <label>Active Since</label>
+                                <input type="text" id="aStat-since" name="since" placeholder="e.g. 2001">
+                            </div>
+                            <div class="field">
+                                <label>Total Trips</label>
+                                <input type="text" id="aStat-totalTrips" name="totalTrips" placeholder="e.g. 14">
+                            </div>
+                            <div class="field">
+                                <label>Key Metric Value</label>
+                                <input type="text" id="aStat-treesPlanted" name="treesPlanted"
+                                    placeholder="e.g. 1,150+">
+                            </div>
+                            <div class="field">
+                                <label>Trips Label</label>
+                                <input type="text" id="aStat-labelTrips" name="label_trips"
+                                    placeholder="e.g. Total Trips">
+                            </div>
+                            <div class="field form-col-full">
+                                <label>Metric Label</label>
+                                <input type="text" id="aStat-labelMetric" name="label_metric"
+                                    placeholder="e.g. Trees Planted">
+                            </div>
+                        </div>
+                        <div class="form-actions" style="margin-top:24px">
+                            <button type="submit" class="btn btn--gold" id="aStatsSubmitBtn">Save Stats</button>
+                            <span class="form-status" id="aStatsStatus"></span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div><!-- /.admin-drawer-body -->
+    </div><!-- /#adminDrawer -->
+
+    <!-- Admin confirm dialog -->
+    <div class="overlay hidden" id="aConfirmOverlay">
+        <div class="confirm-dialog">
+            <h3>Delete Entry?</h3>
+            <p>This action cannot be undone.</p>
+            <div class="confirm-actions">
+                <button class="btn btn--outline" id="aConfirmCancel">Cancel</button>
+                <button class="btn btn--danger" id="aConfirmOk">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin toasts -->
+    <div class="toast-container" id="aToastContainer"></div>
+
+    <!-- ═══════════════════════════════════════
+         DETAIL MODAL (diary / report click-through)
+    ═══════════════════════════════════════ -->
+    <div id="detailModal" class="detail-modal-overlay">
+        <div class="detail-modal-inner">
+            <button class="detail-modal-close" id="detailModalClose">✕</button>
+            <div id="detailModalContent"></div>
+        </div>
+    </div>
+
+    <script src="project.js"></script>
+    <script src="project-admin.js"></script>
+</body>
+
+</html>

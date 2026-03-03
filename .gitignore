@@ -1,0 +1,12 @@
+# Environment secrets — NEVER commit
+.env
+
+# Dependencies
+node_modules/
+
+# Uploaded files (can be large, should be backed up separately)
+data/uploads/
+
+# System files
+.DS_Store
+*.log

@@ -1,0 +1,134 @@
+{
+  "id": "malaysia",
+  "name": "Malaysia",
+  "name_jp": "マレーシア",
+  "tag": "New · 2024",
+  "slogan": "Bridging Cultures, Building Futures.",
+  "instagram": "https://www.instagram.com/axis_malaysia?igsh=aGJic3hwaWF3aG90",
+  "since": 2024,
+  "hero_image": "../malaysia_hero.png",
+  "seal_image": "../input_file_0.png",
+  "color": "#11235A",
+  "description": "2024年に新たに始動したマレーシアプロジェクト。日本とマレーシアの若者が共に参加するキャンプ・文化交流プログラムを通じて、互いの文化への理解を深め、長期的な協力関係を構築することを目指しています。",
+  "card": {
+    "tag": "Malaysia",
+    "slogan_line1": "Bridging Cultures,",
+    "slogan_line2": "Building Futures.",
+    "lead": "A bold new chapter — Japan meets Malaysia in the first-ever joint youth exchange camp.",
+    "body": "Launched in 2024 in partnership with AIESEC Malaysia, Axis brought together 7 Japanese and 35 Malaysian students for a 3-night joint camp in Selangor. Cultural workshops, sports, and company visits built genuine friendships across borders — and a formal partnership agreement was signed for long-term collaboration.",
+    "meta": [
+      {
+        "label": "Participants",
+        "value": "42 (JP 7 + MY 35)"
+      },
+      {
+        "label": "Partner",
+        "value": "AIESEC Malaysia"
+      },
+      {
+        "label": "Since",
+        "value": "2024"
+      }
+    ],
+    "instagram_handle": "@axis_malaysia",
+    "instagram_url": "https://www.instagram.com/axis_malaysia?igsh=aGJic3hwaWF3aG90"
+  },
+  "stats": {
+    "since": "2024",
+    "totalTrips": 1,
+    "treesPlanted": "40+",
+    "label_trips": "Total Trips",
+    "label_metric": "Participants"
+  },
+  "diary": [
+    {
+      "id": "d001",
+      "date": "2024-09-15",
+      "location": "Kuala Lumpur, Malaysia",
+      "title": "Day 1 — はじめてのマレーシア",
+      "body": "初の渡航。クアラルンプール国際空港に降り立った瞬間の熱気と活気に、チーム全員が圧倒された。現地の学生団体メンバーが空港まで出迎えてくれ、早速交流がスタート。初日にしてすでに多くを学べた気がする。",
+      "images": []
+    }
+  ],
+  "reports": [
+    {
+      "id": "r001",
+      "date": "2024-10",
+      "title": "第1回 マレーシア派遣 活動報告書",
+      "period": "2024.09.14 – 09.22",
+      "members": 7,
+      "summary": "クアラルンプールおよびセランゴール州にて日马合同キャンプを実施。参加者40名超。",
+      "sections": [
+        {
+          "heading": "活動概要",
+          "body": "2024年9月、Axisとして初となるマレーシア訪問を実施。現地の学生団体「AIESEC Malaysia」と連携し、3泊4日の日马合同キャンプを開催。文化交流ワークショップ・スポーツイベント・現地企業見学などを実施した。"
+        },
+        {
+          "heading": "成果 / Impact",
+          "body": "合同キャンプ参加者：日本側7名、マレーシア側35名（合計42名）。文化ワークショップ：2回。パートナーシップ協定の締結：1件。"
+        },
+        {
+          "heading": "課題と次回方針",
+          "body": "初回ということもあり、プログラムの時間配分に余裕がなかった。次回は事前の現地スタッフとのオンライン事前ミーティングを増やし、よりよいプログラム設計を行う。"
+        }
+      ],
+      "impact": {
+        "participants": 42,
+        "workshops": 2,
+        "members": 7
+      }
+    }
+  ],
+  "gallery": [
+    {
+      "id": "g001",
+      "date": "2024-09-15",
+      "location": "Kuala Lumpur",
+      "caption": "現地メンバーと初顔合わせ",
+      "image": "",
+      "trip": "第1回"
+    },
+    {
+      "id": "g002",
+      "date": "2024-09-17",
+      "location": "Selangor",
+      "caption": "日马合同キャンプの開会式",
+      "image": "",
+      "trip": "第1回"
+    },
+    {
+      "id": "g003",
+      "date": "2024-09-18",
+      "location": "Selangor",
+      "caption": "文化ワークショップ: 日本の折り紙",
+      "image": "",
+      "trip": "第1回"
+    }
+  ],
+  "interviews": [
+    {
+      "id": "i001",
+      "name": "山田 健太",
+      "name_en": "Kenta Yamada",
+      "year": "慶應義塾大学 法学部 2年",
+      "trips": [
+        "第1回マレーシア"
+      ],
+      "photo": "",
+      "qanda": [
+        {
+          "q": "新しいプロジェクトに参加した理由は?",
+          "a": "「最初のメンバー」として歴史をつくれることに魅力を感じました。まだ誰も行ったことのない道を切り拓く経験は、Axisでしかできないと思いました。"
+        },
+        {
+          "q": "マレーシアの印象は?",
+          "a": "多民族・多文化が共存する社会のダイナミズムに驚きました。マレー系・中国系・インド系の学生たちが一つのチームとして動く姿は、日本では見られない光景でした。"
+        },
+        {
+          "q": "次の渡航に向けて意気込みを",
+          "a": "第1回で築いた信頼関係をさらに深めたい。継続的なパートナーシップこそがAxisの強みなので、次回はより深い協働ができるよう準備を進めています。"
+        }
+      ]
+    }
+  ]
+}

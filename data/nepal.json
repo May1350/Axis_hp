@@ -1,0 +1,135 @@
+{
+    "id": "nepal",
+    "name": "Nepal",
+    "name_jp": "ネパール",
+    "tag": "Nepal",
+    "slogan": "Building Resilience Through Education.",
+    "instagram": "https://www.instagram.com/axis_nepal?igsh=MTQ0aWp6NDhweGN3dA==",
+    "since": 2004,
+    "hero_image": "../nepal_project_support_1770897680830.png",
+    "seal_image": "../input_file_2.png",
+    "color": "#C40C0C",
+    "description": "ネパールの学校・地域コミュニティと協力し、防災教育プログラムの開発と教育インフラの整備を行っています。東日本大震災後の復興支援経験を活かし、現地に根ざした防災知識の普及を続けています。",
+    "card": {
+        "tag": "Nepal",
+        "slogan_line1": "Building Resilience",
+        "slogan_line2": "Through Education.",
+        "lead": "Equipping Kathmandu's next generation with life-saving disaster preparedness skills.",
+        "body": "Active since 2004, Axis has completed 9 expeditions to Nepal, partnering with local schools and education NPOs to deliver disaster preparedness workshops. In 2023 alone, our team of 6 reached 180 children across 3 schools near Kathmandu and trained 12 local teachers — building programs that continue long after we leave.",
+        "meta": [
+            {
+                "label": "Children Reached",
+                "value": "180+ per trip"
+            },
+            {
+                "label": "Total Trips",
+                "value": "9 expeditions"
+            },
+            {
+                "label": "Since",
+                "value": "2004"
+            }
+        ],
+        "instagram_handle": "@axis_nepal",
+        "instagram_url": "https://www.instagram.com/axis_nepal?igsh=MTQ0aWp6NDhweGN3dA=="
+    },
+    "stats": {
+        "since": "2004",
+        "totalTrips": 9,
+        "treesPlanted": "20+",
+        "label_trips": "Total Trips",
+        "label_metric": "Schools Supported"
+    },
+    "diary": [
+        {
+            "id": "d001",
+            "date": "2023-03-08",
+            "location": "Kathmandu, Nepal",
+            "title": "Day 2 — 学校訪問",
+            "body": "カトマンズ郊外の小学校を訪問。校長先生の案内で施設を見学した後、防災ワークショップを実施。子どもたちの積極的な参加がとても印象的だった。地震のシミュレーション演習では、子どもたちが互いに声を掛け合う姿が見られた。",
+            "images": []
+        }
+    ],
+    "reports": [
+        {
+            "id": "r001",
+            "date": "2023-04",
+            "title": "第9回 ネパール派遣 活動報告書",
+            "period": "2023.03.07 – 03.17",
+            "members": 6,
+            "summary": "カトマンズ近郊の小学校3校にて防災教育ワークショップを実施。教材の寄贈も完了。",
+            "sections": [
+                {
+                    "heading": "活動概要",
+                    "body": "2023年3月、6名の隊員がネパール・カトマンズを訪問。現地教育NPOと連携し、小学校3校にて防災教育ワークショップを実施した。避難訓練の指導および地震・洪水に関する教材配布を行った。"
+                },
+                {
+                    "heading": "成果 / Impact",
+                    "body": "ワークショップ参加児童：約180名。教材配布：3校。現地教員向け防災指導研修：1回（参加教員12名）。"
+                },
+                {
+                    "heading": "課題と次回方針",
+                    "body": "学校によってインフラ整備状況に大きな差があることが判明。次回は特に設備が不足している農村部の学校への訪問を優先的に計画する。"
+                }
+            ],
+            "impact": {
+                "students": 180,
+                "schools": 3,
+                "members": 6
+            }
+        }
+    ],
+    "gallery": [
+        {
+            "id": "g001",
+            "date": "2023-03-08",
+            "location": "Kathmandu",
+            "caption": "学校でのワークショップの様子",
+            "image": "",
+            "trip": "第9回"
+        },
+        {
+            "id": "g002",
+            "date": "2023-03-09",
+            "location": "Kathmandu",
+            "caption": "子どもたちと避難訓練",
+            "image": "",
+            "trip": "第9回"
+        },
+        {
+            "id": "g003",
+            "date": "2023-03-11",
+            "location": "Bhaktapur",
+            "caption": "古都バクタプールの世界遺産地区",
+            "image": "",
+            "trip": "第9回"
+        }
+    ],
+    "interviews": [
+        {
+            "id": "i001",
+            "name": "鈴木 花子",
+            "name_en": "Hanako Suzuki",
+            "year": "慶應義塾大学 総合政策学部 4年",
+            "trips": [
+                "第8回ネパール",
+                "第9回ネパール"
+            ],
+            "photo": "",
+            "qanda": [
+                {
+                    "q": "ネパールプロジェクトを選んだ理由は?",
+                    "a": "防災と教育の両方に関われる点が魅力でした。東日本大震災の経験から、日本の知見を世界に伝えたいという思いを持っていたので、Axisのネパールプロジェクトはまさに自分が求めていた活動でした。"
+                },
+                {
+                    "q": "一番難しかったことは?",
+                    "a": "言語の壁です。英語が通じない地域もあり、ジェスチャーや絵を使って伝えることもありました。でも、それが逆にコミュニケーションの本質を教えてくれた気がします。"
+                },
+                {
+                    "q": "参加前後で変わったことは?",
+                    "a": "「支援する」という意識から「一緒につくる」という意識へ。現地の方々から教わることの方が多く、自分の視野が大きく広がりました。"
+                }
+            ]
+        }
+    ]
+}

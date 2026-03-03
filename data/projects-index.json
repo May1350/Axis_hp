@@ -1,0 +1,38 @@
+[
+  {
+    "id": "mongolia",
+    "name": "Mongolia",
+    "name_jp": "モンゴル",
+    "label": "MONGOLIA",
+    "countryCode": "MN",
+    "markerX": 770,
+    "markerY": 315,
+    "labelY": 345,
+    "color": "#2C6E49",
+    "since": 2001
+  },
+  {
+    "id": "nepal",
+    "name": "Nepal",
+    "name_jp": "ネパール",
+    "label": "NEPAL",
+    "countryCode": "NP",
+    "markerX": 710,
+    "markerY": 380,
+    "labelY": 405,
+    "color": "#1a3a5c",
+    "since": 2012
+  },
+  {
+    "id": "malaysia",
+    "name": "Malaysia",
+    "name_jp": "マレーシア",
+    "label": "MALAYSIA",
+    "countryCode": "MY",
+    "markerX": 760,
+    "markerY": 455,
+    "labelY": 480,
+    "color": "#11235A",
+    "since": 2024
+  }
+]

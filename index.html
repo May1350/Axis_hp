@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Axis | Connect to the World, Connect to the Future</title>
+    <meta name="description"
+        content="Axis is a student-led international cooperation organization based at Keio University. We connect young people to global communities through direct field engagement in Mongolia, Nepal, and Malaysia.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200..800&family=Inter:wght@300..700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- ═══════════════════════════════════════
+         NAVIGATION
+    ═══════════════════════════════════════ -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-inner">
+            <a href="#" class="nav-logo">
+                <img src="input_file_1.png" alt="Axis Logo">
+                <span>AXIS</span>
+            </a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#what-we-do">About</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#map">Global Map</a></li>
+                <li><a href="#history">History</a></li>
+                <li><a href="#join" class="btn btn--gold" style="padding:9px 22px;font-size:14px;">Join Us</a></li>
+            </ul>
+            <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- ═══════════════════════════════════════
+         S1 — HERO
+    ═══════════════════════════════════════ -->
+    <section class="hero" id="hero">
+        <div class="hero-bg">
+            <img src="axis_hero_background_1770897665025.png" alt="Mongolia Forest">
+        </div>
+        <div class="hero-inner">
+            <div class="hero-content">
+                <div class="hero-label">Association of Exchange and International Service</div>
+                <h1>Connect to the<br><span class="accent">World.</span><br>Connect to the<br><span
+                        class="accent">Future.</span></h1>
+                <p class="hero-sub">We don't just talk about change.<br>We go there and make it happen.</p>
+                <div class="hero-actions">
+                    <a href="#projects" class="btn btn--gold">View Projects</a>
+                    <a href="#what-we-do" class="btn btn--outline">Our Story</a>
+                </div>
+            </div>
+            <div class="hero-emblem">
+                <img src="input_file_1.png" alt="Axis Official Seal">
+            </div>
+        </div>
+        <div class="hero-scroll-hint">
+            <div class="scroll-arrow"></div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════
+         S2 — WHAT WE DO
+    ═══════════════════════════════════════ -->
+    <section class="section what-we-do" id="what-we-do">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="label">Our Approach</span>
+                <h2>Real change starts<br>with being there.</h2>
+                <p>We believe that meaningful international cooperation begins with direct, sustained engagement on the
+                    ground — not from a distance.</p>
+            </div>
+            <div class="principles-grid">
+                <div class="principle-card reveal reveal--delay-1">
+                    <span class="principle-num">01</span>
+                    <h3>Field First</h3>
+                    <p>Every project begins with going there. We prioritize direct engagement with local communities to
+                        understand their real needs.</p>
+                </div>
+                <div class="principle-card reveal reveal--delay-2">
+                    <span class="principle-num">02</span>
+                    <h3>Long-term Trust</h3>
+                    <p>We invest in relationships, not transactions. Sustainable partnerships with local organizations
+                        form the foundation of everything we do.</p>
+                </div>
+                <div class="principle-card reveal reveal--delay-3">
+                    <span class="principle-num">03</span>
+                    <h3>Mutual Benefit</h3>
+                    <p>True cooperation creates value for both sides. Our projects are designed to generate lasting,
+                        two-way impact — not one-time aid.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════
+         S3 — WORLD MAP
+    ═══════════════════════════════════════ -->
+    <section class="section map-section" id="map">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="label">Global Network</span>
+                <h2>Our world,<br>connected.</h2>
+                <p>Click on a highlighted country to explore its project.</p>
+            </div>
+        </div>
+        <div class="container" style="padding: 0 40px;">
+            <div class="interactive-map-wrapper reveal">
+                <div id="axis-world-map"></div>
+            </div>
+        </div>
+        <script src="world-map.js"></script>
+    </section>
+
+    <!-- ═══════════════════════════════════════
+         S4 — IMPACT NUMBERS
+    ═══════════════════════════════════════ -->
+    <section class="section impact-section" id="impact">
+        <div class="container">
+            <div class="section-header section-header--center reveal">
+                <span class="label">Impact</span>
+                <h2>Over two decades.<br><span id="impactCountryLine">Three countries.</span><br>One mission.</h2>
+            </div>
+            <div class="stats-grid reveal">
+                <div class="stat-item">
+                    <span class="stat-num" id="gStatYears" data-count="25">0</span>
+                    <span class="stat-label" id="gStatYearsLabel">Years of Service</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-num" id="gStatCountries" data-count="0">0</span>
+                    <span class="stat-label" id="gStatCountriesLabel">Active Countries</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-num" id="gStatTrees" data-count="1150" data-suffix="+">0</span>
+                    <span class="stat-label" id="gStatTreesLabel">Trees Planted</span>
+                </div>
+            </div>
+            <div class="impact-bullets reveal" id="impactBullets">
+                <!-- populated dynamically by app.js from /api/projects-index -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════
+         S4 — PROJECTS
+    ═══════════════════════════════════════ -->
+    <section class="section projects-section" id="projects">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="label">Projects</span>
+                <h2>Where we work,<br>what we build.</h2>
+                <p id="projectsSectionDesc">Loading projects…</p>
+            </div>
+
+            <!-- Dynamically populated by app.js loadProjectCards() -->
+            <div id="projectsContainer">
+                <!-- skeleton placeholder shown while loading -->
+                <div class="project-block reveal" style="opacity:0.3;pointer-events:none;">
+                    <div class="project-img-wrap"
+                        style="background:rgba(255,255,255,0.05);min-height:280px;border-radius:16px;"></div>
+                    <div class="project-text" style="padding:24px;"></div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════
+         S6 — ABOUT / HISTORY
+    ═══════════════════════════════════════ -->
+    <section class="section about-section" id="history">
+        <div class="container">
+            <div class="about-grid">
+                <div class="about-text reveal">
+                    <span class="label" style="display:block;margin-bottom:16px;">About Axis</span>
+                    <h2>25 years of going<br>where it matters.</h2>
+                    <p>Axis began in 2001 as the overseas dispatch team "Pax IV Hyper" within Keio University's Rover
+                        Scout chapter (慶應ローバー). For over two decades, we promoted international cooperation, social
+                        service, environmental conservation, and human development across Asia.</p>
+                    <p>In 2024, we relaunched as an independent student organization — Axis — with clearer
+                        accountability and an expanded vision. The same commitment to direct field engagement. A new
+                        chapter.</p>
+                    <div class="about-vision">
+                        <p>世界とつながる、<br>未来へつなげる。</p>
+                        <p class="vision-jp">Connect to the World, Connect to the Future.</p>
+                    </div>
+                </div>
+                <div class="reveal reveal--delay-2">
+                    <span class="timeline-label label">Our History</span>
+                    <div class="timeline" id="historyTimeline">
+                        <!-- populated dynamically by app.js from /api/history -->
+                        <div class="timeline-item" style="opacity:0.3;pointer-events:none;">
+                            <span class="timeline-year">—</span>
+                            <h4>Loading history…</h4>
+                            <p></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════
+         S7 — JOIN US / CTA
+    ═══════════════════════════════════════ -->
+    <section class="cta-section" id="join">
+        <div class="reveal">
+            <span class="label">Get Involved</span>
+            <h2>Be part of something<br>that actually matters.</h2>
+            <p>We're students who believe showing up is the most powerful thing we can do. If you agree, we want you on
+                the team.</p>
+            <div class="cta-actions">
+                <a href="mailto:axis@example.com" class="btn btn--gold">Apply Now</a>
+                <a href="mailto:axis@example.com" class="btn btn--outline">Send a Message</a>
+            </div>
+            <div class="cta-social">
+                <a href="https://www.instagram.com/axis_official.jp?igsh=MTN1YmhsNjdiY3hhdQ==" target="_blank"
+                    rel="noopener">@axis_official.jp</a>
+                <span>·</span>
+                <a href="mailto:axis@example.com">axis@example.com</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════
+         S8 — FOOTER
+    ═══════════════════════════════════════ -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-top">
+                <div class="footer-logo">
+                    <img src="input_file_1.png" alt="Axis Logo">
+                    AXIS
+                </div>
+                <nav class="footer-nav">
+                    <a href="#what-we-do">About</a>
+                    <a href="#projects">Projects</a>
+                    <a href="#map">Map</a>
+                    <a href="#history">History</a>
+                    <a href="#join">Join Us</a>
+                </nav>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2024 Axis — Association of Exchange and International Service</p>
+                <div style="display:flex;gap:12px;align-items:center;">
+                    <a href="admin.html"
+                        style="font-size:12px;color:rgba(255,255,255,0.2);text-decoration:none;">Admin</a>
+                    <span style="color:rgba(255,255,255,0.1)">·</span>
+                    <a href="mailto:axis@example.com">Contact</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

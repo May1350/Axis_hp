@@ -1,0 +1,1248 @@
+[
+  {
+    "iso": "AF",
+    "name": "Afghanistan",
+    "markerX": 665,
+    "markerY": 362,
+    "labelY": 387
+  },
+  {
+    "iso": "AL",
+    "name": "Albania",
+    "markerX": 532,
+    "markerY": 337,
+    "labelY": 362
+  },
+  {
+    "iso": "DZ",
+    "name": "Algeria",
+    "markerX": 480,
+    "markerY": 381,
+    "labelY": 406
+  },
+  {
+    "iso": "AO",
+    "name": "Angola",
+    "markerX": 255,
+    "markerY": 254,
+    "labelY": 279
+  },
+  {
+    "iso": "AR",
+    "name": "Argentina",
+    "markerX": 143,
+    "markerY": 319,
+    "labelY": 344
+  },
+  {
+    "iso": "AM",
+    "name": "Armenia",
+    "markerX": 602,
+    "markerY": 341,
+    "labelY": 366
+  },
+  {
+    "iso": "AU",
+    "name": "Australia",
+    "markerX": 439,
+    "markerY": 292,
+    "labelY": 317
+  },
+  {
+    "iso": "AT",
+    "name": "Austria",
+    "markerX": 512,
+    "markerY": 311,
+    "labelY": 336
+  },
+  {
+    "iso": "AZ",
+    "name": "Azerbaijan",
+    "markerX": 302,
+    "markerY": 170,
+    "labelY": 195
+  },
+  {
+    "iso": "BS",
+    "name": "Bahamas",
+    "markerX": 128,
+    "markerY": 197,
+    "labelY": 222
+  },
+  {
+    "iso": "BD",
+    "name": "Bangladesh",
+    "markerX": 729,
+    "markerY": 396,
+    "labelY": 421
+  },
+  {
+    "iso": "BY",
+    "name": "Belarus",
+    "markerX": 554,
+    "markerY": 285,
+    "labelY": 310
+  },
+  {
+    "iso": "BE",
+    "name": "Belgium",
+    "markerX": 487,
+    "markerY": 300,
+    "labelY": 325
+  },
+  {
+    "iso": "BZ",
+    "name": "Belize",
+    "markerX": 227,
+    "markerY": 415,
+    "labelY": 440
+  },
+  {
+    "iso": "BJ",
+    "name": "Benin",
+    "markerX": 482,
+    "markerY": 438,
+    "labelY": 463
+  },
+  {
+    "iso": "BM",
+    "name": "Bermuda",
+    "markerX": 326,
+    "markerY": 239,
+    "labelY": 264
+  },
+  {
+    "iso": "BT",
+    "name": "Bhutan",
+    "markerX": 729,
+    "markerY": 384,
+    "labelY": 409
+  },
+  {
+    "iso": "BO",
+    "name": "Bolivia",
+    "markerX": 297,
+    "markerY": 510,
+    "labelY": 535
+  },
+  {
+    "iso": "BA",
+    "name": "Bosnia and Herzegovina",
+    "markerX": 525,
+    "markerY": 327,
+    "labelY": 352
+  },
+  {
+    "iso": "BW",
+    "name": "Botswana",
+    "markerX": 544,
+    "markerY": 527,
+    "labelY": 552
+  },
+  {
+    "iso": "BR",
+    "name": "Brazil",
+    "markerX": 323,
+    "markerY": 506,
+    "labelY": 531
+  },
+  {
+    "iso": "BN",
+    "name": "Brunei Darussalam",
+    "markerX": 797,
+    "markerY": 450,
+    "labelY": 475
+  },
+  {
+    "iso": "BG",
+    "name": "Bulgaria",
+    "markerX": 547,
+    "markerY": 331,
+    "labelY": 356
+  },
+  {
+    "iso": "BF",
+    "name": "Burkina Faso",
+    "markerX": 471,
+    "markerY": 429,
+    "labelY": 454
+  },
+  {
+    "iso": "BI",
+    "name": "Burundi",
+    "markerX": 559,
+    "markerY": 473,
+    "labelY": 498
+  },
+  {
+    "iso": "KH",
+    "name": "Cambodia",
+    "markerX": 770,
+    "markerY": 428,
+    "labelY": 453
+  },
+  {
+    "iso": "CM",
+    "name": "Cameroon",
+    "markerX": 510,
+    "markerY": 443,
+    "labelY": 468
+  },
+  {
+    "iso": "CA",
+    "name": "Canada",
+    "markerX": 151,
+    "markerY": 158,
+    "labelY": 183
+  },
+  {
+    "iso": "CF",
+    "name": "Central African Republic",
+    "markerX": 534,
+    "markerY": 445,
+    "labelY": 470
+  },
+  {
+    "iso": "TD",
+    "name": "Chad",
+    "markerX": 528,
+    "markerY": 419,
+    "labelY": 444
+  },
+  {
+    "iso": "CL",
+    "name": "Chile",
+    "markerX": 140,
+    "markerY": 314,
+    "labelY": 339
+  },
+  {
+    "iso": "CN",
+    "name": "China",
+    "markerX": 414,
+    "markerY": 202,
+    "labelY": 227
+  },
+  {
+    "iso": "CO",
+    "name": "Colombia",
+    "markerX": 271,
+    "markerY": 452,
+    "labelY": 477
+  },
+  {
+    "iso": "CR",
+    "name": "Costa Rica",
+    "markerX": 239,
+    "markerY": 436,
+    "labelY": 461
+  },
+  {
+    "iso": "CI",
+    "name": "Côte d'Ivoire",
+    "markerX": 460,
+    "markerY": 443,
+    "labelY": 468
+  },
+  {
+    "iso": "HR",
+    "name": "Croatia",
+    "markerX": 522,
+    "markerY": 324,
+    "labelY": 349
+  },
+  {
+    "iso": "CU",
+    "name": "Cuba",
+    "markerX": 252,
+    "markerY": 402,
+    "labelY": 427
+  },
+  {
+    "iso": "CY",
+    "name": "Cyprus",
+    "markerX": 569,
+    "markerY": 359,
+    "labelY": 384
+  },
+  {
+    "iso": "CZ",
+    "name": "Czechia",
+    "markerX": 519,
+    "markerY": 302,
+    "labelY": 327
+  },
+  {
+    "iso": "CD",
+    "name": "Democratic Republic of Congo",
+    "markerX": 536,
+    "markerY": 475,
+    "labelY": 500
+  },
+  {
+    "iso": "DK",
+    "name": "Denmark",
+    "markerX": 254,
+    "markerY": 135,
+    "labelY": 160
+  },
+  {
+    "iso": "DJ",
+    "name": "Djibouti",
+    "markerX": 594,
+    "markerY": 430,
+    "labelY": 455
+  },
+  {
+    "iso": "DO",
+    "name": "Dominican Republic",
+    "markerX": 279,
+    "markerY": 410,
+    "labelY": 435
+  },
+  {
+    "iso": "EC",
+    "name": "Ecuador",
+    "markerX": 256,
+    "markerY": 468,
+    "labelY": 493
+  },
+  {
+    "iso": "EG",
+    "name": "Egypt",
+    "markerX": 562,
+    "markerY": 386,
+    "labelY": 411
+  },
+  {
+    "iso": "SV",
+    "name": "El Salvador",
+    "markerX": 226,
+    "markerY": 425,
+    "labelY": 450
+  },
+  {
+    "iso": "GQ",
+    "name": "Equatorial Guinea",
+    "markerX": 504,
+    "markerY": 459,
+    "labelY": 484
+  },
+  {
+    "iso": "ER",
+    "name": "Eritrea",
+    "markerX": 587,
+    "markerY": 420,
+    "labelY": 445
+  },
+  {
+    "iso": "EE",
+    "name": "Estonia",
+    "markerX": 547,
+    "markerY": 261,
+    "labelY": 286
+  },
+  {
+    "iso": "ET",
+    "name": "Ethiopia",
+    "markerX": 588,
+    "markerY": 438,
+    "labelY": 463
+  },
+  {
+    "iso": "FK",
+    "name": "Falkland Islands",
+    "markerX": 308,
+    "markerY": 632,
+    "labelY": 657
+  },
+  {
+    "iso": "FJ",
+    "name": "Fiji",
+    "markerX": 489,
+    "markerY": 256,
+    "labelY": 281
+  },
+  {
+    "iso": "FI",
+    "name": "Finland",
+    "markerX": 548,
+    "markerY": 219,
+    "labelY": 244
+  },
+  {
+    "iso": "FR",
+    "name": "France",
+    "markerX": 248,
+    "markerY": 163,
+    "labelY": 188
+  },
+  {
+    "iso": "GF",
+    "name": "French Guiana",
+    "markerX": 163,
+    "markerY": 227,
+    "labelY": 252
+  },
+  {
+    "iso": "TF",
+    "name": "French Southern and Antarctic Lands",
+    "markerX": 671,
+    "markerY": 621,
+    "labelY": 646
+  },
+  {
+    "iso": "GA",
+    "name": "Gabon",
+    "markerX": 508,
+    "markerY": 466,
+    "labelY": 491
+  },
+  {
+    "iso": "GM",
+    "name": "Gambia",
+    "markerX": 432,
+    "markerY": 425,
+    "labelY": 450
+  },
+  {
+    "iso": "GE",
+    "name": "Georgia",
+    "markerX": 597,
+    "markerY": 333,
+    "labelY": 358
+  },
+  {
+    "iso": "DE",
+    "name": "Germany",
+    "markerX": 505,
+    "markerY": 296,
+    "labelY": 321
+  },
+  {
+    "iso": "GH",
+    "name": "Ghana",
+    "markerX": 472,
+    "markerY": 441,
+    "labelY": 466
+  },
+  {
+    "iso": "GR",
+    "name": "Greece",
+    "markerX": 273,
+    "markerY": 274,
+    "labelY": 299
+  },
+  {
+    "iso": "GL",
+    "name": "Greenland",
+    "markerX": 355,
+    "markerY": 126,
+    "labelY": 151
+  },
+  {
+    "iso": "GT",
+    "name": "Guatemala",
+    "markerX": 222,
+    "markerY": 419,
+    "labelY": 444
+  },
+  {
+    "iso": "GN",
+    "name": "Guinea",
+    "markerX": 443,
+    "markerY": 436,
+    "labelY": 461
+  },
+  {
+    "iso": "GW",
+    "name": "Guinea-Bissau",
+    "markerX": 433,
+    "markerY": 430,
+    "labelY": 455
+  },
+  {
+    "iso": "GY",
+    "name": "Guyana",
+    "markerX": 310,
+    "markerY": 450,
+    "labelY": 475
+  },
+  {
+    "iso": "HT",
+    "name": "Haiti",
+    "markerX": 270,
+    "markerY": 410,
+    "labelY": 435
+  },
+  {
+    "iso": "HN",
+    "name": "Honduras",
+    "markerX": 233,
+    "markerY": 423,
+    "labelY": 448
+  },
+  {
+    "iso": "HU",
+    "name": "Hungary",
+    "markerX": 530,
+    "markerY": 314,
+    "labelY": 339
+  },
+  {
+    "iso": "IS",
+    "name": "Iceland",
+    "markerX": 422,
+    "markerY": 222,
+    "labelY": 247
+  },
+  {
+    "iso": "IN",
+    "name": "India",
+    "markerX": 707,
+    "markerY": 399,
+    "labelY": 424
+  },
+  {
+    "iso": "ID",
+    "name": "Indonesia",
+    "markerX": 424,
+    "markerY": 244,
+    "labelY": 269
+  },
+  {
+    "iso": "IR",
+    "name": "Iran",
+    "markerX": 626,
+    "markerY": 367,
+    "labelY": 392
+  },
+  {
+    "iso": "IQ",
+    "name": "Iraq",
+    "markerX": 598,
+    "markerY": 365,
+    "labelY": 390
+  },
+  {
+    "iso": "IE",
+    "name": "Ireland",
+    "markerX": 453,
+    "markerY": 286,
+    "labelY": 311
+  },
+  {
+    "iso": "IL",
+    "name": "Israel",
+    "markerX": 574,
+    "markerY": 371,
+    "labelY": 396
+  },
+  {
+    "iso": "IT",
+    "name": "Italy",
+    "markerX": 257,
+    "markerY": 172,
+    "labelY": 197
+  },
+  {
+    "iso": "JM",
+    "name": "Jamaica",
+    "markerX": 259,
+    "markerY": 412,
+    "labelY": 437
+  },
+  {
+    "iso": "JP",
+    "name": "Japan",
+    "markerX": 437,
+    "markerY": 178,
+    "labelY": 203
+  },
+  {
+    "iso": "JO",
+    "name": "Jordan",
+    "markerX": 579,
+    "markerY": 371,
+    "labelY": 396
+  },
+  {
+    "iso": "KZ",
+    "name": "Kazakhstan",
+    "markerX": 663,
+    "markerY": 308,
+    "labelY": 333
+  },
+  {
+    "iso": "KE",
+    "name": "Kenya",
+    "markerX": 581,
+    "markerY": 462,
+    "labelY": 487
+  },
+  {
+    "iso": "XK",
+    "name": "Kosovo",
+    "markerX": 534,
+    "markerY": 332,
+    "labelY": 357
+  },
+  {
+    "iso": "KW",
+    "name": "Kuwait",
+    "markerX": 608,
+    "markerY": 378,
+    "labelY": 403
+  },
+  {
+    "iso": "KG",
+    "name": "Kyrgyzstan",
+    "markerX": 685,
+    "markerY": 337,
+    "labelY": 362
+  },
+  {
+    "iso": "LA",
+    "name": "Lao People's Democratic Republic",
+    "markerX": 766,
+    "markerY": 412,
+    "labelY": 437
+  },
+  {
+    "iso": "LV",
+    "name": "Latvia",
+    "markerX": 544,
+    "markerY": 270,
+    "labelY": 295
+  },
+  {
+    "iso": "LB",
+    "name": "Lebanon",
+    "markerX": 576,
+    "markerY": 363,
+    "labelY": 388
+  },
+  {
+    "iso": "LS",
+    "name": "Lesotho",
+    "markerX": 554,
+    "markerY": 550,
+    "labelY": 575
+  },
+  {
+    "iso": "LR",
+    "name": "Liberia",
+    "markerX": 449,
+    "markerY": 445,
+    "labelY": 470
+  },
+  {
+    "iso": "LY",
+    "name": "Libya",
+    "markerX": 524,
+    "markerY": 387,
+    "labelY": 412
+  },
+  {
+    "iso": "LT",
+    "name": "Lithuania",
+    "markerX": 542,
+    "markerY": 278,
+    "labelY": 303
+  },
+  {
+    "iso": "LU",
+    "name": "Luxembourg",
+    "markerX": 492,
+    "markerY": 303,
+    "labelY": 328
+  },
+  {
+    "iso": "MG",
+    "name": "Madagascar",
+    "markerX": 607,
+    "markerY": 517,
+    "labelY": 542
+  },
+  {
+    "iso": "MW",
+    "name": "Malawi",
+    "markerX": 571,
+    "markerY": 500,
+    "labelY": 525
+  },
+  {
+    "iso": "MY",
+    "name": "Malaysia",
+    "markerX": 402,
+    "markerY": 224,
+    "labelY": 249
+  },
+  {
+    "iso": "ML",
+    "name": "Mali",
+    "markerX": 464,
+    "markerY": 413,
+    "labelY": 438
+  },
+  {
+    "iso": "MT",
+    "name": "Malta",
+    "markerX": 543,
+    "markerY": 224,
+    "labelY": 249
+  },
+  {
+    "iso": "MR",
+    "name": "Mauritania",
+    "markerX": 444,
+    "markerY": 403,
+    "labelY": 428
+  },
+  {
+    "iso": "MX",
+    "name": "Mexico",
+    "markerX": 189,
+    "markerY": 395,
+    "labelY": 420
+  },
+  {
+    "iso": "MD",
+    "name": "Moldova",
+    "markerX": 555,
+    "markerY": 315,
+    "labelY": 340
+  },
+  {
+    "iso": "MN",
+    "name": "Mongolia",
+    "markerX": 766,
+    "markerY": 314,
+    "labelY": 339
+  },
+  {
+    "iso": "ME",
+    "name": "Montenegro",
+    "markerX": 530,
+    "markerY": 331,
+    "labelY": 356
+  },
+  {
+    "iso": "MA",
+    "name": "Morocco",
+    "markerX": 455,
+    "markerY": 370,
+    "labelY": 395
+  },
+  {
+    "iso": "MZ",
+    "name": "Mozambique",
+    "markerX": 575,
+    "markerY": 517,
+    "labelY": 542
+  },
+  {
+    "iso": "MM",
+    "name": "Myanmar",
+    "markerX": 747,
+    "markerY": 408,
+    "labelY": 433
+  },
+  {
+    "iso": "NA",
+    "name": "Namibia",
+    "markerX": 527,
+    "markerY": 530,
+    "labelY": 555
+  },
+  {
+    "iso": "NP",
+    "name": "Nepal",
+    "markerX": 711,
+    "markerY": 381,
+    "labelY": 406
+  },
+  {
+    "iso": "NL",
+    "name": "Netherlands",
+    "markerX": 490,
+    "markerY": 292,
+    "labelY": 317
+  },
+  {
+    "iso": "NC",
+    "name": "New Caledonia",
+    "markerX": 940,
+    "markerY": 524,
+    "labelY": 549
+  },
+  {
+    "iso": "NZ",
+    "name": "New Zealand",
+    "markerX": 481,
+    "markerY": 292,
+    "labelY": 317
+  },
+  {
+    "iso": "NI",
+    "name": "Nicaragua",
+    "markerX": 236,
+    "markerY": 427,
+    "labelY": 452
+  },
+  {
+    "iso": "NE",
+    "name": "Niger",
+    "markerX": 498,
+    "markerY": 413,
+    "labelY": 438
+  },
+  {
+    "iso": "NG",
+    "name": "Nigeria",
+    "markerX": 499,
+    "markerY": 438,
+    "labelY": 463
+  },
+  {
+    "iso": "KP",
+    "name": "North Korea",
+    "markerX": 833,
+    "markerY": 340,
+    "labelY": 365
+  },
+  {
+    "iso": "MK",
+    "name": "North Macedonia",
+    "markerX": 536,
+    "markerY": 336,
+    "labelY": 361
+  },
+  {
+    "iso": "NO",
+    "name": "Norway",
+    "markerX": 274,
+    "markerY": 81,
+    "labelY": 106
+  },
+  {
+    "iso": "OM",
+    "name": "Oman",
+    "markerX": 319,
+    "markerY": 199,
+    "labelY": 224
+  },
+  {
+    "iso": "PK",
+    "name": "Pakistan",
+    "markerX": 670,
+    "markerY": 374,
+    "labelY": 399
+  },
+  {
+    "iso": "PS",
+    "name": "Palestinian Territories",
+    "markerX": 574,
+    "markerY": 369,
+    "labelY": 394
+  },
+  {
+    "iso": "PA",
+    "name": "Panama",
+    "markerX": 251,
+    "markerY": 440,
+    "labelY": 465
+  },
+  {
+    "iso": "PG",
+    "name": "Papua New Guinea",
+    "markerX": 454,
+    "markerY": 237,
+    "labelY": 262
+  },
+  {
+    "iso": "PY",
+    "name": "Paraguay",
+    "markerX": 311,
+    "markerY": 531,
+    "labelY": 556
+  },
+  {
+    "iso": "PE",
+    "name": "Peru",
+    "markerX": 265,
+    "markerY": 489,
+    "labelY": 514
+  },
+  {
+    "iso": "PH",
+    "name": "Philippines",
+    "markerX": 413,
+    "markerY": 218,
+    "labelY": 243
+  },
+  {
+    "iso": "PL",
+    "name": "Poland",
+    "markerX": 529,
+    "markerY": 293,
+    "labelY": 318
+  },
+  {
+    "iso": "PT",
+    "name": "Portugal",
+    "markerX": 453,
+    "markerY": 343,
+    "labelY": 368
+  },
+  {
+    "iso": "PR",
+    "name": "Puerto Rico",
+    "markerX": 289,
+    "markerY": 412,
+    "labelY": 437
+  },
+  {
+    "iso": "QA",
+    "name": "Qatar",
+    "markerX": 619,
+    "markerY": 390,
+    "labelY": 415
+  },
+  {
+    "iso": "CG",
+    "name": "Republic of Congo",
+    "markerX": 517,
+    "markerY": 465,
+    "labelY": 490
+  },
+  {
+    "iso": "RO",
+    "name": "Romania",
+    "markerX": 545,
+    "markerY": 319,
+    "labelY": 344
+  },
+  {
+    "iso": "RU",
+    "name": "Russia",
+    "markerX": 498,
+    "markerY": 145,
+    "labelY": 170
+  },
+  {
+    "iso": "RW",
+    "name": "Rwanda",
+    "markerX": 559,
+    "markerY": 469,
+    "labelY": 494
+  },
+  {
+    "iso": "SA",
+    "name": "Saudi Arabia",
+    "markerX": 602,
+    "markerY": 393,
+    "labelY": 418
+  },
+  {
+    "iso": "SN",
+    "name": "Senegal",
+    "markerX": 434,
+    "markerY": 423,
+    "labelY": 448
+  },
+  {
+    "iso": "RS",
+    "name": "Serbia",
+    "markerX": 534,
+    "markerY": 326,
+    "labelY": 351
+  },
+  {
+    "iso": "SL",
+    "name": "Sierra Leone",
+    "markerX": 442,
+    "markerY": 440,
+    "labelY": 465
+  },
+  {
+    "iso": "SK",
+    "name": "Slovakia",
+    "markerX": 531,
+    "markerY": 308,
+    "labelY": 333
+  },
+  {
+    "iso": "SI",
+    "name": "Slovenia",
+    "markerX": 518,
+    "markerY": 318,
+    "labelY": 343
+  },
+  {
+    "iso": "SB",
+    "name": "Solomon Islands",
+    "markerX": 464,
+    "markerY": 463,
+    "labelY": 488
+  },
+  {
+    "iso": "SO",
+    "name": "Somalia",
+    "markerX": 604,
+    "markerY": 449,
+    "labelY": 474
+  },
+  {
+    "iso": "ZA",
+    "name": "South Africa",
+    "markerX": 280,
+    "markerY": 269,
+    "labelY": 294
+  },
+  {
+    "iso": "KR",
+    "name": "South Korea",
+    "markerX": 834,
+    "markerY": 354,
+    "labelY": 379
+  },
+  {
+    "iso": "SS",
+    "name": "South Sudan",
+    "markerX": 558,
+    "markerY": 441,
+    "labelY": 466
+  },
+  {
+    "iso": "ES",
+    "name": "Spain",
+    "markerX": 466,
+    "markerY": 342,
+    "labelY": 367
+  },
+  {
+    "iso": "LK",
+    "name": "Sri Lanka",
+    "markerX": 702,
+    "markerY": 441,
+    "labelY": 466
+  },
+  {
+    "iso": "SD",
+    "name": "Sudan",
+    "markerX": 560,
+    "markerY": 420,
+    "labelY": 445
+  },
+  {
+    "iso": "SR",
+    "name": "Suriname",
+    "markerX": 318,
+    "markerY": 452,
+    "labelY": 477
+  },
+  {
+    "iso": "SJ",
+    "name": "Svalbard and Jan Mayen",
+    "markerX": 269,
+    "markerY": 46,
+    "labelY": 71
+  },
+  {
+    "iso": "SZ",
+    "name": "Swaziland",
+    "markerX": 563,
+    "markerY": 540,
+    "labelY": 565
+  },
+  {
+    "iso": "SE",
+    "name": "Sweden",
+    "markerX": 524,
+    "markerY": 235,
+    "labelY": 260
+  },
+  {
+    "iso": "CH",
+    "name": "Switzerland",
+    "markerX": 498,
+    "markerY": 315,
+    "labelY": 340
+  },
+  {
+    "iso": "SY",
+    "name": "Syria",
+    "markerX": 585,
+    "markerY": 360,
+    "labelY": 385
+  },
+  {
+    "iso": "TW",
+    "name": "Taiwan",
+    "markerX": 815,
+    "markerY": 396,
+    "labelY": 421
+  },
+  {
+    "iso": "TJ",
+    "name": "Tajikistan",
+    "markerX": 675,
+    "markerY": 346,
+    "labelY": 371
+  },
+  {
+    "iso": "TZ",
+    "name": "Tanzania",
+    "markerX": 573,
+    "markerY": 481,
+    "labelY": 506
+  },
+  {
+    "iso": "TH",
+    "name": "Thailand",
+    "markerX": 760,
+    "markerY": 426,
+    "labelY": 451
+  },
+  {
+    "iso": "TL",
+    "name": "Timor-Leste",
+    "markerX": 829,
+    "markerY": 488,
+    "labelY": 513
+  },
+  {
+    "iso": "TG",
+    "name": "Togo",
+    "markerX": 478,
+    "markerY": 440,
+    "labelY": 465
+  },
+  {
+    "iso": "TT",
+    "name": "Trinidad and Tobago",
+    "markerX": 303,
+    "markerY": 434,
+    "labelY": 459
+  },
+  {
+    "iso": "TN",
+    "name": "Tunisia",
+    "markerX": 502,
+    "markerY": 363,
+    "labelY": 388
+  },
+  {
+    "iso": "TR",
+    "name": "Turkey",
+    "markerX": 287,
+    "markerY": 168,
+    "labelY": 193
+  },
+  {
+    "iso": "TM",
+    "name": "Turkmenistan",
+    "markerX": 642,
+    "markerY": 345,
+    "labelY": 370
+  },
+  {
+    "iso": "UG",
+    "name": "Uganda",
+    "markerX": 566,
+    "markerY": 459,
+    "labelY": 484
+  },
+  {
+    "iso": "UA",
+    "name": "Ukraine",
+    "markerX": 562,
+    "markerY": 308,
+    "labelY": 333
+  },
+  {
+    "iso": "AE",
+    "name": "United Arab Emirates",
+    "markerX": 627,
+    "markerY": 394,
+    "labelY": 419
+  },
+  {
+    "iso": "GB",
+    "name": "United Kingdom",
+    "markerX": 231,
+    "markerY": 138,
+    "labelY": 163
+  },
+  {
+    "iso": "US",
+    "name": "United States",
+    "markerX": 153,
+    "markerY": 198,
+    "labelY": 223
+  },
+  {
+    "iso": "UY",
+    "name": "Uruguay",
+    "markerX": 319,
+    "markerY": 559,
+    "labelY": 584
+  },
+  {
+    "iso": "UZ",
+    "name": "Uzbekistan",
+    "markerX": 656,
+    "markerY": 336,
+    "labelY": 361
+  },
+  {
+    "iso": "VU",
+    "name": "Vanuatu",
+    "markerX": 472,
+    "markerY": 254,
+    "labelY": 279
+  },
+  {
+    "iso": "VE",
+    "name": "Venezuela",
+    "markerX": 289,
+    "markerY": 445,
+    "labelY": 470
+  },
+  {
+    "iso": "VN",
+    "name": "Vietnam",
+    "markerX": 772,
+    "markerY": 418,
+    "labelY": 443
+  },
+  {
+    "iso": "EH",
+    "name": "Western Sahara",
+    "markerX": 439,
+    "markerY": 393,
+    "labelY": 418
+  },
+  {
+    "iso": "YE",
+    "name": "Yemen",
+    "markerX": 609,
+    "markerY": 419,
+    "labelY": 444
+  },
+  {
+    "iso": "ZM",
+    "name": "Zambia",
+    "markerX": 553,
+    "markerY": 500,
+    "labelY": 525
+  },
+  {
+    "iso": "ZW",
+    "name": "Zimbabwe",
+    "markerX": 557,
+    "markerY": 517,
+    "labelY": 542
+  }
+]

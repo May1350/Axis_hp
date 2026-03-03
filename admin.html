@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Axis — Admin Panel</title>
+    <link rel="stylesheet" href="admin.css">
+</head>
+
+<body>
+
+    <!-- ─── LOGIN ─────────────────────────────────────────────── -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-card">
+            <img src="input_file_1.png" alt="Axis Logo" class="login-logo">
+            <h1>Admin Panel</h1>
+            <p class="login-sub">Axis Content Management System</p>
+            <form id="loginForm">
+                <div class="login-field">
+                    <input type="password" id="passwordInput" placeholder="Password" autocomplete="current-password"
+                        required>
+                </div>
+                <button type="submit" class="btn-login" id="loginBtn">Sign In</button>
+            </form>
+            <p class="login-error" id="loginError"></p>
+        </div>
+    </div>
+
+    <!-- ─── DASHBOARD ─────────────────────────────────────────── -->
+    <div id="dashboard" class="dashboard hidden">
+
+        <!-- Header -->
+        <header class="admin-header">
+            <div class="admin-logo">
+                <img src="input_file_1.png" alt="Axis">
+                AXIS
+                <span>Admin</span>
+            </div>
+            <div class="admin-header-right">
+                <div class="current-project-badge" id="currentProjectBadge">
+                    <span class="badge-dot"></span>
+                    <span id="currentProjectLabel">Mongolia</span>
+                </div>
+                <a href="index.html" target="_blank" class="view-site-btn">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" />
+                        <polyline points="15 3 21 3 21 9" />
+                        <line x1="10" y1="14" x2="21" y2="3" />
+                    </svg>
+                    View Site
+                </a>
+                <button class="btn-logout" id="logoutBtn">Logout</button>
+            </div>
+        </header>
+
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="sidebar-label">Projects</div>
+            <div id="sidebarProjectList">
+                <!-- dynamically populated by admin.js -->
+                <button class="project-btn active" data-project="mongolia">
+                    <span class="project-name">Mongolia</span>
+                </button>
+                <button class="project-btn" data-project="nepal">
+                    <span class="project-name">Nepal</span>
+                </button>
+                <button class="project-btn" data-project="malaysia">
+                    <span class="project-name">Malaysia</span>
+                </button>
+            </div>
+            <button class="project-btn add-project-shortcut" id="addProjectShortcut"
+                style="margin-top:12px;border:1px dashed rgba(255,255,255,0.2);color:rgba(255,255,255,0.5);font-size:12px;">
+                <span class="project-name">+ New Project</span>
+            </button>
+        </aside>
+
+        <!-- Main Area -->
+        <main class="admin-main">
+
+            <!-- Tab navigation -->
+            <div class="admin-tabs">
+                <button class="admin-tab-btn active" data-tab="diary">Field Diary</button>
+                <button class="admin-tab-btn" data-tab="reports">Activity Reports</button>
+                <button class="admin-tab-btn" data-tab="gallery">Photo Gallery</button>
+                <button class="admin-tab-btn" data-tab="interviews">Member Voices</button>
+                <button class="admin-tab-btn" data-tab="stats">Stats</button>
+                <button class="admin-tab-btn" data-tab="cards">Cards</button>
+                <button class="admin-tab-btn" data-tab="history">History</button>
+                <button class="admin-tab-btn admin-tab-btn--global" data-tab="projects"
+                    style="margin-left:auto;border-left:1px solid rgba(255,255,255,0.1);padding-left:16px;color:var(--gold,#C5A028);">
+                    ⊕ Projects
+                </button>
+            </div>
+
+            <!-- ── TAB: PROJECTS (Global) ── -->
+            <div id="tab-projects" class="admin-tab-content">
+                <div class="section-top">
+                    <div>
+                        <h2>Project Management</h2>
+                        <p>Add or remove countries from the active project list. Changes immediately reflect on the map
+                            &amp; main page.</p>
+                    </div>
+                </div>
+
+                <!-- New Project Form -->
+                <div class="add-form-panel" id="newProjectFormPanel">
+                    <div class="form-title">New Project</div>
+                    <form id="newProjectForm" enctype="multipart/form-data">
+                        <div class="form-grid">
+                            <!-- Country dropdown (populated by admin.js from /api/countries-catalog) -->
+                            <div class="field form-col-full">
+                                <label>Country * <small style="color:rgba(255,255,255,0.4)">Select from 178 countries on
+                                        the map</small></label>
+                                <select id="np_country_select" required
+                                    style="background:#1a2535;color:#fff;border:1px solid rgba(255,255,255,0.15);border-radius:6px;padding:10px 14px;font-size:14px;width:100%;cursor:pointer;">
+                                    <option value="">— Choose a country —</option>
+                                </select>
+                            </div>
+
+                            <!-- Auto-filled preview row (read-only) -->
+                            <div class="field" id="np_preview_row" style="display:none;grid-column:1/-1;">
+                                <div id="np_preview_badge"
+                                    style="display:flex;gap:12px;align-items:center;padding:10px 14px;background:rgba(255,255,255,0.06);border-radius:6px;font-size:13px;color:rgba(255,255,255,0.7);">
+                                </div>
+                            </div>
+
+                            <!-- Hidden fields auto-filled by dropdown -->
+                            <input type="hidden" id="np_code" name="countryCode">
+                            <input type="hidden" id="np_name" name="name">
+                            <input type="hidden" id="np_markerX" name="markerX">
+                            <input type="hidden" id="np_markerY" name="markerY">
+                            <input type="hidden" id="np_labelY" name="labelY">
+
+                            <!-- Editable project ID (auto-generated from ISO, overridable) -->
+                            <div class="field">
+                                <label>Project ID * <small style="color:rgba(255,255,255,0.4)">(auto-generated,
+                                        editable)</small></label>
+                                <input type="text" id="np_id" name="id" placeholder="e.g. india" pattern="[a-z0-9_]+"
+                                    required>
+                            </div>
+
+                            <!-- Country Name (JP) - manual since catalog is EN only -->
+                            <div class="field">
+                                <label>Country Name (JP)</label>
+                                <input type="text" id="np_name_jp" name="name_jp" placeholder="インド">
+                            </div>
+
+                            <div class="field">
+                                <label>Map Label <small style="color:rgba(255,255,255,0.4)">(auto from name,
+                                        editable)</small></label>
+                                <input type="text" id="np_label" name="label" placeholder="INDIA">
+                            </div>
+
+                            <div class="field">
+                                <label>Theme Color</label>
+                                <input type="color" id="np_color" name="color" value="#2C6E49"
+                                    style="height:40px;padding:4px;">
+                            </div>
+
+                            <div class="field">
+                                <label>Since (Year)</label>
+                                <input type="number" id="np_since" name="since" placeholder="2025" min="2000"
+                                    max="2099">
+                            </div>
+
+                            <div class="field">
+                                <label>Slogan</label>
+                                <input type="text" id="np_slogan" name="slogan" placeholder="短いスローガン">
+                            </div>
+                        </div>
+
+                        <!-- Hero Image -->
+                        <div class="form-grid" style="margin-top:12px;">
+                            <div class="field">
+                                <label>Hero Image (optional)</label>
+                                <label class="file-input-wrap" style="cursor:pointer;">
+                                    <input type="file" id="np_hero" name="hero_image" accept="image/*"
+                                        onchange="document.getElementById('np_hero_name').textContent = this.files[0]?.name || 'No file chosen'">
+                                    <span class="file-input-btn">Choose File</span>
+                                    <span class="file-input-name" id="np_hero_name">No file chosen</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn-submit" id="newProjectSubmitBtn">Add Project</button>
+                        </div>
+                    </form>
+                    <p id="newProjectMsg" class="form-msg" style="display:none;"></p>
+                </div>
+
+                <!-- Existing Projects List -->
+                <div class="content-list" id="projectIndexList" style="margin-top:32px;">
+                    <div class="list-header">Active Projects</div>
+                    <div id="projectIndexItems">
+                        <!-- populated by admin.js -->
+                        <p style="color:rgba(255,255,255,0.4);padding:16px;">Loading…</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── TAB: FIELD DIARY ── -->
+
+            <div id="tab-diary" class="admin-tab-content active">
+                <div class="section-top">
+                    <div>
+                        <h2>Field Diary</h2>
+                        <p>Add daily journal entries from the field</p>
+                    </div>
+                </div>
+
+                <!-- Add form -->
+                <div class="add-form-panel">
+                    <div class="form-title">New Diary Entry</div>
+                    <form id="diaryForm">
+                        <div class="form-grid">
+                            <div class="field">
+                                <label>Date *</label>
+                                <input type="date" name="date" required>
+                            </div>
+                            <div class="field">
+                                <label>Location *</label>
+                                <input type="text" name="location" placeholder="e.g. Darkhan, Mongolia" required>
+                            </div>
+                            <div class="field form-col-full">
+                                <label>Title *</label>
+                                <input type="text" name="title" placeholder="e.g. Day 5 — 植林作業、本格化" required>
+                            </div>
+                            <div class="field form-col-full">
+                                <label>Body *</label>
+                                <textarea name="body" rows="5" placeholder="Write the diary entry here..."
+                                    required></textarea>
+                            </div>
+                            <div class="field form-col-full">
+                                <label>Photos (up to 10)</label>
+                                <div class="upload-zone" id="diaryImgZone">
+                                    <input type="file" name="images" accept="image/*" multiple id="diaryImgInput">
+                                    <div class="upload-icon">+</div>
+                                    <p>Click or drop images here<br><strong>JPG, PNG, WebP</strong> — max 15 MB each</p>
+                                </div>
+                                <div class="img-previews" id="diaryImgPreviews"></div>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn--gold" id="diarySubmitBtn">Add Entry</button>
+                            <span class="form-status" id="diaryStatus"></span>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Existing entries -->
+                <div class="entries-section">
+                    <div class="entries-header">Existing Entries</div>
+                    <div class="entries-list" id="diaryList"></div>
+                </div>
+            </div>
+
+            <!-- ── TAB: ACTIVITY REPORTS ── -->
+            <div id="tab-reports" class="admin-tab-content">
+                <div class="section-top">
+                    <div>
+                        <h2>Activity Reports</h2>
+                        <p>Official post-trip reports with impact metrics</p>
+                    </div>
+                </div>
+
+                <div class="add-form-panel">
+                    <div class="form-title">New Report</div>
+                    <form id="reportForm">
+                        <div class="form-grid">
+                            <div class="field form-col-full">
+                                <label>Report Title *</label>
+                                <input type="text" name="title" placeholder="e.g. 第13回 モンゴル派遣 活動報告書" required>
+                            </div>
+                            <div class="field">
+                                <label>Period *</label>
+                                <input type="text" name="period" placeholder="e.g. 2023.08.10 – 08.20">
+                            </div>
+                            <div class="field">
+                                <label>Date (for sorting)</label>
+                                <input type="date" name="date">
+                            </div>
+                            <div class="field">
+                                <label>Members</label>
+                                <input type="number" name="members" placeholder="e.g. 8" min="1" max="100">
+                            </div>
+                            <div class="field form-col-full">
+                                <label>Executive Summary</label>
+                                <textarea name="summary" rows="3"
+                                    placeholder="Brief summary of the report..."></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Sections -->
+                        <div style="margin-top:20px;">
+                            <label class="field" style="margin-bottom:8px;">
+                                <span
+                                    style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-sub);">Report
+                                    Sections</span>
+                            </label>
+                            <div class="dynamic-group" id="reportSections"></div>
+                            <button type="button" class="add-dynamic-btn" id="addSectionBtn">+ Add Section</button>
+                        </div>
+
+                        <!-- Impact -->
+                        <div style="margin-top:20px;">
+                            <label class="field" style="margin-bottom:8px;">
+                                <span
+                                    style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-sub);">Impact
+                                    Metrics (optional)</span>
+                            </label>
+                            <div class="impact-grid">
+                                <div class="field"><label>Trees</label><input type="number" name="impact_trees"
+                                        placeholder="0" min="0"></div>
+                                <div class="field"><label>Students</label><input type="number" name="impact_students"
+                                        placeholder="0" min="0"></div>
+                                <div class="field"><label>Schools</label><input type="number" name="impact_schools"
+                                        placeholder="0" min="0"></div>
+                                <div class="field"><label>Participants</label><input type="number"
+                                        name="impact_participants" placeholder="0" min="0"></div>
+                                <div class="field"><label>Members</label><input type="number" name="impact_members"
+                                        placeholder="0" min="0"></div>
+                                <div class="field"><label>Workshops</label><input type="number" name="impact_workshops"
+                                        placeholder="0" min="0"></div>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn--gold" id="reportSubmitBtn">Add Report</button>
+                            <span class="form-status" id="reportStatus"></span>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="entries-section">
+                    <div class="entries-header">Existing Reports</div>
+                    <div class="entries-list" id="reportList"></div>
+                </div>
+            </div>
+
+            <!-- ── TAB: PHOTO GALLERY ── -->
+            <div id="tab-gallery" class="admin-tab-content">
+                <div class="section-top">
+                    <div>
+                        <h2>Photo Gallery</h2>
+                        <p>Upload multiple photos at once — drag & drop supported. Images are auto-resized to max 1920px
+                            before upload.</p>
+                    </div>
+                </div>
+
+                <div class="add-form-panel">
+                    <div class="form-title">Add Photos</div>
+                    <form id="galleryForm">
+                        <div class="form-grid">
+                            <div class="field">
+                                <label>Date *</label>
+                                <input type="date" name="date" required>
+                            </div>
+                            <div class="field">
+                                <label>Location</label>
+                                <input type="text" name="location" placeholder="e.g. Darkhan, Mongolia">
+                            </div>
+                            <div class="field">
+                                <label>Trip / Dispatch</label>
+                                <input type="text" name="trip" placeholder="e.g. 第13回モンゴル派遣">
+                            </div>
+                            <div class="field">
+                                <label>Caption <small style="color:rgba(255,255,255,0.4)">(applied to all
+                                        photos)</small></label>
+                                <input type="text" name="caption" placeholder="Short description of the photos">
+                            </div>
+                            <div class="field form-col-full">
+                                <label>Photos * <small style="color:rgba(255,255,255,0.4)">JPG, PNG, WebP — up to 20
+                                        files, max 50MB each</small></label>
+
+                                <!-- Drop Zone -->
+                                <div class="upload-zone upload-zone--gallery" id="galleryDropZone"
+                                    style="min-height:140px;cursor:pointer;">
+                                    <input type="file" name="images" accept="image/*" id="galleryImgInput" multiple
+                                        style="display:none;">
+                                    <div class="upload-icon" style="font-size:32px;">🖼</div>
+                                    <p style="margin:8px 0 4px;font-weight:600;">Drop photos here or <span
+                                            style="color:var(--gold,#C5A028);text-decoration:underline;cursor:pointer;"
+                                            id="galleryBrowseLink">browse</span></p>
+                                    <p style="font-size:12px;color:rgba(255,255,255,0.4);margin:0;">Multiple files
+                                        supported · Auto-resized to max 1920px · JPEG 85%</p>
+                                </div>
+
+                                <!-- Selected files badge -->
+                                <div id="galleryFileBadge"
+                                    style="display:none;margin-top:10px;padding:8px 14px;background:rgba(197,160,40,0.12);border:1px solid rgba(197,160,40,0.3);border-radius:8px;font-size:13px;color:rgba(255,255,255,0.8);display:none;align-items:center;gap:10px;">
+                                    <span id="galleryFileCount"
+                                        style="font-weight:700;color:var(--gold,#C5A028);"></span>
+                                    <span id="galleryFileSizeSum"></span>
+                                    <button type="button" id="galleryClearFiles"
+                                        style="margin-left:auto;background:none;border:none;color:rgba(255,255,255,0.4);cursor:pointer;font-size:18px;line-height:1;padding:0;"
+                                        title="Clear selection">✕</button>
+                                </div>
+
+                                <!-- Thumbnail previews -->
+                                <div class="img-previews" id="galleryImgPreview"
+                                    style="margin-top:12px;display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px;">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn--gold" id="gallerySubmitBtn">Upload Photos</button>
+                            <span class="form-status" id="galleryStatus"></span>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="entries-section">
+                    <div class="entries-header">Gallery Items</div>
+                    <div class="entries-list" id="galleryList"></div>
+                </div>
+
+            </div>
+
+            <!-- ── TAB: MEMBER VOICES ── -->
+            <div id="tab-interviews" class="admin-tab-content">
+                <div class="section-top">
+                    <div>
+                        <h2>Member Voices</h2>
+                        <p>Q&amp;A interviews with project participants</p>
+                    </div>
+                </div>
+
+                <div class="add-form-panel">
+                    <div class="form-title">New Interview</div>
+                    <form id="interviewForm">
+                        <div class="form-grid">
+                            <div class="field">
+                                <label>Name *</label>
+                                <input type="text" name="name" placeholder="e.g. 田中太郎" required>
+                            </div>
+                            <div class="field">
+                                <label>Year / Affiliation</label>
+                                <input type="text" name="year" placeholder="e.g. 慶應義塾大学 経済学部 3年">
+                            </div>
+                            <div class="field form-col-full">
+                                <label>Trips (comma separated)</label>
+                                <input type="text" name="trips" placeholder="e.g. 第13回モンゴル, 第14回モンゴル">
+                            </div>
+                            <div class="field form-col-full">
+                                <label>Profile Photo</label>
+                                <div class="upload-zone" id="interviewPhotoZone">
+                                    <input type="file" name="photo" accept="image/*" id="interviewPhotoInput">
+                                    <div class="upload-icon">+</div>
+                                    <p>Click to upload a profile photo</p>
+                                </div>
+                                <div class="img-previews" id="interviewPhotoPreview"></div>
+                            </div>
+                        </div>
+
+                        <!-- Q&A -->
+                        <div style="margin-top:20px;">
+                            <label class="field" style="margin-bottom:8px;">
+                                <span
+                                    style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-sub);">Q
+                                    &amp; A</span>
+                            </label>
+                            <div class="dynamic-group" id="qandaItems"></div>
+                            <button type="button" class="add-dynamic-btn" id="addQaBtn">+ Add Q&amp;A Pair</button>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn--gold" id="interviewSubmitBtn">Add Interview</button>
+                            <span class="form-status" id="interviewStatus"></span>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="entries-section">
+                    <div class="entries-header">Existing Interviews</div>
+                    <div class="entries-list" id="interviewList"></div>
+                </div>
+            </div>
+
+            <!-- ── TAB: STATS ── -->
+            <div id="tab-stats" class="admin-tab-content">
+                <div class="section-top">
+                    <div>
+                        <h2>Stats Editor</h2>
+                        <p>Edit main page and per-project statistics in one place. Changes are reflected immediately
+                            after saving.</p>
+                    </div>
+                </div>
+
+                <!-- SECTION A: Axis Global -->
+                <div class="add-form-panel" style="margin-bottom:28px">
+                    <div class="form-title">Axis Global — Main Page Impact Section</div>
+                    <p style="font-size:13px;color:var(--text-sub);margin-bottom:20px">These numbers appear in the
+                        animated count-up section on index.html.</p>
+                    <form id="globalStatsForm">
+                        <div class="form-grid">
+                            <div class="field">
+                                <label>Years of Service</label>
+                                <input type="text" id="gs-years" name="yearsOfService" placeholder="e.g. 25">
+                            </div>
+                            <div class="field">
+                                <label>Years Label</label>
+                                <input type="text" id="gs-yearsLabel" name="label_years"
+                                    placeholder="e.g. Years of Service">
+                            </div>
+                            <div class="field">
+                                <label>Active Countries</label>
+                                <input type="text" id="gs-countries" name="activeCountries" placeholder="e.g. 3">
+                            </div>
+                            <div class="field">
+                                <label>Countries Label</label>
+                                <input type="text" id="gs-countriesLabel" name="label_countries"
+                                    placeholder="e.g. Active Countries">
+                            </div>
+                            <div class="field">
+                                <label>Trees Planted (number only)</label>
+                                <input type="text" id="gs-trees" name="treesPlanted" placeholder="e.g. 1150">
+                            </div>
+                            <div class="field">
+                                <label>Trees Suffix</label>
+                                <input type="text" id="gs-treesSuffix" name="treesPlantedSuffix" placeholder="e.g. +">
+                            </div>
+                            <div class="field form-col-full">
+                                <label>Trees Label</label>
+                                <input type="text" id="gs-treesLabel" name="label_trees"
+                                    placeholder="e.g. Trees Planted">
+                            </div>
+                        </div>
+                        <div class="form-actions" style="margin-top:20px">
+                            <button type="submit" class="btn btn--gold" id="globalStatsSubmitBtn">Save Global
+                                Stats</button>
+                            <span class="form-status" id="globalStatsStatus"></span>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- SECTION B: Project Stats -->
+                <div class="add-form-panel">
+                    <div class="form-title">Project: <span id="projectStatsTitle">Mongolia</span> — Detail Page Stats
+                        Bar</div>
+                    <p style="font-size:13px;color:var(--text-sub);margin-bottom:20px">Select a project from the left
+                        sidebar. The form auto-updates when you switch projects.</p>
+                    <form id="projectStatsForm">
+                        <div class="form-grid">
+                            <div class="field">
+                                <label>Active Since</label>
+                                <input type="text" id="ps-since" name="since" placeholder="e.g. 2001">
+                            </div>
+                            <div class="field">
+                                <label>Total Trips</label>
+                                <input type="text" id="ps-trips" name="totalTrips" placeholder="e.g. 14">
+                            </div>
+                            <div class="field">
+                                <label>Key Metric Value</label>
+                                <input type="text" id="ps-metric" name="treesPlanted" placeholder="e.g. 1,150+">
+                            </div>
+                            <div class="field">
+                                <label>Trips Label</label>
+                                <input type="text" id="ps-labelTrips" name="label_trips" placeholder="e.g. Total Trips">
+                            </div>
+                            <div class="field form-col-full">
+                                <label>Metric Label</label>
+                                <input type="text" id="ps-labelMetric" name="label_metric"
+                                    placeholder="e.g. Trees Planted">
+                            </div>
+                        </div>
+                        <div class="form-actions" style="margin-top:20px">
+                            <button type="submit" class="btn btn--gold" id="projectStatsSubmitBtn">Save Project
+                                Stats</button>
+                            <span class="form-status" id="projectStatsStatus"></span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- ── TAB: CARDS ── -->
+            <div id="tab-cards" class="admin-tab-content">
+                <div class="section-top">
+                    <div>
+                        <h2>Project Card Editor</h2>
+                        <p>Edit the content displayed on each project card on the main page. Changes are reflected
+                            immediately after saving.</p>
+                    </div>
+                </div>
+
+                <div class="add-form-panel">
+                    <div class="form-title">Project: <span id="cardProjectTitle">Mongolia</span></div>
+                    <p style="font-size:13px;color:var(--text-sub);margin-bottom:20px">Select a project from the left
+                        sidebar to edit its card content.</p>
+
+                    <form id="cardForm">
+                        <div class="form-grid">
+                            <!-- Tag -->
+                            <div class="field form-col-full">
+                                <label>Tag Label</label>
+                                <input type="text" id="cf-tag" name="tag" placeholder="e.g. Mongolia">
+                            </div>
+
+                            <!-- Slogan -->
+                            <div class="field">
+                                <label>Slogan — Line 1</label>
+                                <input type="text" id="cf-slogan1" name="slogan_line1"
+                                    placeholder="e.g. Planting the Future,">
+                            </div>
+                            <div class="field">
+                                <label>Slogan — Line 2</label>
+                                <input type="text" id="cf-slogan2" name="slogan_line2"
+                                    placeholder="e.g. One Tree at a Time.">
+                            </div>
+
+                            <!-- Lead + Body -->
+                            <div class="field form-col-full">
+                                <label>Lead (sub-headline)</label>
+                                <input type="text" id="cf-lead" name="lead" placeholder="One-line description">
+                            </div>
+                            <div class="field form-col-full">
+                                <label>Body Paragraph</label>
+                                <textarea id="cf-body" name="body" rows="4"
+                                    placeholder="Main description of the project..."></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Meta Items -->
+                        <div style="margin-top:20px">
+                            <label
+                                style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-sub);display:block;margin-bottom:12px">Meta
+                                Items (3 key facts shown on the card)</label>
+                            <div class="form-grid">
+                                <div class="field">
+                                    <label>Item 1 — Label</label>
+                                    <input type="text" id="cf-m0l" name="meta_0_label" placeholder="e.g. Impact">
+                                </div>
+                                <div class="field">
+                                    <label>Item 1 — Value</label>
+                                    <input type="text" id="cf-m0v" name="meta_0_value"
+                                        placeholder="e.g. 1,150+ Trees Planted">
+                                </div>
+                                <div class="field">
+                                    <label>Item 2 — Label</label>
+                                    <input type="text" id="cf-m1l" name="meta_1_label" placeholder="e.g. Focus">
+                                </div>
+                                <div class="field">
+                                    <label>Item 2 — Value</label>
+                                    <input type="text" id="cf-m1v" name="meta_1_value"
+                                        placeholder="e.g. Environment &amp; Climate">
+                                </div>
+                                <div class="field">
+                                    <label>Item 3 — Label</label>
+                                    <input type="text" id="cf-m2l" name="meta_2_label" placeholder="e.g. Since">
+                                </div>
+                                <div class="field">
+                                    <label>Item 3 — Value</label>
+                                    <input type="text" id="cf-m2v" name="meta_2_value" placeholder="e.g. 2001">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Instagram -->
+                        <div class="form-grid" style="margin-top:20px">
+                            <div class="field">
+                                <label>Instagram Handle</label>
+                                <input type="text" id="cf-ighandle" name="instagram_handle"
+                                    placeholder="e.g. @axis_mongolia_project">
+                            </div>
+                            <div class="field">
+                                <label>Instagram URL</label>
+                                <input type="url" id="cf-igurl" name="instagram_url"
+                                    placeholder="https://www.instagram.com/...">
+                            </div>
+                        </div>
+
+                        <div class="form-actions" style="margin-top:24px">
+                            <button type="submit" class="btn btn--gold" id="cardSubmitBtn">Save Card</button>
+                            <span class="form-status" id="cardStatus"></span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- ── TAB: HISTORY MANAGER ── -->
+            <div id="tab-history" class="admin-tab-content">
+                <div class="section-top">
+                    <div>
+                        <h2>History Manager</h2>
+                        <p>Edit Axis timeline entries displayed in the History section on the main page. Drag to
+                            reorder, or use the arrow buttons.</p>
+                    </div>
+                </div>
+
+                <!-- Add / Edit Form -->
+                <div class="add-form-panel">
+                    <div class="form-title" id="historyFormTitle">New Timeline Entry</div>
+                    <form id="historyForm">
+                        <input type="hidden" id="hf-editIndex" value="">
+                        <div class="form-grid">
+                            <div class="field">
+                                <label>Year / Period *</label>
+                                <input type="text" id="hf-year" placeholder="e.g. 2001 or 2001 – 2023 or Now" required>
+                            </div>
+                            <div class="field form-col-full">
+                                <label>Title *</label>
+                                <input type="text" id="hf-title" placeholder="e.g. Founded as Pax IV Hyper" required>
+                            </div>
+                            <div class="field form-col-full">
+                                <label>Description</label>
+                                <textarea id="hf-body" rows="3"
+                                    placeholder="Brief description of this milestone..."></textarea>
+                            </div>
+                        </div>
+                        <div class="form-actions" style="margin-top:20px">
+                            <button type="submit" class="btn btn--gold" id="historySubmitBtn">Add Entry</button>
+                            <button type="button" class="btn btn--outline" id="historyCancelEditBtn"
+                                style="display:none">Cancel Edit</button>
+                            <span class="form-status" id="historyStatus"></span>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Existing Entries List -->
+                <div class="entries-section" style="margin-top:32px">
+                    <div class="entries-header">Timeline Entries <span
+                            style="font-size:12px;font-weight:400;color:rgba(255,255,255,0.4);margin-left:8px;">top =
+                            oldest shown first</span></div>
+                    <div class="entries-list" id="historyList"></div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- ─── CONFIRM DIALOG ────────────────────────────────────── -->
+    <div class="overlay hidden" id="confirmOverlay">
+        <div class="confirm-dialog">
+            <h3>Delete Entry?</h3>
+            <p>This cannot be undone.</p>
+            <div class="confirm-actions">
+                <button class="btn btn--outline" id="confirmCancel">Cancel</button>
+                <button class="btn btn--danger" id="confirmOk">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ─── TOASTS ─────────────────────────────────────────────── -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- ─── DELETE CONFIRMATION MODAL ────────────────────────────── -->
+    <div id="deleteModal" style="
+        display:none;
+        position:fixed;inset:0;z-index:9999;
+        background:rgba(0,0,0,0.7);
+        backdrop-filter:blur(4px);
+        align-items:center;justify-content:center;
+    ">
+        <div style="
+            background:#16202e;
+            border:1px solid rgba(255,255,255,0.12);
+            border-radius:16px;
+            padding:36px 40px;
+            max-width:440px;width:90%;
+            box-shadow:0 24px 80px rgba(0,0,0,0.6);
+            animation:modalIn 0.2s ease;
+        ">
+            <div style="text-align:center;margin-bottom:20px;">
+                <div
+                    style="width:48px;height:48px;border-radius:50%;background:rgba(231,76,60,0.15);border:1px solid rgba(231,76,60,0.4);display:flex;align-items:center;justify-content:center;margin:0 auto;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e74c3c" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                        <line x1="12" y1="9" x2="12" y2="13" />
+                        <line x1="12" y1="17" x2="12.01" y2="17" />
+                    </svg>
+                </div>
+                <h3 style="margin:16px 0 6px;color:#fff;font-size:18px;font-weight:600;">Delete Project</h3>
+                <p style="color:rgba(255,255,255,0.55);font-size:14px;line-height:1.6;margin:0;" id="deleteModalDesc">
+                </p>
+            </div>
+            <div style="
+                background:rgba(231,76,60,0.1);
+                border:1px solid rgba(231,76,60,0.3);
+                border-radius:8px;
+                padding:12px 16px;
+                margin-bottom:28px;
+                font-size:13px;
+                color:rgba(255,255,255,0.7);
+                line-height:1.6;
+            ">
+                This will permanently remove <strong style="color:#e74c3c;">all associated data</strong>:<br>
+                &bull;&nbsp;Map marker and main page card<br>
+                &bull;&nbsp;Field diary entries and activity reports<br>
+                &bull;&nbsp;Project stats and gallery
+            </div>
+            <div style="display:flex;gap:12px;justify-content:flex-end;">
+                <button id="deleteModalCancel" style="
+                    padding:10px 24px;border-radius:8px;border:1px solid rgba(255,255,255,0.2);
+                    background:transparent;color:rgba(255,255,255,0.7);font-size:14px;cursor:pointer;
+                    transition:background 0.2s;
+                " onmouseover="this.style.background='rgba(255,255,255,0.08)'"
+                    onmouseout="this.style.background='transparent'">
+                    Cancel
+                </button>
+                <button id="deleteModalConfirm" style="
+                    padding:10px 24px;border-radius:8px;border:none;
+                    background:#e74c3c;color:#fff;font-size:14px;font-weight:600;cursor:pointer;
+                    transition:background 0.2s;
+                " onmouseover="this.style.background='#c0392b'" onmouseout="this.style.background='#e74c3c'">
+                    Delete Permanently
+                </button>
+            </div>
+        </div>
+    </div>
+    <style>
+        @keyframes modalIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95) translateY(-8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+    </style>
+
+    <script src="admin.js"></script>
+</body>
+
+</html>

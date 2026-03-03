@@ -1,0 +1,178 @@
+{
+  "id": "mongolia",
+  "name": "Mongolia",
+  "name_jp": "モンゴル",
+  "tag": "Mongolia",
+  "slogan": "Planting the Future, One Tree at a Time.",
+  "instagram": "https://www.instagram.com/axis_mongolia_project?igsh=MXY3NXdjdGQzdXBpNw==",
+  "since": 2001,
+  "hero_image": "../axis_hero_background_1770897665025.png",
+  "seal_image": "../input_file_3.png",
+  "color": "#C40C0C",
+  "description": "モンゴルのダルハン地域を中心に、砂漠化防止を目的とした植林活動とクリーンエネルギー導入を推進しています。2001年の創設以来、現地パートナー団体と協力しながら持続的な活動を続けてきました。",
+  "card": {
+    "tag": "Mongolia",
+    "slogan_line1": "Planting Roots,",
+    "slogan_line2": "Changing the Climate.",
+    "lead": "25 years combatting desertification in Mongolia's Darkhan region — one sapling at a time.",
+    "body": "Since 2001, Axis has dispatched 15 teams to Darkhan, partnering with local organizations to plant over 1,150 trees and repair solar panel installations in off-grid communities. Each expedition combines hands-on environmental work with cultural exchange, giving Japanese students direct experience of how grassroots action addresses climate change.",
+    "meta": [
+      {
+        "label": "Trees Planted",
+        "value": "1,150+"
+      },
+      {
+        "label": "Total Trips",
+        "value": "15 expeditions"
+      },
+      {
+        "label": "Since",
+        "value": "2001"
+      }
+    ],
+    "instagram_handle": "@axis_mongolia_project",
+    "instagram_url": "https://www.instagram.com/axis_mongolia_project?igsh=MXY3NXdjdGQzdXBpNw=="
+  },
+  "stats": {
+    "since": "2001",
+    "totalTrips": 15,
+    "treesPlanted": "1,150+",
+    "label_trips": "Total Trips",
+    "label_metric": "Trees Planted"
+  },
+  "diary": [
+    {
+      "date": "2001-05-31",
+      "location": "11",
+      "title": "11",
+      "body": "11",
+      "images": []
+    },
+    {
+      "id": "d002",
+      "date": "2023-08-14",
+      "location": "Darkhan, Mongolia",
+      "title": "Day 5 — 植林作業、本格化",
+      "body": "今日は早朝6時から作業を開始。現地スタッフのガンバータル氏の指導のもと、隊員8名で約120本の苗木を植えた。土が固く掘り起こすのに苦労したが、現地の子どもたちも加わってくれて、思いのほか早く終えることができた。夕方には達成感とともに最高の夕焼けを見た。",
+      "images": []
+    },
+    {
+      "id": "d001",
+      "date": "2023-08-12",
+      "location": "Ulaanbaatar → Darkhan",
+      "title": "Day 3 — ダルハンへ移動",
+      "body": "ウランバートルでの事前ミーティングを終え、バスでダルハンへ移動。約4時間のドライブで広大なモンゴルの草原を横目に見ながら活動地へ向かった。現地パートナーとの再会を喜びつつ、明日からの作業に備えて早めに就寝。",
+      "images": []
+    }
+  ],
+  "reports": [
+    {
+      "title": "1",
+      "period": "1",
+      "date": "1",
+      "pdf": "data/uploads/1772144363847-0yt74iy.pdf"
+    },
+    {
+      "title": "1",
+      "period": "1",
+      "date": "1",
+      "pdf": ""
+    },
+    {
+      "id": "r001",
+      "date": "2023-09",
+      "title": "第13回 モンゴル派遣 活動報告書",
+      "period": "2023.08.10 – 08.20",
+      "members": 8,
+      "summary": "ダルハン地域にて植林活動300本完了。クリーンエネルギー設備の点検・修繕も実施。",
+      "sections": [
+        {
+          "heading": "活動概要",
+          "body": "2023年8月10日から20日にかけて、慶應義塾大学生8名がモンゴル・ダルハン地域を訪問。現地パートナー団体と協力し、砂漠化防止を目的とした植林活動（300本）および太陽光パネルの点検・修繕を実施した。"
+        },
+        {
+          "heading": "成果 / Impact",
+          "body": "植林本数：300本（累計1,150本超）。太陽光パネル修繕：3基。現地の子ども約20名との交流ワークショップを実施し、環境教育プログラムを提供した。"
+        },
+        {
+          "heading": "課題と次回方針",
+          "body": "現地の土壌劣化が想定以上に進んでいる地域が確認された。次回は土壌改良剤の活用を検討し、現地NGOとの情報共有を強化する。"
+        }
+      ],
+      "impact": {
+        "trees": 300,
+        "members": 8,
+        "workshops": 1
+      }
+    }
+  ],
+  "gallery": [
+    {
+      "id": "g001",
+      "date": "2023-08-12",
+      "location": "Ulaanbaatar",
+      "caption": "出発前、空港にて集合写真",
+      "image": "",
+      "trip": "第13回"
+    },
+    {
+      "id": "g002",
+      "date": "2023-08-14",
+      "location": "Darkhan",
+      "caption": "早朝の植林作業",
+      "image": "",
+      "trip": "第13回"
+    },
+    {
+      "id": "g003",
+      "date": "2023-08-15",
+      "location": "Darkhan",
+      "caption": "現地の子どもたちとワークショップ",
+      "image": "",
+      "trip": "第13回"
+    },
+    {
+      "id": "g004",
+      "date": "2023-08-16",
+      "location": "Darkhan",
+      "caption": "クリーンエネルギー設備の点検",
+      "image": "",
+      "trip": "第13回"
+    },
+    {
+      "id": "g005",
+      "date": "2022-08-10",
+      "location": "Darkhan",
+      "caption": "第12回 — 苗木の搬入",
+      "image": "",
+      "trip": "第12回"
+    }
+  ],
+  "interviews": [
+    {
+      "id": "i001",
+      "name": "田中 太郎",
+      "name_en": "Taro Tanaka",
+      "year": "慶應義塾大学 経済学部 3年",
+      "trips": [
+        "第12回モンゴル",
+        "第13回モンゴル"
+      ],
+      "photo": "",
+      "qanda": [
+        {
+          "q": "Axisへの参加したきっかけは?",
+          "a": "海外に出て何か行動を起こしたいと思っていたところ、Axisの説明会で「議論より行動」という言葉に惹かれました。自分の手で実際に変化をつくれる場所だと感じ、入団を決めました。"
+        },
+        {
+          "q": "現地で最も印象に残っていることは?",
+          "a": "現地の子どもたちと一緒に植えた苗木が、翌年の訪問で育っているのを見たとき。自分たちの行動が確かに続いている、という実感が一番記憶に残っています。"
+        },
+        {
+          "q": "これから参加を考えている人へ一言",
+          "a": "語学力は関係ありません。行動しようとする意志があれば大丈夫です。現地に着いた瞬間、すべての不安が消えます。"
+        }
+      ]
+    }
+  ]
+}

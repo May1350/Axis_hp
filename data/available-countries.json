@@ -1,0 +1,1604 @@
+[
+  {
+    "id": "af",
+    "iso": "AF",
+    "name_en": "Afghanistan",
+    "name_jp": "アフガニスタン",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "al",
+    "iso": "AL",
+    "name_en": "Albania",
+    "name_jp": "アルバニア",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "dz",
+    "iso": "DZ",
+    "name_en": "Algeria",
+    "name_jp": "アルジェリア",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "ao",
+    "iso": "AO",
+    "name_en": "Angola",
+    "name_jp": "アンゴラ",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "ar",
+    "iso": "AR",
+    "name_en": "Argentina",
+    "name_jp": "アルゼンチン",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "am",
+    "iso": "AM",
+    "name_en": "Armenia",
+    "name_jp": "アルメニア",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "au",
+    "iso": "AU",
+    "name_en": "Australia",
+    "name_jp": "オーストラリア",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "at",
+    "iso": "AT",
+    "name_en": "Austria",
+    "name_jp": "オーストリア",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "az",
+    "iso": "AZ",
+    "name_en": "Azerbaijan",
+    "name_jp": "アゼルバイジャン",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "bs",
+    "iso": "BS",
+    "name_en": "Bahamas",
+    "name_jp": "バハマ",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "bd",
+    "iso": "BD",
+    "name_en": "Bangladesh",
+    "name_jp": "バングラデシュ",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "by",
+    "iso": "BY",
+    "name_en": "Belarus",
+    "name_jp": "ベラルーシ",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "be",
+    "iso": "BE",
+    "name_en": "Belgium",
+    "name_jp": "ベルギー",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "bz",
+    "iso": "BZ",
+    "name_en": "Belize",
+    "name_jp": "ベリーズ",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "bj",
+    "iso": "BJ",
+    "name_en": "Benin",
+    "name_jp": "ベナン",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "bm",
+    "iso": "BM",
+    "name_en": "Bermuda",
+    "name_jp": "Bermuda",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "bt",
+    "iso": "BT",
+    "name_en": "Bhutan",
+    "name_jp": "ブータン",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "bo",
+    "iso": "BO",
+    "name_en": "Bolivia",
+    "name_jp": "ボリビア",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "ba",
+    "iso": "BA",
+    "name_en": "Bosnia and Herzegovina",
+    "name_jp": "ボスニア・ヘルツェゴビナ",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "bw",
+    "iso": "BW",
+    "name_en": "Botswana",
+    "name_jp": "ボツワナ",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "br",
+    "iso": "BR",
+    "name_en": "Brazil",
+    "name_jp": "ブラジル",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "bn",
+    "iso": "BN",
+    "name_en": "Brunei Darussalam",
+    "name_jp": "ブルネイ",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "bg",
+    "iso": "BG",
+    "name_en": "Bulgaria",
+    "name_jp": "ブルガリア",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "bf",
+    "iso": "BF",
+    "name_en": "Burkina Faso",
+    "name_jp": "ブルキナファソ",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "bi",
+    "iso": "BI",
+    "name_en": "Burundi",
+    "name_jp": "ブルンジ",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "kh",
+    "iso": "KH",
+    "name_en": "Cambodia",
+    "name_jp": "カンボジア",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "cm",
+    "iso": "CM",
+    "name_en": "Cameroon",
+    "name_jp": "カメルーン",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "ca",
+    "iso": "CA",
+    "name_en": "Canada",
+    "name_jp": "カナダ",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "cf",
+    "iso": "CF",
+    "name_en": "Central African Republic",
+    "name_jp": "中央アフリカ",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "td",
+    "iso": "TD",
+    "name_en": "Chad",
+    "name_jp": "チャド",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "cl",
+    "iso": "CL",
+    "name_en": "Chile",
+    "name_jp": "チリ",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "cn",
+    "iso": "CN",
+    "name_en": "China",
+    "name_jp": "中国",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "co",
+    "iso": "CO",
+    "name_en": "Colombia",
+    "name_jp": "コロンビア",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "cr",
+    "iso": "CR",
+    "name_en": "Costa Rica",
+    "name_jp": "コスタリカ",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "ci",
+    "iso": "CI",
+    "name_en": "Côte d'Ivoire",
+    "name_jp": "Côte d'Ivoire",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "hr",
+    "iso": "HR",
+    "name_en": "Croatia",
+    "name_jp": "クロアチア",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "cu",
+    "iso": "CU",
+    "name_en": "Cuba",
+    "name_jp": "キューバ",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "cy",
+    "iso": "CY",
+    "name_en": "Cyprus",
+    "name_jp": "キプロス",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "cz",
+    "iso": "CZ",
+    "name_en": "Czechia",
+    "name_jp": "チェコ",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "cd",
+    "iso": "CD",
+    "name_en": "Democratic Republic of Congo",
+    "name_jp": "コンゴ民主共和国",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "dk",
+    "iso": "DK",
+    "name_en": "Denmark",
+    "name_jp": "デンマーク",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "dj",
+    "iso": "DJ",
+    "name_en": "Djibouti",
+    "name_jp": "ジブチ",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "do",
+    "iso": "DO",
+    "name_en": "Dominican Republic",
+    "name_jp": "ドミニカ共和国",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "ec",
+    "iso": "EC",
+    "name_en": "Ecuador",
+    "name_jp": "エクアドル",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "eg",
+    "iso": "EG",
+    "name_en": "Egypt",
+    "name_jp": "エジプト",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "sv",
+    "iso": "SV",
+    "name_en": "El Salvador",
+    "name_jp": "エルサルバドル",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "gq",
+    "iso": "GQ",
+    "name_en": "Equatorial Guinea",
+    "name_jp": "赤道ギニア",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "er",
+    "iso": "ER",
+    "name_en": "Eritrea",
+    "name_jp": "エリトリア",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "ee",
+    "iso": "EE",
+    "name_en": "Estonia",
+    "name_jp": "エストニア",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "et",
+    "iso": "ET",
+    "name_en": "Ethiopia",
+    "name_jp": "エチオピア",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "fk",
+    "iso": "FK",
+    "name_en": "Falkland Islands",
+    "name_jp": "Falkland Islands",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "fj",
+    "iso": "FJ",
+    "name_en": "Fiji",
+    "name_jp": "フィジー",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "fi",
+    "iso": "FI",
+    "name_en": "Finland",
+    "name_jp": "フィンランド",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "fr",
+    "iso": "FR",
+    "name_en": "France",
+    "name_jp": "フランス",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "gf",
+    "iso": "GF",
+    "name_en": "French Guiana",
+    "name_jp": "French Guiana",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "tf",
+    "iso": "TF",
+    "name_en": "French Southern and Antarctic Lands",
+    "name_jp": "French Southern and Antarctic Lands",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "ga",
+    "iso": "GA",
+    "name_en": "Gabon",
+    "name_jp": "ガボン",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "gm",
+    "iso": "GM",
+    "name_en": "Gambia",
+    "name_jp": "ガンビア",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "ge",
+    "iso": "GE",
+    "name_en": "Georgia",
+    "name_jp": "ジョージア",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "de",
+    "iso": "DE",
+    "name_en": "Germany",
+    "name_jp": "ドイツ",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "gh",
+    "iso": "GH",
+    "name_en": "Ghana",
+    "name_jp": "ガーナ",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "gr",
+    "iso": "GR",
+    "name_en": "Greece",
+    "name_jp": "ギリシャ",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "gl",
+    "iso": "GL",
+    "name_en": "Greenland",
+    "name_jp": "Greenland",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "gt",
+    "iso": "GT",
+    "name_en": "Guatemala",
+    "name_jp": "グアテマラ",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "gn",
+    "iso": "GN",
+    "name_en": "Guinea",
+    "name_jp": "ギニア",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "gw",
+    "iso": "GW",
+    "name_en": "Guinea-Bissau",
+    "name_jp": "ギニアビサウ",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "gy",
+    "iso": "GY",
+    "name_en": "Guyana",
+    "name_jp": "ガイアナ",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "ht",
+    "iso": "HT",
+    "name_en": "Haiti",
+    "name_jp": "ハイチ",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "hn",
+    "iso": "HN",
+    "name_en": "Honduras",
+    "name_jp": "ホンジュラス",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "hu",
+    "iso": "HU",
+    "name_en": "Hungary",
+    "name_jp": "ハンガリー",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "is",
+    "iso": "IS",
+    "name_en": "Iceland",
+    "name_jp": "アイスランド",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "in",
+    "iso": "IN",
+    "name_en": "India",
+    "name_jp": "インド",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "id",
+    "iso": "ID",
+    "name_en": "Indonesia",
+    "name_jp": "インドネシア",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "ir",
+    "iso": "IR",
+    "name_en": "Iran",
+    "name_jp": "イラン",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "iq",
+    "iso": "IQ",
+    "name_en": "Iraq",
+    "name_jp": "イラク",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "ie",
+    "iso": "IE",
+    "name_en": "Ireland",
+    "name_jp": "アイルランド",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "il",
+    "iso": "IL",
+    "name_en": "Israel",
+    "name_jp": "イスラエル",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "it",
+    "iso": "IT",
+    "name_en": "Italy",
+    "name_jp": "イタリア",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "jm",
+    "iso": "JM",
+    "name_en": "Jamaica",
+    "name_jp": "ジャマイカ",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "jp",
+    "iso": "JP",
+    "name_en": "Japan",
+    "name_jp": "日本",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "jo",
+    "iso": "JO",
+    "name_en": "Jordan",
+    "name_jp": "ヨルダン",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "kz",
+    "iso": "KZ",
+    "name_en": "Kazakhstan",
+    "name_jp": "カザフスタン",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "ke",
+    "iso": "KE",
+    "name_en": "Kenya",
+    "name_jp": "ケニア",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "xk",
+    "iso": "XK",
+    "name_en": "Kosovo",
+    "name_jp": "Kosovo",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "kw",
+    "iso": "KW",
+    "name_en": "Kuwait",
+    "name_jp": "クウェート",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "kg",
+    "iso": "KG",
+    "name_en": "Kyrgyzstan",
+    "name_jp": "キルギス",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "la",
+    "iso": "LA",
+    "name_en": "Lao People's Democratic Republic",
+    "name_jp": "ラオス",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "lv",
+    "iso": "LV",
+    "name_en": "Latvia",
+    "name_jp": "ラトビア",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "lb",
+    "iso": "LB",
+    "name_en": "Lebanon",
+    "name_jp": "レバノン",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "ls",
+    "iso": "LS",
+    "name_en": "Lesotho",
+    "name_jp": "レソト",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "lr",
+    "iso": "LR",
+    "name_en": "Liberia",
+    "name_jp": "リベリア",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "ly",
+    "iso": "LY",
+    "name_en": "Libya",
+    "name_jp": "リビア",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "lt",
+    "iso": "LT",
+    "name_en": "Lithuania",
+    "name_jp": "リトアニア",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "lu",
+    "iso": "LU",
+    "name_en": "Luxembourg",
+    "name_jp": "ルクセンブルク",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "mg",
+    "iso": "MG",
+    "name_en": "Madagascar",
+    "name_jp": "マダガスカル",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "mw",
+    "iso": "MW",
+    "name_en": "Malawi",
+    "name_jp": "マラウイ",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "my",
+    "iso": "MY",
+    "name_en": "Malaysia",
+    "name_jp": "マレーシア",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "ml",
+    "iso": "ML",
+    "name_en": "Mali",
+    "name_jp": "マリ",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "mt",
+    "iso": "MT",
+    "name_en": "Malta",
+    "name_jp": "マルタ",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "mr",
+    "iso": "MR",
+    "name_en": "Mauritania",
+    "name_jp": "モーリタニア",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "mx",
+    "iso": "MX",
+    "name_en": "Mexico",
+    "name_jp": "メキシコ",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "md",
+    "iso": "MD",
+    "name_en": "Moldova",
+    "name_jp": "モルドバ",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "mn",
+    "iso": "MN",
+    "name_en": "Mongolia",
+    "name_jp": "モンゴル",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "me",
+    "iso": "ME",
+    "name_en": "Montenegro",
+    "name_jp": "モンテネグロ",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "ma",
+    "iso": "MA",
+    "name_en": "Morocco",
+    "name_jp": "モロッコ",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "mz",
+    "iso": "MZ",
+    "name_en": "Mozambique",
+    "name_jp": "モザンビーク",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "mm",
+    "iso": "MM",
+    "name_en": "Myanmar",
+    "name_jp": "ミャンマー",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "na",
+    "iso": "NA",
+    "name_en": "Namibia",
+    "name_jp": "ナミビア",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "np",
+    "iso": "NP",
+    "name_en": "Nepal",
+    "name_jp": "ネパール",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "nl",
+    "iso": "NL",
+    "name_en": "Netherlands",
+    "name_jp": "オランダ",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "nc",
+    "iso": "NC",
+    "name_en": "New Caledonia",
+    "name_jp": "New Caledonia",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "nz",
+    "iso": "NZ",
+    "name_en": "New Zealand",
+    "name_jp": "ニュージーランド",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "ni",
+    "iso": "NI",
+    "name_en": "Nicaragua",
+    "name_jp": "ニカラグア",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "ne",
+    "iso": "NE",
+    "name_en": "Niger",
+    "name_jp": "ニジェール",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "ng",
+    "iso": "NG",
+    "name_en": "Nigeria",
+    "name_jp": "ナイジェリア",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "kp",
+    "iso": "KP",
+    "name_en": "North Korea",
+    "name_jp": "北朝鮮",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "mk",
+    "iso": "MK",
+    "name_en": "North Macedonia",
+    "name_jp": "北マケドニア",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "no",
+    "iso": "NO",
+    "name_en": "Norway",
+    "name_jp": "ノルウェー",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "om",
+    "iso": "OM",
+    "name_en": "Oman",
+    "name_jp": "オマーン",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "pk",
+    "iso": "PK",
+    "name_en": "Pakistan",
+    "name_jp": "パキスタン",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "ps",
+    "iso": "PS",
+    "name_en": "Palestinian Territories",
+    "name_jp": "Palestinian Territories",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "pa",
+    "iso": "PA",
+    "name_en": "Panama",
+    "name_jp": "パナマ",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "pg",
+    "iso": "PG",
+    "name_en": "Papua New Guinea",
+    "name_jp": "パプアニューギニア",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "py",
+    "iso": "PY",
+    "name_en": "Paraguay",
+    "name_jp": "パラグアイ",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "pe",
+    "iso": "PE",
+    "name_en": "Peru",
+    "name_jp": "ペルー",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "ph",
+    "iso": "PH",
+    "name_en": "Philippines",
+    "name_jp": "フィリピン",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "pl",
+    "iso": "PL",
+    "name_en": "Poland",
+    "name_jp": "ポーランド",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "pt",
+    "iso": "PT",
+    "name_en": "Portugal",
+    "name_jp": "ポルトガル",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "pr",
+    "iso": "PR",
+    "name_en": "Puerto Rico",
+    "name_jp": "Puerto Rico",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "qa",
+    "iso": "QA",
+    "name_en": "Qatar",
+    "name_jp": "カタール",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "cg",
+    "iso": "CG",
+    "name_en": "Republic of Congo",
+    "name_jp": "コンゴ共和国",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "ro",
+    "iso": "RO",
+    "name_en": "Romania",
+    "name_jp": "ルーマニア",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "ru",
+    "iso": "RU",
+    "name_en": "Russia",
+    "name_jp": "ロシア",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "rw",
+    "iso": "RW",
+    "name_en": "Rwanda",
+    "name_jp": "ルワンダ",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "sa",
+    "iso": "SA",
+    "name_en": "Saudi Arabia",
+    "name_jp": "サウジアラビア",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "sn",
+    "iso": "SN",
+    "name_en": "Senegal",
+    "name_jp": "セネガル",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "rs",
+    "iso": "RS",
+    "name_en": "Serbia",
+    "name_jp": "セルビア",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "sl",
+    "iso": "SL",
+    "name_en": "Sierra Leone",
+    "name_jp": "シエラレオネ",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "sk",
+    "iso": "SK",
+    "name_en": "Slovakia",
+    "name_jp": "スロバキア",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "si",
+    "iso": "SI",
+    "name_en": "Slovenia",
+    "name_jp": "スロベニア",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "sb",
+    "iso": "SB",
+    "name_en": "Solomon Islands",
+    "name_jp": "ソロモン諸島",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "so",
+    "iso": "SO",
+    "name_en": "Somalia",
+    "name_jp": "ソマリア",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "za",
+    "iso": "ZA",
+    "name_en": "South Africa",
+    "name_jp": "南アフリカ",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "kr",
+    "iso": "KR",
+    "name_en": "South Korea",
+    "name_jp": "韓国",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "ss",
+    "iso": "SS",
+    "name_en": "South Sudan",
+    "name_jp": "南スーダン",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "es",
+    "iso": "ES",
+    "name_en": "Spain",
+    "name_jp": "スペイン",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "lk",
+    "iso": "LK",
+    "name_en": "Sri Lanka",
+    "name_jp": "スリランカ",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "sd",
+    "iso": "SD",
+    "name_en": "Sudan",
+    "name_jp": "スーダン",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "sr",
+    "iso": "SR",
+    "name_en": "Suriname",
+    "name_jp": "スリナム",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "sj",
+    "iso": "SJ",
+    "name_en": "Svalbard and Jan Mayen",
+    "name_jp": "Svalbard and Jan Mayen",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "sz",
+    "iso": "SZ",
+    "name_en": "Swaziland",
+    "name_jp": "エスワティニ",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "se",
+    "iso": "SE",
+    "name_en": "Sweden",
+    "name_jp": "スウェーデン",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "ch",
+    "iso": "CH",
+    "name_en": "Switzerland",
+    "name_jp": "スイス",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "sy",
+    "iso": "SY",
+    "name_en": "Syria",
+    "name_jp": "シリア",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "tw",
+    "iso": "TW",
+    "name_en": "Taiwan",
+    "name_jp": "Taiwan",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "tj",
+    "iso": "TJ",
+    "name_en": "Tajikistan",
+    "name_jp": "タジキスタン",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "tz",
+    "iso": "TZ",
+    "name_en": "Tanzania",
+    "name_jp": "タンザニア",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "th",
+    "iso": "TH",
+    "name_en": "Thailand",
+    "name_jp": "タイ",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "tl",
+    "iso": "TL",
+    "name_en": "Timor-Leste",
+    "name_jp": "東ティモール",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "tg",
+    "iso": "TG",
+    "name_en": "Togo",
+    "name_jp": "トーゴ",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "tt",
+    "iso": "TT",
+    "name_en": "Trinidad and Tobago",
+    "name_jp": "トリニダード・トバゴ",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "tn",
+    "iso": "TN",
+    "name_en": "Tunisia",
+    "name_jp": "チュニジア",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "tr",
+    "iso": "TR",
+    "name_en": "Turkey",
+    "name_jp": "トルコ",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "tm",
+    "iso": "TM",
+    "name_en": "Turkmenistan",
+    "name_jp": "トルクメニスタン",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "ug",
+    "iso": "UG",
+    "name_en": "Uganda",
+    "name_jp": "ウガンダ",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "ua",
+    "iso": "UA",
+    "name_en": "Ukraine",
+    "name_jp": "ウクライナ",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "ae",
+    "iso": "AE",
+    "name_en": "United Arab Emirates",
+    "name_jp": "アラブ首長国連邦",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "gb",
+    "iso": "GB",
+    "name_en": "United Kingdom",
+    "name_jp": "イギリス",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "us",
+    "iso": "US",
+    "name_en": "United States",
+    "name_jp": "アメリカ",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "uy",
+    "iso": "UY",
+    "name_en": "Uruguay",
+    "name_jp": "ウルグアイ",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "uz",
+    "iso": "UZ",
+    "name_en": "Uzbekistan",
+    "name_jp": "ウズベキスタン",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "vu",
+    "iso": "VU",
+    "name_en": "Vanuatu",
+    "name_jp": "バヌアツ",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "ve",
+    "iso": "VE",
+    "name_en": "Venezuela",
+    "name_jp": "ベネズエラ",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "vn",
+    "iso": "VN",
+    "name_en": "Vietnam",
+    "name_jp": "ベトナム",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "eh",
+    "iso": "EH",
+    "name_en": "Western Sahara",
+    "name_jp": "Western Sahara",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "ye",
+    "iso": "YE",
+    "name_en": "Yemen",
+    "name_jp": "イエメン",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "zm",
+    "iso": "ZM",
+    "name_en": "Zambia",
+    "name_jp": "ザンビア",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  },
+  {
+    "id": "zw",
+    "iso": "ZW",
+    "name_en": "Zimbabwe",
+    "name_jp": "ジンバブエ",
+    "markerX": 504,
+    "markerY": 325,
+    "labelY": 350
+  }
+]
