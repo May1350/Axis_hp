@@ -291,6 +291,18 @@ async function loadCardForm() {
     const titleEl = document.getElementById('cardProjectTitle');
     if (titleEl) titleEl.textContent = currentProject.charAt(0).toUpperCase() + currentProject.slice(1);
 
+    // Reset image preview when switching projects
+    const cardImgPreview = document.getElementById('cardImgPreview');
+    const cardImgInput = document.getElementById('cardImgInput');
+    if (cardImgPreview) cardImgPreview.innerHTML = '';
+    if (cardImgInput) cardImgInput.value = '';
+
+    // Setup image preview handler
+    if (cardImgInput && !cardImgInput._previewAttached) {
+        cardImgInput._previewAttached = true;
+        setupImagePreview('cardImgInput', 'cardImgPreview', false);
+    }
+
     try {
         const res = await authFetch(`/api/projects/${currentProject}/card`);
         if (!res.ok) return;
@@ -308,6 +320,16 @@ async function loadCardForm() {
         });
         set('cf-ighandle', card.instagram_handle);
         set('cf-igurl', card.instagram_url);
+
+        // Show current image
+        const currentImgEl = document.getElementById('cardCurrentImg');
+        if (currentImgEl) {
+            if (card.image) {
+                currentImgEl.innerHTML = `Current: <a href="/${card.image}" target="_blank" style="color:var(--gold,#C5A028);">${card.image}</a>`;
+            } else {
+                currentImgEl.textContent = 'No card image set.';
+            }
+        }
     } catch { toast('Failed to load card data', 'error'); }
 }
 
@@ -319,33 +341,38 @@ async function handleCardSubmit(e) {
     btn.innerHTML = '<span class="spinner"></span>';
     status.textContent = '';
 
-    const body = {
-        tag: document.getElementById('cf-tag')?.value.trim() ?? '',
-        slogan_line1: document.getElementById('cf-slogan1')?.value.trim() ?? '',
-        slogan_line2: document.getElementById('cf-slogan2')?.value.trim() ?? '',
-        lead: document.getElementById('cf-lead')?.value.trim() ?? '',
-        body: document.getElementById('cf-body')?.value.trim() ?? '',
-        instagram_handle: document.getElementById('cf-ighandle')?.value.trim() ?? '',
-        instagram_url: document.getElementById('cf-igurl')?.value.trim() ?? '',
-        meta_0_label: document.getElementById('cf-m0l')?.value.trim() ?? '',
-        meta_0_value: document.getElementById('cf-m0v')?.value.trim() ?? '',
-        meta_1_label: document.getElementById('cf-m1l')?.value.trim() ?? '',
-        meta_1_value: document.getElementById('cf-m1v')?.value.trim() ?? '',
-        meta_2_label: document.getElementById('cf-m2l')?.value.trim() ?? '',
-        meta_2_value: document.getElementById('cf-m2v')?.value.trim() ?? '',
-    };
+    // Build as FormData to support file upload
+    const fd = new FormData();
+    fd.append('tag', document.getElementById('cf-tag')?.value.trim() ?? '');
+    fd.append('slogan_line1', document.getElementById('cf-slogan1')?.value.trim() ?? '');
+    fd.append('slogan_line2', document.getElementById('cf-slogan2')?.value.trim() ?? '');
+    fd.append('lead', document.getElementById('cf-lead')?.value.trim() ?? '');
+    fd.append('body', document.getElementById('cf-body')?.value.trim() ?? '');
+    fd.append('instagram_handle', document.getElementById('cf-ighandle')?.value.trim() ?? '');
+    fd.append('instagram_url', document.getElementById('cf-igurl')?.value.trim() ?? '');
+    fd.append('meta_0_label', document.getElementById('cf-m0l')?.value.trim() ?? '');
+    fd.append('meta_0_value', document.getElementById('cf-m0v')?.value.trim() ?? '');
+    fd.append('meta_1_label', document.getElementById('cf-m1l')?.value.trim() ?? '');
+    fd.append('meta_1_value', document.getElementById('cf-m1v')?.value.trim() ?? '');
+    fd.append('meta_2_label', document.getElementById('cf-m2l')?.value.trim() ?? '');
+    fd.append('meta_2_value', document.getElementById('cf-m2v')?.value.trim() ?? '');
+
+    // Attach image file if selected
+    const cardImgInput = document.getElementById('cardImgInput');
+    if (cardImgInput?.files?.[0]) fd.append('card_image', cardImgInput.files[0], cardImgInput.files[0].name);
 
     try {
         const res = await authFetch(`/api/projects/${currentProject}/card`, {
             method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(body)
+            body: fd   // no Content-Type header — browser sets multipart boundary
         });
         if (!res.ok) throw new Error();
         status.textContent = '✓ Saved!';
         status.className = 'form-status success';
         toast(`${currentProject} card updated`, 'success');
         setTimeout(() => { status.textContent = ''; status.className = 'form-status'; }, 3500);
+        // Reload to show updated current image path
+        loadCardForm();
     } catch {
         status.textContent = '✗ Failed';
         status.className = 'form-status error';

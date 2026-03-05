@@ -638,7 +638,7 @@ app.get('/api/projects/:id/card', async (req, res) => {
     res.json(data.card || {});
 });
 
-app.patch('/api/projects/:id/card', requireAuth, async (req, res) => {
+app.patch('/api/projects/:id/card', requireAuth, upload.single('card_image'), async (req, res) => {
     const data = await readProject(req.params.id);
     if (!data) return res.status(404).json({ error: 'Not found' });
 
@@ -658,6 +658,7 @@ app.patch('/api/projects/:id/card', requireAuth, async (req, res) => {
             if (req.body[`meta_${i}_value`] !== undefined) card.meta[i].value = req.body[`meta_${i}_value`];
         });
     }
+    if (req.file) card.image = `data/uploads/${req.file.filename}`;
 
     data.card = card;
     await writeProject(req.params.id, data);
