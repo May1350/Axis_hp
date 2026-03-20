@@ -628,11 +628,11 @@ img {
 .field input,
 .field textarea,
 .field select {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid var(--border);
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.18);
     border-radius: var(--radius-sm);
     padding: 11px 14px;
-    color: var(--text);
+    color: #0B1437;
     font-size: 14px;
     outline: none;
     transition: border-color 0.2s;
@@ -642,11 +642,12 @@ img {
 .field textarea:focus,
 .field select:focus {
     border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
 }
 
 .field input::placeholder,
 .field textarea::placeholder {
-    color: var(--text-muted);
+    color: #6b7280;
 }
 
 .field textarea {
@@ -655,7 +656,8 @@ img {
 }
 
 .field select option {
-    background: #1e293b;
+    background: #ffffff;
+    color: #0B1437;
 }
 
 /* ─── IMAGE UPLOAD ─────────────────────────────────────────── */

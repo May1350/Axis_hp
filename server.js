@@ -59,32 +59,26 @@ app.use(helmet({ contentSecurityPolicy: false }));
 app.use(express.json({ limit: '1mb' }));
 app.use(express.static(__dirname));
 
-// ─── Upload directory ─────────────────────────────────────────
-const UPLOAD_DIR = path.join(__dirname, 'data', 'uploads');
-if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
-
-// ─── Multer ───────────────────────────────────────────────────
-const storage = multer.diskStorage({
-    destination: (_req, _file, cb) => cb(null, UPLOAD_DIR),
-    filename: (_req, file, cb) => {
-        const ext = path.extname(file.originalname).toLowerCase();
-        const name = `${Date.now()}-${Math.random().toString(36).slice(2, 9)}${ext}`;
-        cb(null, name);
-    }
-});
-
+// ─── Multer (memory storage — images stored as Base64 in MongoDB) ───
 const upload = multer({
-    storage,
-    limits: { fileSize: 50 * 1024 * 1024 },
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 5 * 1024 * 1024 },   // 5 MB per file
     fileFilter: (_req, file, cb) => {
         const allowedMime = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'application/pdf'];
         const allowedExt = ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.pdf'];
         const ext = path.extname(file.originalname).toLowerCase();
         const mimeOk = allowedMime.includes(file.mimetype);
-        const extOk = allowedExt.includes(ext);
+        const extOk  = allowedExt.includes(ext);
         cb(null, mimeOk && extOk);
     }
 });
+
+// Convert an in-memory multer file to a Base64 Data URL
+function toDataUrl(file) {
+    const mime = file.mimetype || 'application/octet-stream';
+    return `data:${mime};base64,${file.buffer.toString('base64')}`;
+}
+
 
 // ─── Auth middleware ──────────────────────────────────────────
 function requireAuth(req, res, next) {
@@ -299,7 +293,7 @@ app.post('/api/projects', requireAuth, upload.single('hero_image'), async (req, 
     index.push(entry);
     await writeProjectsIndex(index);
 
-    const heroImage = req.file ? `data/uploads/${req.file.filename}` : '';
+    const heroImage = req.file ? toDataUrl(req.file) : '';
     const projectData = {
         id,
         name: entry.name,
@@ -370,7 +364,7 @@ app.patch('/api/projects/:id', requireAuth, upload.single('hero_image'), async (
         if (req.body.name_jp !== undefined) data.name_jp = req.body.name_jp;
         if (req.body.slogan !== undefined) data.slogan = req.body.slogan;
         if (req.body.color !== undefined) data.color = req.body.color;
-        if (req.file) data.hero_image = `data/uploads/${req.file.filename}`;
+        if (req.file) data.hero_image = toDataUrl(req.file);
         await writeProject(req.params.id, data);
     }
     await appendLog('UPDATE', 'project', req.params.id, entry.name);
@@ -388,7 +382,7 @@ app.post('/api/projects/:id/diary', requireAuth, upload.array('images', 20), asy
     const data = await readProject(req.params.id);
     if (!data) return res.status(404).json({ error: 'Not found' });
 
-    const images = (req.files || []).map(f => `data/uploads/${f.filename}`);
+    const images = (req.files || []).map(f => toDataUrl(f));
     const entry = {
         date: req.body.date || new Date().toISOString().slice(0, 10),
         location: req.body.location || '',
@@ -416,7 +410,7 @@ app.patch('/api/projects/:id/diary/:index', requireAuth, upload.array('images', 
     if (req.body.title !== undefined) entry.title = req.body.title;
     if (req.body.body !== undefined) entry.body = req.body.body;
     if (req.files && req.files.length > 0)
-        entry.images = (entry.images || []).concat(req.files.map(f => `data/uploads/${f.filename}`));
+        entry.images = (entry.images || []).concat(req.files.map(f => toDataUrl(f)));
     await writeProject(req.params.id, data);
     await appendLog('UPDATE', 'diary', req.params.id, entry.title || entry.date, { index: idx, prev: prevEntry });
     res.json(entry);
@@ -437,7 +431,7 @@ app.post('/api/projects/:id/reports', requireAuth, upload.single('pdf'), async (
         title: req.body.title || '',
         period: req.body.period || '',
         body: req.body.body || '',
-        pdf: req.file ? `data/uploads/${req.file.filename}` : ''
+        pdf: req.file ? toDataUrl(req.file) : ''
     };
     data.reports = data.reports || [];
     data.reports.unshift(report);
@@ -457,7 +451,7 @@ app.patch('/api/projects/:id/reports/:index', requireAuth, upload.single('pdf'),
     if (req.body.title !== undefined) report.title = req.body.title;
     if (req.body.period !== undefined) report.period = req.body.period;
     if (req.body.body !== undefined) report.body = req.body.body;
-    if (req.file) report.pdf = `data/uploads/${req.file.filename}`;
+    if (req.file) report.pdf = toDataUrl(req.file);
     await writeProject(req.params.id, data);
     await appendLog('UPDATE', 'report', req.params.id, report.title || report.period, { index: idx, prev: prevReport });
     res.json(report);
@@ -489,7 +483,7 @@ app.post('/api/projects/:id/gallery', requireAuth, upload.array('images', 30), a
         return res.status(201).json([item]);
     }
 
-    const items = req.files.map(f => ({ ...baseItem, image: `data/uploads/${f.filename}` }));
+    const items = req.files.map(f => ({ ...baseItem, image: toDataUrl(f) }));
     data.gallery.unshift(...items);
     await writeProject(req.params.id, data);
     await appendLog('CREATE', 'gallery', req.params.id,
@@ -509,7 +503,7 @@ app.patch('/api/projects/:id/gallery/:index', requireAuth, upload.single('image'
     if (req.body.date !== undefined) item.date = req.body.date;
     if (req.body.location !== undefined) item.location = req.body.location;
     if (req.body.caption !== undefined) item.caption = req.body.caption;
-    if (req.file) item.image = `data/uploads/${req.file.filename}`;
+    if (req.file) item.image = toDataUrl(req.file);
     await writeProject(req.params.id, data);
     await appendLog('UPDATE', 'gallery', req.params.id, item.caption || item.date, { index: idx, prev: prevGallery });
     res.json(item);
@@ -531,7 +525,7 @@ app.post('/api/projects/:id/interviews', requireAuth, upload.single('photo'), as
         year: req.body.year || '',
         role: req.body.role || '',
         quote: req.body.quote || '',
-        photo: req.file ? `data/uploads/${req.file.filename}` : ''
+        photo: req.file ? toDataUrl(req.file) : ''
     };
     data.interviews = data.interviews || [];
     data.interviews.push(interview);
@@ -553,7 +547,7 @@ app.patch('/api/projects/:id/interviews/:index', requireAuth, upload.single('pho
     if (req.body.year !== undefined) interview.year = req.body.year;
     if (req.body.role !== undefined) interview.role = req.body.role;
     if (req.body.quote !== undefined) interview.quote = req.body.quote;
-    if (req.file) interview.photo = `data/uploads/${req.file.filename}`;
+    if (req.file) interview.photo = toDataUrl(req.file);
     await writeProject(req.params.id, data);
     await appendLog('UPDATE', 'interview', req.params.id, interview.name || interview.year,
         { index: idx, prev: prevInterview });
@@ -658,7 +652,7 @@ app.patch('/api/projects/:id/card', requireAuth, upload.single('card_image'), as
             if (req.body[`meta_${i}_value`] !== undefined) card.meta[i].value = req.body[`meta_${i}_value`];
         });
     }
-    if (req.file) card.image = `data/uploads/${req.file.filename}`;
+    if (req.file) card.image = toDataUrl(req.file);
 
     data.card = card;
     await writeProject(req.params.id, data);

@@ -17,7 +17,7 @@ window.addEventListener('scroll', () => {
 document.getElementById('navbar').classList.add('scrolled'); // always frosted on detail page
 
 // ─── FETCH JSON ──────────────────────────────────────────────
-fetch(`data/${projectId}.json`)
+fetch(`/api/projects/${projectId}`)
     .then(r => {
         if (!r.ok) throw new Error(`Project "${projectId}" not found`);
         return r.json();
