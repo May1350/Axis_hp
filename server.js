@@ -522,15 +522,17 @@ app.post('/api/projects/:id/interviews', requireAuth, upload.single('photo'), as
 
     const interview = {
         name: req.body.name || '',
-        year: req.body.year || '',
-        role: req.body.role || '',
-        quote: req.body.quote || '',
+        university: req.body.university || '',
+        department: req.body.department || '',
+        grade: req.body.grade || '',
+        trips: req.body.trips ? req.body.trips.split(',').map(t => t.trim()).filter(Boolean) : [],
+        qanda: req.body.qanda ? JSON.parse(req.body.qanda) : [],
         photo: req.file ? toDataUrl(req.file) : ''
     };
     data.interviews = data.interviews || [];
     data.interviews.push(interview);
     await writeProject(req.params.id, data);
-    await appendLog('CREATE', 'interview', req.params.id, interview.name || interview.year,
+    await appendLog('CREATE', 'interview', req.params.id, interview.name || interview.university,
         { index: data.interviews.length - 1, item: interview });
     res.status(201).json(interview);
 });
@@ -544,12 +546,14 @@ app.patch('/api/projects/:id/interviews/:index', requireAuth, upload.single('pho
     const prevInterview = JSON.parse(JSON.stringify(data.interviews[idx]));
     const interview = data.interviews[idx];
     if (req.body.name !== undefined) interview.name = req.body.name;
-    if (req.body.year !== undefined) interview.year = req.body.year;
-    if (req.body.role !== undefined) interview.role = req.body.role;
-    if (req.body.quote !== undefined) interview.quote = req.body.quote;
+    if (req.body.university !== undefined) interview.university = req.body.university;
+    if (req.body.department !== undefined) interview.department = req.body.department;
+    if (req.body.grade !== undefined) interview.grade = req.body.grade;
+    if (req.body.trips !== undefined) interview.trips = req.body.trips.split(',').map(t => t.trim()).filter(Boolean);
+    if (req.body.qanda !== undefined) interview.qanda = JSON.parse(req.body.qanda);
     if (req.file) interview.photo = toDataUrl(req.file);
     await writeProject(req.params.id, data);
-    await appendLog('UPDATE', 'interview', req.params.id, interview.name || interview.year,
+    await appendLog('UPDATE', 'interview', req.params.id, interview.name || interview.university,
         { index: idx, prev: prevInterview });
     res.json(interview);
 });

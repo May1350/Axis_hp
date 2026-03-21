@@ -837,9 +837,8 @@ function renderInterviewList() {
             <div class="entry-card-info">
                 <div class="entry-card-title">${escHtml(iv.name || '(No name)')}</div>
                 <div class="entry-card-meta">
-                    <span>${escHtml(iv.year || '')}</span>
+                    <span>${[escHtml(iv.university || ''), escHtml(iv.department || ''), escHtml(iv.grade || '')].filter(Boolean).join(' · ')}</span>
                     ${iv.qanda?.length ? `<span class="tag">${iv.qanda.length} Q&amp;A</span>` : ''}
-                    ${iv.trips?.length ? `<span>${iv.trips.join(', ')}</span>` : ''}
                 </div>
             </div>
             <div class="entry-card-actions">
@@ -933,8 +932,9 @@ function openEditForm(type, index) {
     } else if (type === 'interviews') {
         const f = document.getElementById('interviewForm');
         f.querySelector('[name=name]').value = item.name || '';
-        f.querySelector('[name=year]').value = item.year || '';
-        f.querySelector('[name=trips]').value = (item.trips || []).join(', ');
+        f.querySelector('[name=university]').value = item.university || '';
+        f.querySelector('[name=department]').value = item.department || '';
+        f.querySelector('[name=grade]').value = item.grade || '';
         // Rebuild Q&A
         document.getElementById('qandaItems').innerHTML = '';
         qaCount = 0;
