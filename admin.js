@@ -622,7 +622,7 @@ async function handleGallerySubmit(e) {
             const file = gallerySelectedFiles[0];
             if (file) {
                 const resized = await resizeImageFile(file);
-                fd.set('images', resized, file.name.replace(/\.[^.]+$/, '.jpg'));
+                fd.set('image', resized, file.name.replace(/\.[^.]+$/, '.jpg'));
             }
             const res = await authFetch(`/api/projects/${currentProject}/gallery/${editMode.index}`, { method: 'PATCH', body: fd });
             if (!res.ok) throw new Error();

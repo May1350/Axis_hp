@@ -62,7 +62,7 @@ app.use(express.static(__dirname));
 // ─── Multer (memory storage — images stored as Base64 in MongoDB) ───
 const upload = multer({
     storage: multer.memoryStorage(),
-    limits: { fileSize: 5 * 1024 * 1024 },   // 5 MB per file
+    limits: { fileSize: 15 * 1024 * 1024 },   // 15 MB per file
     fileFilter: (_req, file, cb) => {
         const allowedMime = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'application/pdf'];
         const allowedExt = ['.jpg', '.jpeg', '.png', '.webp', '.gif', '.pdf'];
