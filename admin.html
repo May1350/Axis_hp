@@ -283,7 +283,7 @@
                             </div>
                             <div class="field">
                                 <label>Location *</label>
-                                <input type="text" name="location" placeholder="e.g. Darkhan, Mongolia" required>
+                                <input type="text" name="location" list="ac-location" placeholder="e.g. Darkhan, Mongolia" required>
                             </div>
                             <div class="field form-col-full">
                                 <label>Title *</label>
@@ -337,7 +337,7 @@
                             </div>
                             <div class="field">
                                 <label>Period *</label>
-                                <input type="text" name="period" placeholder="e.g. 2023.08.10 – 08.20">
+                                <input type="text" name="period" list="ac-period" placeholder="e.g. 2023.08.10 – 08.20">
                             </div>
                             <div class="field">
                                 <label>Date (for sorting)</label>
@@ -421,16 +421,16 @@
                             </div>
                             <div class="field">
                                 <label>Location</label>
-                                <input type="text" name="location" placeholder="e.g. Darkhan, Mongolia">
+                                <input type="text" name="location" list="ac-location" placeholder="e.g. Darkhan, Mongolia">
                             </div>
                             <div class="field">
                                 <label>Trip / Dispatch</label>
-                                <input type="text" name="trip" placeholder="e.g. 第13回モンゴル派遣">
+                                <input type="text" name="trip" list="ac-trip" placeholder="e.g. 第13回モンゴル派遣">
                             </div>
                             <div class="field">
                                 <label>Caption <small style="color:rgba(255,255,255,0.4)">(applied to all
                                         photos)</small></label>
-                                <input type="text" name="caption" placeholder="Short description of the photos">
+                                <input type="text" name="caption" list="ac-caption" placeholder="Short description of the photos">
                             </div>
                             <div class="field form-col-full">
                                 <label>Photos * <small style="color:rgba(255,255,255,0.4)">JPG, PNG, WebP — up to 20
@@ -499,15 +499,15 @@
                             </div>
                             <div class="field">
                                 <label>University / School</label>
-                                <input type="text" name="university" placeholder="e.g. 慶應義塾大学">
+                                <input type="text" name="university" list="ac-university" placeholder="e.g. 慶應義塾大学">
                             </div>
                             <div class="field">
                                 <label>Department / Faculty</label>
-                                <input type="text" name="department" placeholder="e.g. 経済学部">
+                                <input type="text" name="department" list="ac-department" placeholder="e.g. 経済学部">
                             </div>
                             <div class="field">
                                 <label>Grade / Year</label>
-                                <input type="text" name="grade" placeholder="e.g. 3年">
+                                <input type="text" name="grade" list="ac-grade" placeholder="e.g. 3年">
                             </div>
                             <div class="field form-col-full">
                                 <label>Profile Photo</label>
@@ -905,6 +905,15 @@
             }
         }
     </style>
+
+    <!-- ── Autocomplete datalists (populated by admin.js buildAutocomplete) ── -->
+    <datalist id="ac-location"></datalist>
+    <datalist id="ac-period"></datalist>
+    <datalist id="ac-trip"></datalist>
+    <datalist id="ac-caption"></datalist>
+    <datalist id="ac-university"></datalist>
+    <datalist id="ac-department"></datalist>
+    <datalist id="ac-grade"></datalist>
 
     <script src="admin.js"></script>
 </body>

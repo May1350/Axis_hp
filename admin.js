@@ -180,6 +180,41 @@ function renderAllLists() {
     renderReportList();
     renderGalleryList();
     renderInterviewList();
+    buildAutocomplete();
+}
+
+// ─── Autocomplete Datalists ───────────────────────────────────
+function buildAutocomplete() {
+    // Helper: collect unique non-empty values for a field across an array
+    function unique(arr, field) {
+        return [...new Set(
+            (arr || []).map(item => (item[field] || '').trim()).filter(Boolean)
+        )];
+    }
+    // Fill a datalist with option elements
+    function fill(id, values) {
+        const dl = document.getElementById(id);
+        if (!dl) return;
+        dl.innerHTML = values.map(v => `<option value="${v.replace(/"/g, '&quot;')}"></option>`).join('');
+    }
+
+    const diary = projectData.diary || [];
+    const gallery = projectData.gallery || [];
+    const reports = projectData.reports || [];
+    const interviews = projectData.interviews || [];
+
+    // location: merge diary + gallery locations
+    const locations = [...new Set([
+        ...unique(diary, 'location'),
+        ...unique(gallery, 'location')
+    ])];
+    fill('ac-location', locations);
+    fill('ac-period', unique(reports, 'period'));
+    fill('ac-trip', unique(gallery, 'trip'));
+    fill('ac-caption', unique(gallery, 'caption'));
+    fill('ac-university', unique(interviews, 'university'));
+    fill('ac-department', unique(interviews, 'department'));
+    fill('ac-grade', unique(interviews, 'grade'));
 }
 
 // ─── Stats Tab ────────────────────────────────────────────────
