@@ -229,9 +229,9 @@
                     <form id="aForm-diary">
                         <div class="form-grid">
                             <div class="field"><label>Date *</label><input type="date" name="date" required></div>
-                            <div class="field"><label>Location *</label><input type="text" name="location"
+                            <div class="field"><label>Location *</label><input type="text" name="location" list="pac-location"
                                     placeholder="e.g. Darkhan, Mongolia" required></div>
-                            <div class="field form-col-full"><label>Title *</label><input type="text" name="title"
+                            <div class="field form-col-full"><label>Title *</label><input type="text" name="title" list="pac-diary-title"
                                     placeholder="e.g. Day 5 — 植林作業、本格化" required></div>
                             <div class="field form-col-full">
                                 <label>Body *</label>
@@ -281,7 +281,7 @@
                         <div class="form-grid">
                             <div class="field form-col-full"><label>Title *</label><input type="text" name="title"
                                     placeholder="e.g. 第13回 モンゴル派遣 活動報告書" required></div>
-                            <div class="field"><label>Period</label><input type="text" name="period"
+                            <div class="field"><label>Period</label><input type="text" name="period" list="pac-period"
                                     placeholder="e.g. 2023.08.10 – 08.20"></div>
                             <div class="field"><label>Date</label><input type="date" name="date"></div>
                             <div class="field"><label>Members</label><input type="number" name="members" placeholder="8"
@@ -315,11 +315,11 @@
                     <form id="aForm-gallery">
                         <div class="form-grid">
                             <div class="field"><label>Date *</label><input type="date" name="date" required></div>
-                            <div class="field"><label>Location</label><input type="text" name="location"
+                            <div class="field"><label>Location</label><input type="text" name="location" list="pac-location"
                                     placeholder="e.g. Darkhan"></div>
-                            <div class="field"><label>Trip</label><input type="text" name="trip"
+                            <div class="field"><label>Trip</label><input type="text" name="trip" list="pac-trip"
                                     placeholder="e.g. 第13回モンゴル派遣"></div>
-                            <div class="field"><label>Caption</label><input type="text" name="caption"
+                            <div class="field"><label>Caption</label><input type="text" name="caption" list="pac-caption"
                                     placeholder="Short description"></div>
                             <div class="field form-col-full">
                                 <label>Photo *</label>
@@ -451,6 +451,13 @@
             <div id="detailModalContent"></div>
         </div>
     </div>
+
+    <!-- ── Autocomplete datalists for admin drawer ── -->
+    <datalist id="pac-location"></datalist>
+    <datalist id="pac-diary-title"></datalist>
+    <datalist id="pac-period"></datalist>
+    <datalist id="pac-trip"></datalist>
+    <datalist id="pac-caption"></datalist>
 
     <script src="project.js"></script>
     <script src="project-admin.js"></script>

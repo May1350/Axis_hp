@@ -218,6 +218,38 @@
         renderList('gallery', projectData.gallery || []);
         renderList('interviews', projectData.interviews || []);
         populateStatsForm(projectData.stats || {});
+        buildDrawerAutocomplete();
+    }
+
+    /* ── Autocomplete datalists ─────────────────────────────── */
+    function buildDrawerAutocomplete() {
+        function unique(arr, field) {
+            return [...new Set(
+                (arr || []).map(item => (item[field] || '').trim()).filter(Boolean)
+            )];
+        }
+        function fill(id, values) {
+            const dl = document.getElementById(id);
+            if (!dl) return;
+            dl.innerHTML = values.map(v =>
+                `<option value="${v.replace(/"/g, '&quot;')}"></option>`
+            ).join('');
+        }
+
+        const diary    = projectData.diary    || [];
+        const gallery  = projectData.gallery  || [];
+        const reports  = projectData.reports  || [];
+
+        // location: merge diary + gallery
+        const locations = [...new Set([
+            ...unique(diary, 'location'),
+            ...unique(gallery, 'location')
+        ])];
+        fill('pac-location',   locations);
+        fill('pac-diary-title', unique(diary, 'title'));
+        fill('pac-period',     unique(reports, 'period'));
+        fill('pac-trip',       unique(gallery, 'trip'));
+        fill('pac-caption',    unique(gallery, 'caption'));
     }
 
     /* ── Stats Form ─────────────────────────────────────────── */
