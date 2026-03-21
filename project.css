@@ -1888,3 +1888,155 @@ body.admin-drawer-open::before {
     color: #D4AF37;
     letter-spacing: 0.03em;
 }
+
+/* ═══════════════════════════════════════════════════════════
+   REPORT THUMBNAIL LIST (project.js rendered)
+   ═══════════════════════════════════════════════════════════ */
+.report-thumb-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.report-thumb-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 18px 20px;
+    cursor: pointer;
+    box-shadow:
+        0 0 0 1px rgba(11, 20, 55, 0.06),
+        0 2px 6px rgba(11, 20, 55, 0.04);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.report-thumb-card:hover {
+    transform: translateX(4px);
+    box-shadow:
+        0 0 0 1px rgba(11, 20, 55, 0.09),
+        0 4px 16px rgba(11, 20, 55, 0.07);
+}
+
+.report-thumb-icon {
+    font-size: 24px;
+    color: rgba(11, 20, 55, 0.15);
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    background: #f1f3f8;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.report-thumb-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.report-thumb-period {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #D4AF37;
+    margin-bottom: 4px;
+}
+
+.report-thumb-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: #0B1437;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.report-thumb-meta {
+    display: flex;
+    gap: 10px;
+    margin-top: 4px;
+}
+
+.report-thumb-meta span {
+    font-size: 12px;
+    color: #4A5B7A;
+}
+
+.report-thumb-arrow {
+    font-size: 18px;
+    color: #D4AF37;
+    flex-shrink: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   INTERVIEW ACCORDION BODY — light background
+   ═══════════════════════════════════════════════════════════ */
+.interview-body {
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.interview-card.open .interview-body {
+    max-height: 2000px;
+}
+
+.interview-qa {
+    padding: 20px 24px;
+    border-top: 1px solid rgba(11, 20, 55, 0.06);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.interview-q {
+    font-size: 14px;
+    font-weight: 700;
+    color: #0B1437;
+    margin: 0 0 4px;
+}
+
+.interview-a {
+    font-size: 14px;
+    line-height: 1.75;
+    color: #374151;
+    margin: 0;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SECTION LABELS — visible on white background
+   ═══════════════════════════════════════════════════════════ */
+.section-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #D4AF37;
+    margin-bottom: 6px;
+}
+
+.section-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: 26px;
+    font-weight: 800;
+    color: #0B1437;
+    margin-bottom: 8px;
+}
+
+.section-subtitle {
+    font-size: 15px;
+    color: #4A5B7A;
+    margin-bottom: 32px;
+}
+
+/* Tab content area separator line */
+.tab-content-inner {
+    max-width: var(--max-width, 1200px);
+    margin: 0 auto;
+    padding: 48px 40px;
+}
