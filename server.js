@@ -556,7 +556,7 @@ app.patch('/api/projects/:id/interviews/:index', requireAuth, upload.single('pho
 
 // ── Generic DELETE for diary / reports / gallery / interviews ─
 app.delete('/api/projects/:id/:type/:index', requireAuth, async (req, res) => {
-    const keyMap = { diary: 'diary', report: 'reports', gallery: 'gallery', interview: 'interviews' };
+    const keyMap = { diary: 'diary', report: 'reports', reports: 'reports', gallery: 'gallery', interview: 'interviews', interviews: 'interviews' };
     const key = keyMap[req.params.type];
     const idx = parseInt(req.params.index, 10);
     const data = await readProject(req.params.id);

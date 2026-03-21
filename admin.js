@@ -574,7 +574,7 @@ async function handleReportSubmit(e) {
 
         const url = isEdit
             ? `/api/projects/${currentProject}/reports/${editMode.index}`
-            : `/api/projects/${currentProject}/report`;
+            : `/api/projects/${currentProject}/reports`;
         const method = isEdit ? 'PATCH' : 'POST';
         const res = await authFetch(url, { method, body: fd });
         if (!res.ok) throw new Error();
@@ -727,7 +727,7 @@ async function handleInterviewSubmit(e) {
         const isEditIv = editMode && editMode.type === 'interviews';
         const urlIv = isEditIv
             ? `/api/projects/${currentProject}/interviews/${editMode.index}`
-            : `/api/projects/${currentProject}/interview`;
+            : `/api/projects/${currentProject}/interviews`;
         const methodIv = isEditIv ? 'PATCH' : 'POST';
         const res = await authFetch(urlIv, { method: methodIv, body: fd });
         if (!res.ok) throw new Error();
