@@ -295,6 +295,13 @@
                                     required></textarea>
                             </div>
                             <div class="field form-col-full">
+                                <!-- Existing images (shown only in edit mode) -->
+                                <div id="diaryExistingImgSection" style="display:none;margin-bottom:12px;">
+                                    <label style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text-sub);display:block;margin-bottom:8px;">
+                                        Existing Photos — Click ✕ to remove
+                                    </label>
+                                    <div class="img-previews" id="diaryExistingImgPreviews"></div>
+                                </div>
                                 <label>Photos (up to 10)</label>
                                 <div class="upload-zone" id="diaryImgZone">
                                     <input type="file" name="images" accept="image/*" multiple id="diaryImgInput">

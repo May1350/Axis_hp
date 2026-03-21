@@ -13,6 +13,7 @@ let sectionCount = 0;
 let qaCount = 0;
 let pendingDelete = null;  // { type, index }
 let editMode = null;       // null | { type, index }
+let diaryKeepImages = [];  // data-URLs of existing images to keep in edit mode
 
 // ─── Token Storage ────────────────────────────────────────────
 function getToken() { return localStorage.getItem('axis_admin_token'); }
@@ -554,6 +555,10 @@ async function handleDiarySubmit(e) {
 
     try {
         const fd = new FormData(form);
+        // In edit mode, tell server which existing images to keep
+        if (isEdit) {
+            fd.set('keepImages', JSON.stringify(diaryKeepImages));
+        }
         const url = isEdit
             ? `/api/projects/${currentProject}/diary/${editMode.index}`
             : `/api/projects/${currentProject}/diary`;
@@ -574,14 +579,66 @@ async function handleDiarySubmit(e) {
         status.className = 'form-status success';
         toast(isEdit ? 'Diary entry updated' : 'Diary entry added successfully', 'success');
         editMode = null;
+        diaryKeepImages = [];
+        // Clear existing-image preview area
+        const epv = document.getElementById('diaryExistingImgPreviews');
+        if (epv) epv.innerHTML = '';
     } catch {
         status.textContent = '✗ Failed to save. Try again.';
         status.className = 'form-status error';
     } finally {
         btn.disabled = false;
         btn.textContent = 'Add Entry';
+        // Hide existing image section and reset button label on success/cancel
+        const epvSec = document.getElementById('diaryExistingImgSection');
+        if (epvSec) epvSec.style.display = 'none';
+        document.getElementById('diarySubmitBtn').textContent = 'Add Entry';
         setTimeout(() => { status.textContent = ''; }, 4000);
     }
+}
+
+// ─── Render existing diary images (edit mode) ─────────────────
+function renderDiaryEditPreviews() {
+    const section = document.getElementById('diaryExistingImgSection');
+    const container = document.getElementById('diaryExistingImgPreviews');
+    if (!section || !container) return;
+
+    if (!diaryKeepImages.length) {
+        section.style.display = 'none';
+        container.innerHTML = '';
+        return;
+    }
+
+    section.style.display = 'block';
+    container.innerHTML = '';
+    diaryKeepImages.forEach((src, i) => {
+        const wrap = document.createElement('div');
+        wrap.className = 'img-preview';
+        wrap.style.position = 'relative';
+
+        const img = document.createElement('img');
+        img.src = src;
+        img.style.cssText = 'width:80px;height:80px;object-fit:cover;border-radius:8px;display:block;';
+
+        const rmBtn = document.createElement('button');
+        rmBtn.type = 'button';
+        rmBtn.textContent = '✕';
+        rmBtn.title = 'Remove this photo';
+        rmBtn.style.cssText = [
+            'position:absolute;top:2px;right:2px;width:20px;height:20px;',
+            'border-radius:50%;background:rgba(0,0,0,0.75);border:none;',
+            'color:#fff;font-size:11px;cursor:pointer;display:flex;',
+            'align-items:center;justify-content:center;line-height:1;padding:0;'
+        ].join('');
+        rmBtn.addEventListener('click', () => {
+            diaryKeepImages.splice(i, 1);
+            renderDiaryEditPreviews();
+        });
+
+        wrap.appendChild(img);
+        wrap.appendChild(rmBtn);
+        container.appendChild(wrap);
+    });
 }
 
 // ─── FORM: Report ─────────────────────────────────────────────
@@ -936,7 +993,9 @@ function openEditForm(type, index) {
         f.querySelector('[name=location]').value = item.location || '';
         f.querySelector('[name=title]').value = item.title || '';
         f.querySelector('[name=body]').value = item.body || '';
-        // Update button label
+        // ── Show existing images with delete buttons ──────────────
+        diaryKeepImages = [...(item.images || [])]; // track which to keep
+        renderDiaryEditPreviews();
         document.getElementById('diarySubmitBtn').textContent = 'Update Entry';
     } else if (type === 'reports') {
         const f = document.getElementById('reportForm');

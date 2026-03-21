@@ -14,6 +14,7 @@
     let projectData = {};
     let aQaCount = 0;
     let aPendingDelete = null;
+    let aDrawerKeepImages = [];  // existing images to keep when editing a diary entry
 
     /* ── Token helpers ────────────────────────────────────── */
     const getToken = () => localStorage.getItem(TOKEN_KEY);
@@ -392,6 +393,10 @@
             // Diary: inject RTE HTML into hidden 'body' field
             if (type === 'diary') {
                 fd.set('body', getRteHtml());
+                // In edit mode, send which existing images to keep
+                if (isEdit) {
+                    fd.set('keepImages', JSON.stringify(aDrawerKeepImages));
+                }
             }
 
             // Interviews: collect Q&A
@@ -449,7 +454,15 @@
                 const el = document.getElementById(id);
                 if (el) el.innerHTML = '';
             });
-            if (type === 'diary') clearRte();
+            if (type === 'diary') {
+                clearRte();
+                // Reset existing-image section
+                aDrawerKeepImages = [];
+                const sec = document.getElementById('aDiaryExistingImgSection');
+                if (sec) sec.style.display = 'none';
+                const submitBtn = form.querySelector('[type=submit]');
+                if (submitBtn) submitBtn.textContent = 'Add Entry';
+            }
             if (type === 'interviews') {
                 document.getElementById('aQandaItems').innerHTML = '';
                 addQaPair();
@@ -544,6 +557,9 @@
             form.querySelector('[name=title]').value = item.title || '';
             const rte = document.getElementById('aDiaryRte');
             if (rte) rte.innerHTML = item.body || '';
+            // ── Show existing images with delete buttons ─────────────
+            aDrawerKeepImages = [...(item.images || [])];
+            renderADiaryEditPreviews();
             form.querySelector('[type=submit]').textContent = 'Update Entry';
         } else if (type === 'reports') {
             form.querySelector('[name=title]').value = item.title || '';
@@ -587,6 +603,50 @@
         } catch {
             aToast('Delete failed', 'error');
         }
+    }
+
+    /* ── Render existing diary images (drawer edit mode) ────── */
+    function renderADiaryEditPreviews() {
+        const section = document.getElementById('aDiaryExistingImgSection');
+        const container = document.getElementById('aDiaryExistingImgPreviews');
+        if (!section || !container) return;
+
+        if (!aDrawerKeepImages.length) {
+            section.style.display = 'none';
+            container.innerHTML = '';
+            return;
+        }
+
+        section.style.display = 'block';
+        container.innerHTML = '';
+        aDrawerKeepImages.forEach((src, i) => {
+            const wrap = document.createElement('div');
+            wrap.className = 'img-preview';
+            wrap.style.position = 'relative';
+
+            const img = document.createElement('img');
+            img.src = src;
+            img.style.cssText = 'width:80px;height:80px;object-fit:cover;border-radius:8px;display:block;';
+
+            const rmBtn = document.createElement('button');
+            rmBtn.type = 'button';
+            rmBtn.textContent = '✕';
+            rmBtn.title = 'Remove this photo';
+            rmBtn.style.cssText = [
+                'position:absolute;top:2px;right:2px;width:20px;height:20px;',
+                'border-radius:50%;background:rgba(0,0,0,0.75);border:none;',
+                'color:#fff;font-size:11px;cursor:pointer;display:flex;',
+                'align-items:center;justify-content:center;line-height:1;padding:0;'
+            ].join('');
+            rmBtn.addEventListener('click', () => {
+                aDrawerKeepImages.splice(i, 1);
+                renderADiaryEditPreviews();
+            });
+
+            wrap.appendChild(img);
+            wrap.appendChild(rmBtn);
+            container.appendChild(wrap);
+        });
     }
 
     /* ── Toast ──────────────────────────────────────────────── */

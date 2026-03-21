@@ -409,8 +409,16 @@ app.patch('/api/projects/:id/diary/:index', requireAuth, upload.array('images', 
     if (req.body.location !== undefined) entry.location = req.body.location;
     if (req.body.title !== undefined) entry.title = req.body.title;
     if (req.body.body !== undefined) entry.body = req.body.body;
-    if (req.files && req.files.length > 0)
+
+    // keepImages: JSON array of existing image data-URLs the client wants to retain
+    if (req.body.keepImages !== undefined) {
+        const kept = JSON.parse(req.body.keepImages);   // array of data-URL strings
+        const newImgs = (req.files || []).map(f => toDataUrl(f));
+        entry.images = [...kept, ...newImgs];
+    } else if (req.files && req.files.length > 0) {
         entry.images = (entry.images || []).concat(req.files.map(f => toDataUrl(f)));
+    }
+
     await writeProject(req.params.id, data);
     await appendLog('UPDATE', 'diary', req.params.id, entry.title || entry.date, { index: idx, prev: prevEntry });
     res.json(entry);
