@@ -7,6 +7,12 @@ node_modules/
 # Uploaded files (can be large, should be backed up separately)
 data/uploads/
 
+# Worktrees
+.worktrees/
+
+# Superpowers brainstorm files
+.superpowers/
+
 # System files
 .DS_Store
 *.log
