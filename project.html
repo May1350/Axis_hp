@@ -82,6 +82,7 @@
             <button class="tab-btn" data-tab="reports">Activity Reports</button>
             <button class="tab-btn" data-tab="gallery">Photo Gallery</button>
             <button class="tab-btn" data-tab="interviews">Member Voices</button>
+            <button class="tab-btn" data-tab="milestones">Milestones</button>
             <button class="tab-btn admin-open-btn" id="adminFab" title="Admin Panel"
                 aria-label="Open Admin Panel">＋</button>
         </div>
@@ -140,6 +141,45 @@
             <div class="empty-state">
                 <div class="empty-icon">🎙️</div>
                 <h3>Loading interviews…</h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════
+         TAB: MILESTONES
+    ═══════════════════════════════════════ -->
+    <div class="tab-content" id="tab-milestones">
+        <span class="section-label">Preparation</span>
+        <h2 class="section-title">Milestones</h2>
+        <div id="milestonesSection">
+            <!-- Period selector -->
+            <div class="ms-period-selector" id="msPeriodSelector"></div>
+
+            <!-- Period label + progress -->
+            <div class="ms-track-header" id="msTrackHeader" style="display:none">
+                <div class="ms-track-period-label" id="msTrackPeriodLabel"></div>
+                <div class="ms-track-pct" id="msTrackPct"></div>
+            </div>
+
+            <!-- Horizontal timeline track -->
+            <div class="ms-h-track-outer" id="msHTrackOuter" style="display:none">
+                <div class="ms-h-track" id="msHTrack"></div>
+                <div class="ms-h-line-wrap" id="msHLineWrap">
+                    <div class="ms-h-line-base"></div>
+                    <div class="ms-h-line-fill" id="msHLineFill"></div>
+                    <div class="ms-h-line-arrow" id="msHLineArrow"></div>
+                </div>
+            </div>
+
+            <!-- Vertical detail panel -->
+            <div class="ms-detail-panel" id="msDetailPanel">
+                <div class="ms-detail-inner" id="msDetailInner"></div>
+            </div>
+
+            <div id="msEmptyState" class="empty-state" style="display:none">
+                <div class="empty-icon">◻</div>
+                <h3>No milestones yet</h3>
+                <p>Preparation milestones will appear here once set by the team.</p>
             </div>
         </div>
     </div>
@@ -217,6 +257,7 @@
             <button class="admin-drawer-tab" data-atab="gallery">Gallery</button>
             <button class="admin-drawer-tab" data-atab="interviews">Voices</button>
             <button class="admin-drawer-tab" data-atab="stats">Stats</button>
+            <button class="admin-drawer-tab" data-atab="milestones">Milestones</button>
         </div>
 
         <!-- Drawer Content -->
@@ -428,6 +469,18 @@
                             <span class="form-status" id="aStatsStatus"></span>
                         </div>
                     </form>
+                </div>
+            </div>
+
+            <!-- ── MILESTONES (inline admin) ── -->
+            <div id="atab-milestones" class="admin-drawer-panel">
+                <div class="add-form-panel" style="background:transparent;padding:0;border:none;box-shadow:none">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+                        <div style="font-size:13px;color:rgba(255,255,255,0.5)">Edit goal status &amp; sub-task progress</div>
+                        <button class="btn btn--outline btn--sm" onclick="paLoadMilestones()">↺ Refresh</button>
+                    </div>
+                    <div id="pa-milestone-period-tabs" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px"></div>
+                    <div id="pa-milestone-goal-list"></div>
                 </div>
             </div>
 

@@ -146,6 +146,7 @@
                 <button class="admin-tab-btn" data-tab="reports">Activity Reports</button>
                 <button class="admin-tab-btn" data-tab="gallery">Photo Gallery</button>
                 <button class="admin-tab-btn" data-tab="interviews">Member Voices</button>
+                <button class="admin-tab-btn" data-tab="milestones">Milestones</button>
                 <button class="admin-tab-btn" data-tab="stats">Stats</button>
                 <button class="admin-tab-btn" data-tab="cards">Cards</button>
                 <button class="admin-tab-btn" data-tab="history">History</button>
@@ -813,6 +814,112 @@
                             style="font-size:12px;font-weight:400;color:rgba(255,255,255,0.4);margin-left:8px;">top =
                             oldest shown first</span></div>
                     <div class="entries-list" id="historyList"></div>
+                </div>
+            </div>
+
+            <!-- ── TAB: MILESTONES ── -->
+            <div id="tab-milestones" class="admin-tab-content">
+                <div class="section-top">
+                    <div>
+                        <h2>Preparation Milestones</h2>
+                        <p>Manage pre-trip preparation milestones by period (YYYY.MM). Visible publicly on the project page.</p>
+                    </div>
+                </div>
+
+                <!-- Period management row -->
+                <div class="milestone-period-bar">
+                    <div class="milestone-period-tabs" id="milestonePeriodTabs"></div>
+                    <button class="btn btn--outline btn--sm" id="milestoneAddPeriodBtn" type="button">+ New Period</button>
+                    <button class="btn btn--outline btn--sm" id="milestoneCategoryBtn" type="button" style="margin-left:8px">⊞ Categories</button>
+                </div>
+
+                <!-- Goal list -->
+                <div id="milestoneGoalList" style="margin-top:24px"></div>
+
+                <!-- Add/Edit Goal Form -->
+                <div class="add-form-panel" id="milestoneGoalForm" style="display:none;margin-top:24px">
+                    <div class="form-title" id="milestoneGoalFormTitle">New Goal</div>
+                    <input type="hidden" id="mgf-gIdx">
+                    <div class="form-grid">
+                        <div class="field">
+                            <label>Title (English) *</label>
+                            <input type="text" id="mgf-title-en" placeholder="e.g. Flight Booking">
+                        </div>
+                        <div class="field">
+                            <label>タイトル (日本語) *</label>
+                            <input type="text" id="mgf-title-jp" placeholder="例: 航空券予約">
+                        </div>
+                        <div class="field">
+                            <label>Category</label>
+                            <select id="mgf-category"></select>
+                        </div>
+                        <div class="field">
+                            <label>Target Date</label>
+                            <input type="date" id="mgf-target-date">
+                        </div>
+                        <div class="field">
+                            <label>Assignee / 担当</label>
+                            <input type="text" id="mgf-assignee" placeholder="e.g. 김민수">
+                        </div>
+                        <div class="field">
+                            <label>Status</label>
+                            <select id="mgf-status">
+                                <option value="planned">Planned / 予定</option>
+                                <option value="in_progress">In Progress / 進行中</option>
+                                <option value="completed">Completed / 完了</option>
+                            </select>
+                        </div>
+                        <div class="field form-col-full">
+                            <label>Note (admin only / 非公開メモ)</label>
+                            <textarea id="mgf-note" rows="2" placeholder="Internal note — not shown on public page"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-actions" style="margin-top:16px">
+                        <button type="button" class="btn btn--gold" id="milestoneGoalSaveBtn">Save Goal</button>
+                        <button type="button" class="btn btn--outline" id="milestoneGoalCancelBtn">Cancel</button>
+                        <span class="form-status" id="milestoneGoalStatus"></span>
+                    </div>
+                </div>
+
+                <!-- Subtask Editor -->
+                <div class="add-form-panel" id="milestoneSubtaskForm" style="display:none;margin-top:24px">
+                    <div class="form-title">Sub-tasks — <span id="milestoneSubtaskGoalTitle"></span></div>
+                    <div id="milestoneSubtaskList"></div>
+                    <button type="button" class="btn btn--outline btn--sm" id="milestoneSubtaskAddBtn" style="margin-top:12px">+ Add Sub-task</button>
+                    <div class="form-actions" style="margin-top:16px">
+                        <button type="button" class="btn btn--gold" id="milestoneSubtaskSaveBtn">Save Sub-tasks</button>
+                        <button type="button" class="btn btn--outline" id="milestoneSubtaskCancelBtn">Cancel</button>
+                        <span class="form-status" id="milestoneSubtaskStatus"></span>
+                    </div>
+                </div>
+
+                <!-- Category Manager -->
+                <div class="add-form-panel" id="milestoneCategoryForm" style="display:none;margin-top:24px">
+                    <div class="form-title">Category Manager</div>
+                    <div id="milestoneCategoryList" style="margin-bottom:16px"></div>
+                    <div class="form-grid">
+                        <div class="field">
+                            <label>Key (lowercase)</label>
+                            <input type="text" id="mcf-key" placeholder="e.g. training">
+                        </div>
+                        <div class="field">
+                            <label>Icon (1 char)</label>
+                            <input type="text" id="mcf-icon" placeholder="e.g. ★" maxlength="2">
+                        </div>
+                        <div class="field">
+                            <label>Label (EN)</label>
+                            <input type="text" id="mcf-en" placeholder="e.g. Training">
+                        </div>
+                        <div class="field">
+                            <label>ラベル (JP)</label>
+                            <input type="text" id="mcf-jp" placeholder="例: 訓練">
+                        </div>
+                    </div>
+                    <div class="form-actions" style="margin-top:12px">
+                        <button type="button" class="btn btn--gold" id="milestoneCategoryAddBtn">Add Category</button>
+                        <button type="button" class="btn btn--outline" id="milestoneCategoryCloseBtn">Close</button>
+                        <span class="form-status" id="milestoneCategoryStatus"></span>
+                    </div>
                 </div>
             </div>
 

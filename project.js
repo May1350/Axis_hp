@@ -232,10 +232,12 @@ window.toggleInterview = toggleInterview;
 document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
         const target = btn.dataset.tab;
+        if (!target) return;
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
         document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
         btn.classList.add('active');
         document.getElementById(`tab-${target}`).classList.add('active');
+        if (target === 'milestones') loadMilestones();
     });
 });
 
@@ -376,4 +378,230 @@ function emptyState(icon, title, sub) {
         <h3>${title}</h3>
         <p>${sub}</p>
     </div>`;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// MILESTONES — Public Timeline
+// ═══════════════════════════════════════════════════════════════
+
+let msData = [];         // all periods
+let msCats = [];         // categories
+let msSelectedPIdx = 0;  // current period index
+let msSelectedGIdx = -1; // selected goal index (-1 = none)
+
+async function loadMilestones() {
+    try {
+        const [msRes, catsRes] = await Promise.all([
+            fetch(`/api/projects/${projectId}/milestones`),
+            fetch('/api/milestone-categories')
+        ]);
+        msData = await msRes.json();
+        msCats = await catsRes.json();
+        msSelectedPIdx = 0;
+        msSelectedGIdx = -1;
+        renderMsPeriodSelector();
+        renderMsTrack();
+    } catch {
+        document.getElementById('msEmptyState').style.display = 'block';
+    }
+}
+
+function msGetCat(key) {
+    return msCats.find(c => c.key === key) || { icon: '○', en: key, jp: key };
+}
+
+function msPeriodLabel(period) {
+    // "2025.03" → "March 2025 · 2025年3月"
+    const [y, m] = period.split('.');
+    const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    const monthsJp = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+    const mi = parseInt(m, 10) - 1;
+    return `${months[mi] || m} ${y} · ${y}年${monthsJp[mi] || m}`;
+}
+
+function msCalcProgress(goal) {
+    const subs = goal.subTasks || [];
+    if (!subs.length) {
+        return goal.status === 'completed' ? 100 : goal.status === 'in_progress' ? 50 : 0;
+    }
+    return Math.round(subs.filter(s => s.status === 'completed').length / subs.length * 100);
+}
+
+function renderMsPeriodSelector() {
+    const el = document.getElementById('msPeriodSelector');
+    if (!el) return;
+
+    if (!msData.length) {
+        el.innerHTML = '';
+        document.getElementById('msHTrackOuter').style.display = 'none';
+        document.getElementById('msTrackHeader').style.display = 'none';
+        document.getElementById('msDetailPanel').classList.remove('ms-open');
+        document.getElementById('msEmptyState').style.display = 'block';
+        return;
+    }
+    document.getElementById('msEmptyState').style.display = 'none';
+
+    el.innerHTML = msData.map((p, i) =>
+        `<button class="ms-period-btn${i === msSelectedPIdx ? ' active' : ''}" onclick="msSwitchPeriod(${i})">${p.period}</button>`
+    ).join('');
+}
+
+window.msSwitchPeriod = function(idx) {
+    msSelectedPIdx = idx;
+    msSelectedGIdx = -1;
+    renderMsPeriodSelector();
+    renderMsTrack();
+};
+
+function renderMsTrack() {
+    const period = msData[msSelectedPIdx];
+    const headerEl = document.getElementById('msTrackHeader');
+    const trackOuter = document.getElementById('msHTrackOuter');
+    const detailPanel = document.getElementById('msDetailPanel');
+
+    if (!period || !period.goals.length) {
+        headerEl.style.display = 'none';
+        trackOuter.style.display = 'none';
+        detailPanel.classList.remove('ms-open');
+        return;
+    }
+
+    // Sort goals by targetDate ascending, final goal last
+    const goals = [...period.goals].sort((a, b) => {
+        if (!a.targetDate) return 1;
+        if (!b.targetDate) return -1;
+        return a.targetDate.localeCompare(b.targetDate);
+    });
+
+    // Overall progress = average of all goal progresses
+    const totalPct = Math.round(goals.reduce((sum, g) => sum + msCalcProgress(g), 0) / goals.length);
+
+    headerEl.style.display = 'flex';
+    document.getElementById('msTrackPeriodLabel').textContent = msPeriodLabel(period.period).toUpperCase();
+    document.getElementById('msTrackPct').textContent = `${totalPct}% Complete`;
+    trackOuter.style.display = 'block';
+
+    // Render nodes
+    const track = document.getElementById('msHTrack');
+    const isFinal = (i) => i === goals.length - 1;
+    track.innerHTML = goals.map((g, i) => {
+        const cat = msGetCat(g.category);
+        const pct = msCalcProgress(g);
+        const cls = isFinal(i) ? 'final' : g.status === 'completed' ? 'done' : g.status === 'in_progress' ? 'active-node' : 'planned';
+        const sel = i === msSelectedGIdx ? ' selected' : '';
+        const dateStr = g.targetDate ? g.targetDate.slice(5).replace('-', '/') : '';
+        return `<div class="ms-h-node ${cls}${sel}" onclick="msSelectGoal(${i})" data-gidx="${i}">
+            <div class="ms-h-circle">${cat.icon}</div>
+            <div class="ms-h-label">${g.title_en || g.title_jp}<br><span>${g.title_jp || ''}</span></div>
+            <div class="ms-h-date">${dateStr}</div>
+            <div class="ms-h-tick"></div>
+        </div>`;
+    }).join('');
+
+    // Update fill line
+    const doneCnt = goals.filter(g => g.status === 'completed').length;
+    const fillPct = goals.length > 1 ? (doneCnt / (goals.length - 1)) * 100 : (doneCnt > 0 ? 100 : 0);
+    const fillW = fillPct >= 100 ? '100%' : Math.min(fillPct, 92) + '%';
+    setTimeout(() => {
+        const fill = document.getElementById('msHLineFill');
+        const arrow = document.getElementById('msHLineArrow');
+        if (fill) fill.style.width = fillW;
+        if (arrow) arrow.classList.toggle('filled', fillPct >= 100);
+    }, 50);
+
+    // Update detail panel if a goal is selected
+    if (msSelectedGIdx >= 0 && msSelectedGIdx < goals.length) {
+        renderMsDetailPanel(goals[msSelectedGIdx]);
+    } else {
+        detailPanel.classList.remove('ms-open');
+    }
+}
+
+window.msSelectGoal = function(gIdx) {
+    msSelectedGIdx = gIdx;
+    document.querySelectorAll('.ms-h-node').forEach((n, i) => {
+        n.classList.toggle('selected', i === gIdx);
+    });
+    const period = msData[msSelectedPIdx];
+    const goals = [...period.goals].sort((a, b) => {
+        if (!a.targetDate) return 1;
+        if (!b.targetDate) return -1;
+        return a.targetDate.localeCompare(b.targetDate);
+    });
+    renderMsDetailPanel(goals[gIdx]);
+};
+
+function renderMsDetailPanel(goal) {
+    const panel = document.getElementById('msDetailPanel');
+    const inner = document.getElementById('msDetailInner');
+    const cat = msGetCat(goal.category);
+
+    const subs = goal.subTasks || [];
+    const done = subs.filter(s => s.status === 'completed').length;
+    const total = subs.length;
+    const pct = msCalcProgress(goal);
+
+    const statusLabels = { completed: 'Completed / 完了', in_progress: 'In Progress / 進行中', planned: 'Planned / 予定' };
+    const statusTag = `<span class="ms-status-tag ms-tag-${goal.status}">${statusLabels[goal.status] || goal.status}</span>`;
+
+    // Vertical fill for subtasks
+    const doneSubs = subs.filter(s => s.status === 'completed').length;
+    const vFill = total > 1 ? Math.min((doneSubs / (total - 1)) * 100, pct >= 100 ? 100 : 90) : (pct >= 100 ? 100 : 0);
+
+    const subsHTML = subs.map(s => {
+        const scls = s.status === 'completed' ? 'done' : s.status === 'in_progress' ? 'active-node' : 'planned';
+        const stag = s.status === 'completed' ? '<span class="ms-status-tag ms-tag-completed" style="font-size:9px;padding:2px 7px">完了</span>'
+            : s.status === 'in_progress' ? '<span class="ms-status-tag ms-tag-in_progress" style="font-size:9px;padding:2px 7px">進行中</span>'
+            : '<span class="ms-status-tag ms-tag-planned" style="font-size:9px;padding:2px 7px">予定</span>';
+        return `<div class="ms-v-node ${scls}">
+            <div class="ms-v-circle">○</div>
+            <div class="ms-v-content">
+                <div class="ms-v-title-en">${s.title_en || ''}</div>
+                <div class="ms-v-title-jp">${s.title_jp || ''}</div>
+                ${stag}
+            </div>
+        </div>`;
+    }).join('');
+
+    inner.innerHTML = `
+        <div class="ms-detail-top">
+            <div>
+                <div class="ms-detail-title-en">${goal.title_en || goal.title_jp}</div>
+                <div class="ms-detail-title-jp">${goal.title_jp || ''}</div>
+            </div>
+            ${statusTag}
+        </div>
+        <div class="ms-detail-meta">
+            <div class="ms-meta-item">CATEGORY<strong>${cat.icon} ${cat.en} / ${cat.jp}</strong></div>
+            ${goal.assignee ? `<div class="ms-meta-item">ASSIGNEE / 担当<strong>${goal.assignee}</strong></div>` : ''}
+            ${goal.targetDate ? `<div class="ms-meta-item">DUE DATE<strong>${goal.targetDate}</strong></div>` : ''}
+        </div>
+        ${subs.length ? `
+        <div class="ms-v-track-outer">
+            <div class="ms-v-line-wrap">
+                <div class="ms-v-line-base"></div>
+                <div class="ms-v-line-fill" id="msVLineFill" style="height:0%"></div>
+                <div class="ms-v-line-arrow" id="msVLineArrow"></div>
+            </div>
+            ${subsHTML}
+        </div>
+        <div class="ms-progress-wrap">
+            <div class="ms-progress-label">
+                <span>SUB-TASK PROGRESS</span>
+                <span>${done}/${total} · ${pct}%</span>
+            </div>
+            <div class="ms-progress-bar"><div class="ms-progress-fill" id="msProgressFill" style="width:0%"></div></div>
+        </div>` : ''}
+    `;
+
+    panel.classList.add('ms-open');
+
+    setTimeout(() => {
+        const vf = document.getElementById('msVLineFill');
+        const pf = document.getElementById('msProgressFill');
+        const va = document.getElementById('msVLineArrow');
+        if (vf) vf.style.height = vFill + '%';
+        if (pf) pf.style.width = pct + '%';
+        if (va) va.classList.toggle('filled', pct >= 100);
+    }, 60);
 }

@@ -2040,3 +2040,214 @@ body.admin-drawer-open::before {
     margin: 0 auto;
     padding: 48px 40px;
 }
+/* ── Milestones Public Section ──────────────────────────────── */
+.ms-period-selector {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 32px;
+}
+
+.ms-period-btn {
+    padding: 5px 16px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: transparent;
+    color: rgba(255,255,255,0.35);
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+    letter-spacing: 0.5px;
+}
+
+.ms-period-btn:hover { border-color: var(--gold, #D4AF37); color: var(--gold, #D4AF37); }
+.ms-period-btn.active { background: var(--gold, #D4AF37); border-color: var(--gold, #D4AF37); color: #0a0f1e; font-weight: 700; }
+
+.ms-track-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.ms-track-period-label {
+    font-size: 10px;
+    color: rgba(255,255,255,0.3);
+    letter-spacing: 2px;
+}
+
+.ms-track-pct {
+    font-size: 11px;
+    color: var(--gold, #D4AF37);
+    letter-spacing: 1px;
+}
+
+/* Horizontal track */
+.ms-h-track-outer { position: relative; margin-bottom: 0; }
+
+.ms-h-track {
+    display: flex;
+    align-items: flex-start;
+    position: relative;
+    padding: 0 20px;
+}
+
+.ms-h-line-wrap {
+    position: absolute;
+    left: 20px;
+    right: 20px;
+    top: 18px;
+    height: 2px;
+    pointer-events: none;
+}
+
+.ms-h-line-base {
+    position: absolute;
+    left: 0; right: 0; top: 0;
+    height: 2px;
+    background: repeating-linear-gradient(90deg, rgba(255,255,255,0.1) 0px, rgba(255,255,255,0.1) 8px, transparent 8px, transparent 16px);
+}
+
+.ms-h-line-fill {
+    position: absolute;
+    left: 0; top: 0;
+    height: 2px;
+    width: 0;
+    background: var(--gold, #D4AF37);
+    transition: width 0.9s cubic-bezier(.4,0,.2,1);
+}
+
+.ms-h-line-arrow {
+    position: absolute;
+    right: -8px; top: 50%;
+    transform: translateY(-50%);
+    width: 0; height: 0;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-left: 9px solid rgba(255,255,255,0.1);
+    transition: border-left-color 0.4s;
+}
+.ms-h-line-arrow.filled { border-left-color: var(--gold, #D4AF37); }
+
+/* Horizontal nodes */
+.ms-h-node {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+    z-index: 2;
+}
+
+.ms-h-circle {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255,255,255,0.1);
+    background: var(--bg, #0a0f1e);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px;
+    margin-bottom: 10px;
+    transition: all 0.2s;
+}
+
+.ms-h-node.done .ms-h-circle { border-color: var(--gold, #D4AF37); background: rgba(212,175,55,0.08); }
+.ms-h-node.active-node .ms-h-circle { border-color: rgba(255,255,255,0.6); background: rgba(255,255,255,0.05); }
+.ms-h-node.planned .ms-h-circle { opacity: 0.4; }
+.ms-h-node.final .ms-h-circle { border-color: var(--gold, #D4AF37); background: rgba(212,175,55,0.12); width: 42px; height: 42px; margin-top: -3px; font-size: 16px; }
+.ms-h-node.selected .ms-h-circle { border-color: var(--gold, #D4AF37) !important; background: rgba(212,175,55,0.15) !important; box-shadow: 0 0 0 4px rgba(212,175,55,0.12); opacity: 1 !important; }
+
+.ms-h-label {
+    font-size: 9px; text-align: center; line-height: 1.4;
+    color: rgba(255,255,255,0.3); transition: color 0.2s;
+}
+.ms-h-label span { opacity: 0.6; }
+.ms-h-node.done .ms-h-label { color: rgba(255,255,255,0.55); }
+.ms-h-node.active-node .ms-h-label { color: #fff; }
+.ms-h-node.final .ms-h-label { color: var(--gold, #D4AF37); font-weight: 600; }
+.ms-h-node.selected .ms-h-label { color: var(--gold, #D4AF37); }
+
+.ms-h-date { font-size: 8px; color: rgba(255,255,255,0.15); margin-top: 3px; }
+.ms-h-node.done .ms-h-date { color: rgba(255,255,255,0.3); }
+.ms-h-node.selected .ms-h-date { color: rgba(212,175,55,0.7); }
+
+.ms-h-tick { width: 1px; height: 0; background: linear-gradient(to bottom, var(--gold, #D4AF37), transparent); transition: height 0.3s; margin-top: 6px; }
+.ms-h-node.selected .ms-h-tick { height: 20px; }
+
+/* Detail panel */
+.ms-detail-panel {
+    overflow: hidden; max-height: 0; opacity: 0;
+    transition: max-height 0.45s ease, opacity 0.3s ease;
+}
+.ms-detail-panel.ms-open { max-height: 800px; opacity: 1; }
+
+.ms-detail-inner { padding: 28px 20px 4px; }
+
+.ms-detail-top {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    margin-bottom: 20px; padding-bottom: 18px; border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.ms-detail-title-en { font-size: 16px; font-weight: 700; color: #fff; }
+.ms-detail-title-jp { font-size: 12px; color: rgba(255,255,255,0.35); margin-top: 3px; }
+
+.ms-detail-meta { display: flex; gap: 24px; flex-wrap: wrap; margin-bottom: 24px; }
+.ms-meta-item { font-size: 10px; color: rgba(255,255,255,0.3); letter-spacing: 0.5px; }
+.ms-meta-item strong { display: block; font-size: 12px; color: rgba(255,255,255,0.65); font-weight: 500; margin-top: 2px; }
+
+.ms-status-tag {
+    font-size: 10px; padding: 3px 10px; border-radius: 12px;
+    letter-spacing: 0.5px; white-space: nowrap;
+}
+.ms-tag-completed { border: 1px solid var(--gold, #D4AF37); color: var(--gold, #D4AF37); }
+.ms-tag-in_progress { border: 1px solid rgba(255,255,255,0.5); color: rgba(255,255,255,0.8); }
+.ms-tag-planned { border: 1px solid rgba(255,255,255,0.12); color: rgba(255,255,255,0.3); }
+
+/* Vertical sub-track */
+.ms-v-track-outer { position: relative; padding-left: 20px; }
+
+.ms-v-line-wrap {
+    position: absolute; left: 38px; top: 0; bottom: 0; width: 2px; pointer-events: none;
+}
+.ms-v-line-base {
+    position: absolute; top: 0; bottom: 0; left: 0; width: 2px;
+    background: repeating-linear-gradient(180deg, rgba(255,255,255,0.1) 0px, rgba(255,255,255,0.1) 8px, transparent 8px, transparent 16px);
+}
+.ms-v-line-fill {
+    position: absolute; top: 0; left: 0; width: 2px; height: 0;
+    background: var(--gold, #D4AF37); transition: height 0.9s cubic-bezier(.4,0,.2,1);
+}
+.ms-v-line-arrow {
+    position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%);
+    width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent;
+    border-top: 9px solid rgba(255,255,255,0.1); transition: border-top-color 0.4s;
+}
+.ms-v-line-arrow.filled { border-top-color: var(--gold, #D4AF37); }
+
+.ms-v-node {
+    display: flex; align-items: flex-start; gap: 20px;
+    position: relative; z-index: 2; padding-bottom: 24px;
+}
+.ms-v-node:last-child { padding-bottom: 8px; }
+
+.ms-v-circle {
+    flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%;
+    border: 1.5px solid rgba(255,255,255,0.1); background: var(--bg, #0a0f1e);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; color: rgba(255,255,255,0.2); transition: all 0.2s;
+}
+.ms-v-node.done .ms-v-circle { border-color: var(--gold, #D4AF37); background: rgba(212,175,55,0.08); }
+.ms-v-node.active-node .ms-v-circle { border-color: rgba(255,255,255,0.5); background: rgba(255,255,255,0.04); }
+.ms-v-node.planned .ms-v-circle { opacity: 0.4; }
+
+.ms-v-content { padding-top: 4px; flex: 1; }
+.ms-v-title-en { font-size: 13px; font-weight: 600; color: #fff; }
+.ms-v-title-jp { font-size: 11px; color: rgba(255,255,255,0.35); margin-top: 2px; }
+.ms-v-node.done .ms-v-title-en { color: rgba(255,255,255,0.5); }
+.ms-v-node.planned .ms-v-title-en { color: rgba(255,255,255,0.35); }
+
+.ms-progress-wrap { margin-top: 8px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.06); margin-left: 20px; }
+.ms-progress-label { display: flex; justify-content: space-between; font-size: 10px; color: rgba(255,255,255,0.3); margin-bottom: 8px; letter-spacing: 0.5px; }
+.ms-progress-label span:last-child { color: var(--gold, #D4AF37); }
+.ms-progress-bar { height: 2px; background: rgba(255,255,255,0.06); border-radius: 1px; overflow: hidden; }
+.ms-progress-fill { height: 100%; background: var(--gold, #D4AF37); transition: width 0.8s ease; }

@@ -666,4 +666,125 @@
             .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
     }
 
+    /* ── Inline Milestones (admin drawer) ───────────────────── */
+    let paMilestones = [];
+    let paCats = [];
+    let paPIdx = 0;
+
+    async function paLoadMilestones() {
+        try {
+            const [msRes, catsRes] = await Promise.all([
+                authFetch(`/api/projects/${projectId}/milestones`),
+                fetch('/api/milestone-categories')
+            ]);
+            paMilestones = await msRes.json();
+            paCats = await catsRes.json();
+            paPIdx = 0;
+            pARenderPeriodTabs();
+            pARenderGoals();
+        } catch { toast('Failed to load milestones', 'error'); }
+    }
+
+    function pARenderPeriodTabs() {
+        const el = document.getElementById('pa-milestone-period-tabs');
+        if (!el) return;
+        el.innerHTML = paMilestones.map((m, i) =>
+            `<button class="milestone-period-tab${i === paPIdx ? ' active' : ''}" onclick="window.paSwitchPeriod(${i})">${m.period}</button>`
+        ).join('') || '<span style="font-size:12px;color:rgba(255,255,255,0.3)">No periods configured</span>';
+    }
+
+    window.paSwitchPeriod = function(idx) {
+        paPIdx = idx;
+        pARenderPeriodTabs();
+        pARenderGoals();
+    };
+
+    function pARenderGoals() {
+        const list = document.getElementById('pa-milestone-goal-list');
+        if (!list) return;
+        const period = paMilestones[paPIdx];
+        if (!period) { list.innerHTML = ''; return; }
+
+        const goals = period.goals || [];
+        list.innerHTML = goals.map((g, gIdx) => {
+            const cat = paCats.find(c => c.key === g.category) || { icon: '○', en: g.category };
+            const subs = g.subTasks || [];
+            const done = subs.filter(s => s.status === 'completed').length;
+
+            const subsHTML = subs.map((s, sIdx) => `
+                <div class="milestone-subtask-row" style="padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04)">
+                    <span style="font-size:12px;color:rgba(255,255,255,0.6);flex:1">${escH(s.title_en || s.title_jp)}</span>
+                    <span style="font-size:10px;color:rgba(255,255,255,0.35)">${escH(s.title_jp || '')}</span>
+                    <select style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:5px;padding:3px 6px;color:#fff;font-size:10px;cursor:pointer;font-family:inherit"
+                        onchange="window.paUpdateSubtask(${paPIdx},${gIdx},${sIdx},this.value)">
+                        <option value="planned" ${s.status==='planned'?'selected':''}>予定</option>
+                        <option value="in_progress" ${s.status==='in_progress'?'selected':''}>進行中</option>
+                        <option value="completed" ${s.status==='completed'?'selected':''}>完了</option>
+                    </select>
+                </div>`).join('');
+
+            return `<div class="milestone-goal-card status-${g.status}" style="margin-bottom:12px">
+                <div class="milestone-goal-header">
+                    <div>
+                        <div class="milestone-goal-title">${cat.icon} ${escH(g.title_en || g.title_jp)}</div>
+                        <div class="milestone-goal-title-jp">${escH(g.title_jp || '')}</div>
+                    </div>
+                    <select style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:4px 8px;color:#fff;font-size:11px;cursor:pointer;font-family:inherit"
+                        onchange="window.paUpdateGoalStatus(${paPIdx},${gIdx},this.value)">
+                        <option value="planned" ${g.status==='planned'?'selected':''}>予定 / Planned</option>
+                        <option value="in_progress" ${g.status==='in_progress'?'selected':''}>進行中 / In Progress</option>
+                        <option value="completed" ${g.status==='completed'?'selected':''}>完了 / Completed</option>
+                    </select>
+                </div>
+                ${subs.length ? `<div style="margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.06)">${subsHTML}
+                    <div style="font-size:10px;color:rgba(255,255,255,0.3);margin-top:8px">${done}/${subs.length} sub-tasks completed</div>
+                </div>` : ''}
+            </div>`;
+        }).join('') || '<p style="font-size:13px;color:rgba(255,255,255,0.3)">No goals in this period.</p>';
+    }
+
+    window.paUpdateGoalStatus = async function(pIdx, gIdx, status) {
+        try {
+            const res = await authFetch(`/api/projects/${projectId}/milestones/periods/${pIdx}/goals/${gIdx}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status })
+            });
+            if (!res.ok) throw new Error();
+            paMilestones[pIdx].goals[gIdx].status = status;
+            pARenderGoals();
+            toast('Status updated', 'success');
+            // Refresh public page milestones if open
+            if (typeof loadMilestones === 'function') loadMilestones();
+        } catch { toast('Update failed', 'error'); }
+    };
+
+    window.paUpdateSubtask = async function(pIdx, gIdx, sIdx, status) {
+        const goal = paMilestones[pIdx].goals[gIdx];
+        const subTasks = JSON.parse(JSON.stringify(goal.subTasks || []));
+        subTasks[sIdx].status = status;
+        try {
+            const res = await authFetch(`/api/projects/${projectId}/milestones/periods/${pIdx}/goals/${gIdx}/subtasks`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ subTasks })
+            });
+            if (!res.ok) throw new Error();
+            goal.subTasks = subTasks;
+            pARenderGoals();
+            toast('Sub-task updated', 'success');
+            if (typeof loadMilestones === 'function') loadMilestones();
+        } catch { toast('Update failed', 'error'); }
+    };
+
+    // Load milestones when drawer tab is clicked
+    document.querySelectorAll('.admin-drawer-tab').forEach(btn => {
+        if (btn.dataset.atab === 'milestones') {
+            btn.addEventListener('click', paLoadMilestones);
+        }
+    });
+
+    // Also expose globally for refresh button
+    window.paLoadMilestones = paLoadMilestones;
+
 })();

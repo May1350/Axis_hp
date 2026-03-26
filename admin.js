@@ -56,6 +56,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (currentTab === 'projects') loadProjectIndexTab();
             // Auto-load History when switching to the history tab
             if (currentTab === 'history') loadHistoryTab();
+            // Auto-load Milestones when switching to the milestones tab
+            if (currentTab === 'milestones') loadMilestonesTab();
         });
     });
 
@@ -1979,3 +1981,342 @@ async function _alUndoEntry(logId, btn) {
         btn.disabled = false;
     }
 }
+
+// ═══════════════════════════════════════════════════════════════
+// MILESTONES TAB
+// ═══════════════════════════════════════════════════════════════
+
+let msCategories = [];
+let msMilestones = [];
+let msCurrentPIdx = 0;
+let msEditingGoal = null; // { pIdx, gIdx } or null for new
+let msEditingSubtasks = null; // { pIdx, gIdx }
+
+async function loadMilestonesTab() {
+    try {
+        const [catsRes, msRes] = await Promise.all([
+            fetch('/api/milestone-categories'),
+            authFetch(`/api/projects/${currentProject}/milestones`)
+        ]);
+        msCategories = await catsRes.json();
+        msMilestones = await msRes.json();
+        msCurrentPIdx = 0;
+        renderMilestonePeriodTabs();
+        renderMilestoneGoals();
+        populateMgfCategorySelect();
+    } catch { toast('Failed to load milestones', 'error'); }
+}
+
+function renderMilestonePeriodTabs() {
+    const container = document.getElementById('milestonePeriodTabs');
+    if (!container) return;
+    container.innerHTML = '';
+    if (!msMilestones.length) {
+        container.innerHTML = '<span style="font-size:12px;color:rgba(255,255,255,0.3)">No periods yet — add one →</span>';
+        return;
+    }
+    msMilestones.forEach((m, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'milestone-period-tab' + (i === msCurrentPIdx ? ' active' : '');
+        btn.textContent = m.period;
+        btn.onclick = () => { msCurrentPIdx = i; renderMilestonePeriodTabs(); renderMilestoneGoals(); };
+        container.appendChild(btn);
+    });
+}
+
+function renderMilestoneGoals() {
+    const list = document.getElementById('milestoneGoalList');
+    if (!list) return;
+
+    const period = msMilestones[msCurrentPIdx];
+    if (!period) {
+        list.innerHTML = '<p style="color:rgba(255,255,255,0.3);font-size:13px;padding:16px 0">Select a period or create one to get started.</p>';
+        return;
+    }
+
+    const goals = period.goals || [];
+    let html = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <div style="font-size:13px;color:rgba(255,255,255,0.5)">${period.period} — ${goals.length} goal${goals.length !== 1 ? 's' : ''}</div>
+        <div style="display:flex;gap:8px">
+            <button class="btn btn--gold btn--sm" id="msAddGoalBtn">+ Add Goal</button>
+            <button class="btn btn--outline btn--sm" id="msDeletePeriodBtn" style="color:rgba(255,80,80,0.7);border-color:rgba(255,80,80,0.3)">Delete Period</button>
+        </div>
+    </div>`;
+
+    if (!goals.length) {
+        html += '<p style="color:rgba(255,255,255,0.3);font-size:13px">No goals yet. Add your first goal →</p>';
+    } else {
+        goals.forEach((g, gIdx) => {
+            const cat = msCategories.find(c => c.key === g.category) || { icon: '○', en: g.category };
+            const done = (g.subTasks || []).filter(s => s.status === 'completed').length;
+            const total = (g.subTasks || []).length;
+            const pct = total > 0 ? Math.round((done / total) * 100) : (g.status === 'completed' ? 100 : g.status === 'in_progress' ? 50 : 0);
+            const badgeCls = g.status === 'completed' ? 'completed' : g.status === 'in_progress' ? 'in_progress' : 'planned';
+            const badgeLabel = g.status === 'completed' ? 'Completed / 完了' : g.status === 'in_progress' ? 'In Progress / 進行中' : 'Planned / 予定';
+            html += `<div class="milestone-goal-card status-${g.status}">
+                <div class="milestone-goal-header">
+                    <div>
+                        <div class="milestone-goal-title">${cat.icon} ${g.title_en || '(no EN title)'}</div>
+                        <div class="milestone-goal-title-jp">${g.title_jp || ''}</div>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:8px">
+                        <span class="milestone-status-badge ${badgeCls}">${badgeLabel}</span>
+                        <button class="btn btn--outline btn--sm" onclick="openMilestoneGoalEdit(${msCurrentPIdx},${gIdx})">Edit</button>
+                        <button class="btn btn--outline btn--sm" onclick="openMilestoneSubtasks(${msCurrentPIdx},${gIdx})">Sub-tasks (${total})</button>
+                        <button class="btn btn--outline btn--sm" onclick="deleteMilestoneGoal(${msCurrentPIdx},${gIdx})" style="color:rgba(255,80,80,0.7);border-color:rgba(255,80,80,0.3)">✕</button>
+                    </div>
+                </div>
+                <div class="milestone-goal-meta">
+                    ${g.targetDate ? `<span>Due <strong>${g.targetDate}</strong></span>` : ''}
+                    ${g.assignee ? `<span>Assignee <strong>${g.assignee}</strong></span>` : ''}
+                    ${total > 0 ? `<span>Progress <strong>${pct}%</strong> (${done}/${total})</span>` : ''}
+                </div>
+            </div>`;
+        });
+    }
+
+    list.innerHTML = html;
+    document.getElementById('msAddGoalBtn')?.addEventListener('click', openMilestoneGoalNew);
+    document.getElementById('msDeletePeriodBtn')?.addEventListener('click', deleteMilestonePeriod);
+}
+
+function populateMgfCategorySelect() {
+    const sel = document.getElementById('mgf-category');
+    if (!sel) return;
+    sel.innerHTML = msCategories.map(c => `<option value="${c.key}">${c.icon} ${c.en} / ${c.jp}</option>`).join('');
+}
+
+function openMilestoneGoalNew() {
+    msEditingGoal = null;
+    document.getElementById('milestoneGoalFormTitle').textContent = 'New Goal';
+    document.getElementById('mgf-gIdx').value = '';
+    ['mgf-title-en','mgf-title-jp','mgf-assignee','mgf-note'].forEach(id => { document.getElementById(id).value = ''; });
+    document.getElementById('mgf-target-date').value = '';
+    document.getElementById('mgf-status').value = 'planned';
+    document.getElementById('mgf-category').value = msCategories[0]?.key || 'planning';
+    document.getElementById('milestoneSubtaskForm').style.display = 'none';
+    document.getElementById('milestoneCategoryForm').style.display = 'none';
+    document.getElementById('milestoneGoalForm').style.display = 'block';
+    document.getElementById('milestoneGoalStatus').textContent = '';
+}
+
+function openMilestoneGoalEdit(pIdx, gIdx) {
+    msEditingGoal = { pIdx, gIdx };
+    const g = msMilestones[pIdx].goals[gIdx];
+    document.getElementById('milestoneGoalFormTitle').textContent = 'Edit Goal';
+    document.getElementById('mgf-gIdx').value = gIdx;
+    document.getElementById('mgf-title-en').value = g.title_en || '';
+    document.getElementById('mgf-title-jp').value = g.title_jp || '';
+    document.getElementById('mgf-category').value = g.category || 'planning';
+    document.getElementById('mgf-target-date').value = g.targetDate || '';
+    document.getElementById('mgf-assignee').value = g.assignee || '';
+    document.getElementById('mgf-note').value = g.note || '';
+    document.getElementById('mgf-status').value = g.status || 'planned';
+    document.getElementById('milestoneSubtaskForm').style.display = 'none';
+    document.getElementById('milestoneCategoryForm').style.display = 'none';
+    document.getElementById('milestoneGoalForm').style.display = 'block';
+    document.getElementById('milestoneGoalStatus').textContent = '';
+}
+
+async function saveMilestoneGoal() {
+    const payload = {
+        title_en:   document.getElementById('mgf-title-en').value.trim(),
+        title_jp:   document.getElementById('mgf-title-jp').value.trim(),
+        category:   document.getElementById('mgf-category').value,
+        targetDate: document.getElementById('mgf-target-date').value,
+        assignee:   document.getElementById('mgf-assignee').value.trim(),
+        note:       document.getElementById('mgf-note').value.trim(),
+        status:     document.getElementById('mgf-status').value
+    };
+    if (!payload.title_en && !payload.title_jp) {
+        document.getElementById('milestoneGoalStatus').textContent = 'Title (EN or JP) is required.';
+        return;
+    }
+    const statusEl = document.getElementById('milestoneGoalStatus');
+    statusEl.textContent = 'Saving…';
+
+    const pIdx = msCurrentPIdx;
+    let url, method;
+    if (msEditingGoal) {
+        url = `/api/projects/${currentProject}/milestones/periods/${pIdx}/goals/${msEditingGoal.gIdx}`;
+        method = 'PATCH';
+    } else {
+        url = `/api/projects/${currentProject}/milestones/periods/${pIdx}/goals`;
+        method = 'POST';
+    }
+
+    try {
+        const res = await authFetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+        if (!res.ok) throw new Error((await res.json()).error);
+        document.getElementById('milestoneGoalForm').style.display = 'none';
+        await loadMilestonesTab();
+        toast('Goal saved', 'success');
+    } catch (e) {
+        statusEl.textContent = e.message || 'Save failed';
+    }
+}
+
+async function deleteMilestoneGoal(pIdx, gIdx) {
+    if (!confirm('Delete this goal?')) return;
+    try {
+        const res = await authFetch(`/api/projects/${currentProject}/milestones/periods/${pIdx}/goals/${gIdx}`, { method: 'DELETE' });
+        if (!res.ok) throw new Error((await res.json()).error);
+        await loadMilestonesTab();
+        toast('Goal deleted', 'success');
+    } catch (e) { toast(e.message || 'Delete failed', 'error'); }
+}
+
+async function deleteMilestonePeriod() {
+    const period = msMilestones[msCurrentPIdx];
+    if (!period) return;
+    if (!confirm(`Delete period "${period.period}" and all its goals?`)) return;
+    try {
+        const res = await authFetch(`/api/projects/${currentProject}/milestones/periods/${msCurrentPIdx}`, { method: 'DELETE' });
+        if (!res.ok) throw new Error((await res.json()).error);
+        msCurrentPIdx = 0;
+        await loadMilestonesTab();
+        toast('Period deleted', 'success');
+    } catch (e) { toast(e.message || 'Delete failed', 'error'); }
+}
+
+// ── Subtask editor ────────────────────────────────────────────
+let msSubtaskBuffer = [];
+
+function openMilestoneSubtasks(pIdx, gIdx) {
+    msEditingSubtasks = { pIdx, gIdx };
+    const g = msMilestones[pIdx].goals[gIdx];
+    msSubtaskBuffer = JSON.parse(JSON.stringify(g.subTasks || []));
+    document.getElementById('milestoneSubtaskGoalTitle').textContent = g.title_en || g.title_jp;
+    document.getElementById('milestoneGoalForm').style.display = 'none';
+    document.getElementById('milestoneCategoryForm').style.display = 'none';
+    document.getElementById('milestoneSubtaskStatus').textContent = '';
+    renderSubtaskEditor();
+    document.getElementById('milestoneSubtaskForm').style.display = 'block';
+}
+
+function renderSubtaskEditor() {
+    const list = document.getElementById('milestoneSubtaskList');
+    list.innerHTML = msSubtaskBuffer.map((s, i) => `
+        <div class="milestone-subtask-row">
+            <input type="text" placeholder="Title (EN)" value="${escHtml(s.title_en || '')}" oninput="msSubtaskBuffer[${i}].title_en=this.value">
+            <input type="text" placeholder="タイトル (JP)" value="${escHtml(s.title_jp || '')}" oninput="msSubtaskBuffer[${i}].title_jp=this.value">
+            <select onchange="msSubtaskBuffer[${i}].status=this.value">
+                <option value="planned" ${s.status === 'planned' ? 'selected' : ''}>予定</option>
+                <option value="in_progress" ${s.status === 'in_progress' ? 'selected' : ''}>進行中</option>
+                <option value="completed" ${s.status === 'completed' ? 'selected' : ''}>完了</option>
+            </select>
+            <button class="btn btn--outline btn--sm" onclick="msSubtaskBuffer.splice(${i},1);renderSubtaskEditor()" style="color:rgba(255,80,80,0.7)">✕</button>
+        </div>`).join('');
+}
+
+function escHtml(str) { return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+async function saveSubtasks() {
+    if (!msEditingSubtasks) return;
+    const { pIdx, gIdx } = msEditingSubtasks;
+    const statusEl = document.getElementById('milestoneSubtaskStatus');
+    statusEl.textContent = 'Saving…';
+    try {
+        const res = await authFetch(
+            `/api/projects/${currentProject}/milestones/periods/${pIdx}/goals/${gIdx}/subtasks`,
+            { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ subTasks: msSubtaskBuffer }) }
+        );
+        if (!res.ok) throw new Error((await res.json()).error);
+        document.getElementById('milestoneSubtaskForm').style.display = 'none';
+        await loadMilestonesTab();
+        toast('Sub-tasks saved', 'success');
+    } catch (e) { statusEl.textContent = e.message || 'Save failed'; }
+}
+
+// ── Add Period ────────────────────────────────────────────────
+async function addMilestonePeriod() {
+    const period = prompt('Enter period (YYYY.MM format, e.g. 2025.06):');
+    if (!period) return;
+    if (!/^\d{4}\.\d{2}$/.test(period)) { toast('Period must be YYYY.MM format', 'error'); return; }
+    try {
+        const res = await authFetch(`/api/projects/${currentProject}/milestones/periods`, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ period })
+        });
+        if (!res.ok) throw new Error((await res.json()).error);
+        await loadMilestonesTab();
+        // Select the new period
+        const newIdx = msMilestones.findIndex(m => m.period === period);
+        if (newIdx !== -1) { msCurrentPIdx = newIdx; renderMilestonePeriodTabs(); renderMilestoneGoals(); }
+        toast(`Period ${period} created`, 'success');
+    } catch (e) { toast(e.message || 'Failed', 'error'); }
+}
+
+// ── Category Manager ──────────────────────────────────────────
+async function loadCategoryManager() {
+    const list = document.getElementById('milestoneCategoryList');
+    list.innerHTML = msCategories.map(c => `
+        <div class="milestone-cat-row ${c.is_custom ? 'is-custom' : 'is-builtin'}">
+            <span class="cat-icon">${c.icon}</span>
+            <span class="cat-en">${c.en}</span>
+            <span class="cat-jp">${c.jp}</span>
+            ${c.is_custom ? `<span class="cat-delete" onclick="deleteMilestoneCategory('${c.key}')">✕</span>` : '<span style="margin-left:auto;font-size:10px;color:rgba(255,255,255,0.2)">built-in</span>'}
+        </div>`).join('');
+}
+
+async function deleteMilestoneCategory(key) {
+    if (!confirm(`Delete category "${key}"?`)) return;
+    try {
+        const res = await authFetch(`/api/milestone-categories/${key}`, { method: 'DELETE' });
+        if (!res.ok) throw new Error((await res.json()).error);
+        const catsRes = await fetch('/api/milestone-categories');
+        msCategories = await catsRes.json();
+        loadCategoryManager();
+        populateMgfCategorySelect();
+        toast('Category deleted', 'success');
+    } catch (e) { toast(e.message || 'Failed', 'error'); }
+}
+
+async function addMilestoneCategory() {
+    const key  = document.getElementById('mcf-key').value.trim();
+    const en   = document.getElementById('mcf-en').value.trim();
+    const jp   = document.getElementById('mcf-jp').value.trim();
+    const icon = document.getElementById('mcf-icon').value.trim();
+    const statusEl = document.getElementById('milestoneCategoryStatus');
+    if (!key || !en || !jp || !icon) { statusEl.textContent = 'All fields required.'; return; }
+    statusEl.textContent = 'Saving…';
+    try {
+        const res = await authFetch('/api/milestone-categories', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key, en, jp, icon })
+        });
+        if (!res.ok) throw new Error((await res.json()).error);
+        const catsRes = await fetch('/api/milestone-categories');
+        msCategories = await catsRes.json();
+        ['mcf-key','mcf-en','mcf-jp','mcf-icon'].forEach(id => { document.getElementById(id).value = ''; });
+        statusEl.textContent = '';
+        loadCategoryManager();
+        populateMgfCategorySelect();
+        toast('Category added', 'success');
+    } catch (e) { statusEl.textContent = e.message || 'Failed'; }
+}
+
+// ── Event bindings (run once after DOM ready) ─────────────────
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('milestoneAddPeriodBtn')?.addEventListener('click', addMilestonePeriod);
+    document.getElementById('milestoneGoalSaveBtn')?.addEventListener('click', saveMilestoneGoal);
+    document.getElementById('milestoneGoalCancelBtn')?.addEventListener('click', () => {
+        document.getElementById('milestoneGoalForm').style.display = 'none';
+    });
+    document.getElementById('milestoneSubtaskAddBtn')?.addEventListener('click', () => {
+        msSubtaskBuffer.push({ title_en: '', title_jp: '', status: 'planned' });
+        renderSubtaskEditor();
+    });
+    document.getElementById('milestoneSubtaskSaveBtn')?.addEventListener('click', saveSubtasks);
+    document.getElementById('milestoneSubtaskCancelBtn')?.addEventListener('click', () => {
+        document.getElementById('milestoneSubtaskForm').style.display = 'none';
+    });
+    document.getElementById('milestoneCategoryBtn')?.addEventListener('click', () => {
+        document.getElementById('milestoneGoalForm').style.display = 'none';
+        document.getElementById('milestoneSubtaskForm').style.display = 'none';
+        document.getElementById('milestoneCategoryForm').style.display = 'block';
+        loadCategoryManager();
+    });
+    document.getElementById('milestoneCategoryAddBtn')?.addEventListener('click', addMilestoneCategory);
+    document.getElementById('milestoneCategoryCloseBtn')?.addEventListener('click', () => {
+        document.getElementById('milestoneCategoryForm').style.display = 'none';
+    });
+});

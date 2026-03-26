@@ -1068,3 +1068,153 @@ img {
     border-radius: 50%;
     background: var(--gold);
 }
+/* ── Milestones Tab ──────────────────────────────────────── */
+.milestone-period-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.milestone-period-tabs {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    flex: 1;
+}
+
+.milestone-period-tab {
+    padding: 5px 14px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: transparent;
+    color: rgba(255,255,255,0.4);
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: inherit;
+    letter-spacing: 0.5px;
+}
+
+.milestone-period-tab:hover { border-color: var(--gold); color: var(--gold); }
+.milestone-period-tab.active { background: var(--gold); border-color: var(--gold); color: #0a0f1e; font-weight: 700; }
+
+.milestone-goal-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 12px;
+    border-left: 3px solid rgba(255,255,255,0.1);
+    transition: border-left-color 0.2s;
+}
+
+.milestone-goal-card.status-completed { border-left-color: var(--gold); }
+.milestone-goal-card.status-in_progress { border-left-color: rgba(255,255,255,0.5); }
+.milestone-goal-card.status-planned { border-left-color: rgba(255,255,255,0.15); }
+
+.milestone-goal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.milestone-goal-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.milestone-goal-title-jp {
+    font-size: 12px;
+    color: rgba(255,255,255,0.4);
+    margin-top: 2px;
+}
+
+.milestone-goal-meta {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.milestone-goal-meta span {
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+}
+
+.milestone-goal-meta span strong {
+    color: rgba(255,255,255,0.7);
+    font-weight: 500;
+}
+
+.milestone-status-badge {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.milestone-status-badge.completed { border: 1px solid var(--gold); color: var(--gold); }
+.milestone-status-badge.in_progress { border: 1px solid rgba(255,255,255,0.5); color: rgba(255,255,255,0.8); }
+.milestone-status-badge.planned { border: 1px solid rgba(255,255,255,0.15); color: rgba(255,255,255,0.3); }
+
+.milestone-goal-actions {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.milestone-subtask-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.milestone-subtask-row:last-child { border-bottom: none; }
+
+.milestone-subtask-row input[type="text"] {
+    flex: 1;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 6px;
+    padding: 6px 10px;
+    color: #fff;
+    font-size: 12px;
+    font-family: inherit;
+}
+
+.milestone-subtask-row select {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 6px;
+    padding: 6px 8px;
+    color: #fff;
+    font-size: 11px;
+    font-family: inherit;
+    cursor: pointer;
+}
+
+.milestone-cat-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    font-size: 12px;
+    color: rgba(255,255,255,0.6);
+}
+
+.milestone-cat-row .cat-icon { font-size: 14px; width: 20px; text-align: center; }
+.milestone-cat-row .cat-en { font-weight: 500; color: #fff; }
+.milestone-cat-row .cat-jp { color: rgba(255,255,255,0.4); }
+.milestone-cat-row.is-custom .cat-delete { margin-left: auto; cursor: pointer; color: rgba(255,80,80,0.7); font-size: 14px; }
+.milestone-cat-row.is-builtin { opacity: 0.5; }
+
+.btn--sm { padding: 5px 12px; font-size: 12px; }

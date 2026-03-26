@@ -137,6 +137,17 @@ async function appendLog(action, type, project, title = '', snapshot = null) {
     } catch { /* never crash the main request */ }
 }
 
+// ─── Default milestone categories ────────────────────────────
+const DEFAULT_MILESTONE_CATEGORIES = [
+  { key: 'planning',    en: 'Planning',           jp: '計画策定',   icon: '◻' },
+  { key: 'flights',     en: 'Flights',            jp: '航空券',     icon: '✈' },
+  { key: 'fundraising', en: 'Fundraising',        jp: '資金調達',   icon: '◎' },
+  { key: 'local_coord', en: 'Local Coordination', jp: '現地連絡',   icon: '◇' },
+  { key: 'medical',     en: 'Medical',            jp: '医療準備',   icon: '＋' },
+  { key: 'visa',        en: 'Visa & Documents',   jp: 'ビザ・書類', icon: '□' },
+  { key: 'equipment',   en: 'Equipment',          jp: '備品準備',   icon: '△' },
+];
+
 // GET /api/activity-log
 app.get('/api/activity-log', requireAuth, async (_req, res) => {
     res.json(await readActivityLog());
@@ -735,6 +746,158 @@ app.delete('/api/history/items/:index', requireAuth, async (req, res) => {
     await appendLog('DELETE', 'history', 'global', `${deletedHistory.year} — ${deletedHistory.title}`,
         { index: idx, item: deletedHistory });
     res.json({ ok: true });
+});
+
+// ─── Milestone Categories ─────────────────────────────────────
+app.get('/api/milestone-categories', async (_req, res) => {
+    const cats = await dbRead('milestone-categories', null);
+    res.json(cats && cats.length ? cats : DEFAULT_MILESTONE_CATEGORIES);
+});
+
+app.post('/api/milestone-categories', requireAuth, async (req, res) => {
+    const { key, en, jp, icon } = req.body || {};
+    if (!key || !en || !jp || !icon)
+        return res.status(400).json({ error: 'key, en, jp, icon are required' });
+    if (!/^[a-z0-9_]+$/.test(key))
+        return res.status(400).json({ error: 'key must match /^[a-z0-9_]+$/' });
+    const cats = await dbRead('milestone-categories', null);
+    const list = cats && cats.length ? cats : [...DEFAULT_MILESTONE_CATEGORIES];
+    if (list.some(c => c.key === key))
+        return res.status(400).json({ error: 'Duplicate category key' });
+    list.push({ key, en, jp, icon, is_custom: true });
+    await dbWrite('milestone-categories', list);
+    res.status(201).json({ ok: true, category: list[list.length - 1] });
+});
+
+app.delete('/api/milestone-categories/:key', requireAuth, async (req, res) => {
+    const cats = await dbRead('milestone-categories', null);
+    const list = cats && cats.length ? cats : [...DEFAULT_MILESTONE_CATEGORIES];
+    const idx = list.findIndex(c => c.key === req.params.key);
+    if (idx === -1) return res.status(404).json({ error: 'Category not found' });
+    if (!list[idx].is_custom) return res.status(403).json({ error: 'Cannot delete built-in category' });
+    list.splice(idx, 1);
+    await dbWrite('milestone-categories', list);
+    res.json({ ok: true });
+});
+
+// ─── Milestones ───────────────────────────────────────────────
+app.get('/api/projects/:id/milestones', async (req, res) => {
+    const data = await readProject(req.params.id);
+    if (!data) return res.status(404).json({ error: 'Not found' });
+    res.json(data.milestones || []);
+});
+
+app.post('/api/projects/:id/milestones/periods', requireAuth, async (req, res) => {
+    const { period } = req.body || {};
+    if (!period || !/^\d{4}\.\d{2}$/.test(period))
+        return res.status(400).json({ error: 'period must match YYYY.MM' });
+    const data = await readProject(req.params.id);
+    if (!data) return res.status(404).json({ error: 'Not found' });
+    data.milestones = data.milestones || [];
+    data.milestones.push({ period, goals: [] });
+    data.milestones.sort((a, b) => b.period.localeCompare(a.period));
+    await writeProject(req.params.id, data);
+    await appendLog('CREATE', 'milestone-period', req.params.id, period);
+    res.status(201).json({ ok: true, milestones: data.milestones });
+});
+
+app.delete('/api/projects/:id/milestones/periods/:pIdx', requireAuth, async (req, res) => {
+    const pIdx = parseInt(req.params.pIdx, 10);
+    const data = await readProject(req.params.id);
+    if (!data) return res.status(404).json({ error: 'Not found' });
+    data.milestones = data.milestones || [];
+    if (isNaN(pIdx) || pIdx < 0 || pIdx >= data.milestones.length)
+        return res.status(400).json({ error: 'Invalid' });
+    const deleted = data.milestones.splice(pIdx, 1)[0];
+    await writeProject(req.params.id, data);
+    await appendLog('DELETE', 'milestone-period', req.params.id, deleted.period);
+    res.json({ ok: true });
+});
+
+app.post('/api/projects/:id/milestones/periods/:pIdx/goals', requireAuth, async (req, res) => {
+    const pIdx = parseInt(req.params.pIdx, 10);
+    const data = await readProject(req.params.id);
+    if (!data) return res.status(404).json({ error: 'Not found' });
+    data.milestones = data.milestones || [];
+    if (isNaN(pIdx) || pIdx < 0 || pIdx >= data.milestones.length)
+        return res.status(400).json({ error: 'Invalid' });
+    const { title_en, title_jp, category, targetDate, assignee, note, status } = req.body || {};
+    const goal = {
+        id: 'g_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5),
+        title_en: title_en || '',
+        title_jp: title_jp || '',
+        category: category || '',
+        targetDate: targetDate || '',
+        assignee: assignee || '',
+        note: note || '',
+        status: status || 'planned',
+        subTasks: []
+    };
+    data.milestones[pIdx].goals.push(goal);
+    await writeProject(req.params.id, data);
+    await appendLog('CREATE', 'milestone-goal', req.params.id, goal.title_en || goal.title_jp);
+    res.status(201).json({ ok: true, goal });
+});
+
+app.patch('/api/projects/:id/milestones/periods/:pIdx/goals/:gIdx', requireAuth, async (req, res) => {
+    const pIdx = parseInt(req.params.pIdx, 10);
+    const gIdx = parseInt(req.params.gIdx, 10);
+    const data = await readProject(req.params.id);
+    if (!data) return res.status(404).json({ error: 'Not found' });
+    data.milestones = data.milestones || [];
+    if (isNaN(pIdx) || pIdx < 0 || pIdx >= data.milestones.length)
+        return res.status(400).json({ error: 'Invalid' });
+    const goals = data.milestones[pIdx].goals || [];
+    if (isNaN(gIdx) || gIdx < 0 || gIdx >= goals.length)
+        return res.status(400).json({ error: 'Invalid' });
+    const goal = goals[gIdx];
+    const allowed = ['title_en', 'title_jp', 'category', 'targetDate', 'assignee', 'note', 'status'];
+    for (const field of allowed) {
+        if (req.body[field] !== undefined) goal[field] = req.body[field];
+    }
+    await writeProject(req.params.id, data);
+    await appendLog('UPDATE', 'milestone-goal', req.params.id, goal.title_en || goal.title_jp);
+    res.json({ ok: true, goal });
+});
+
+app.delete('/api/projects/:id/milestones/periods/:pIdx/goals/:gIdx', requireAuth, async (req, res) => {
+    const pIdx = parseInt(req.params.pIdx, 10);
+    const gIdx = parseInt(req.params.gIdx, 10);
+    const data = await readProject(req.params.id);
+    if (!data) return res.status(404).json({ error: 'Not found' });
+    data.milestones = data.milestones || [];
+    if (isNaN(pIdx) || pIdx < 0 || pIdx >= data.milestones.length)
+        return res.status(400).json({ error: 'Invalid' });
+    const goals = data.milestones[pIdx].goals || [];
+    if (isNaN(gIdx) || gIdx < 0 || gIdx >= goals.length)
+        return res.status(400).json({ error: 'Invalid' });
+    const deleted = goals.splice(gIdx, 1)[0];
+    await writeProject(req.params.id, data);
+    await appendLog('DELETE', 'milestone-goal', req.params.id, deleted.title_en || deleted.title_jp);
+    res.json({ ok: true });
+});
+
+app.patch('/api/projects/:id/milestones/periods/:pIdx/goals/:gIdx/subtasks', requireAuth, async (req, res) => {
+    const pIdx = parseInt(req.params.pIdx, 10);
+    const gIdx = parseInt(req.params.gIdx, 10);
+    const data = await readProject(req.params.id);
+    if (!data) return res.status(404).json({ error: 'Not found' });
+    data.milestones = data.milestones || [];
+    if (isNaN(pIdx) || pIdx < 0 || pIdx >= data.milestones.length)
+        return res.status(400).json({ error: 'Invalid' });
+    const goals = data.milestones[pIdx].goals || [];
+    if (isNaN(gIdx) || gIdx < 0 || gIdx >= goals.length)
+        return res.status(400).json({ error: 'Invalid' });
+    const { subTasks } = req.body || {};
+    if (!Array.isArray(subTasks)) return res.status(400).json({ error: 'subTasks must be an array' });
+    const goal = goals[gIdx];
+    goal.subTasks = subTasks.map((st, i) => ({
+        ...st,
+        id: st.id || ('s_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 4) + i)
+    }));
+    await writeProject(req.params.id, data);
+    await appendLog('UPDATE', 'milestone-subtasks', req.params.id, goal.title_en || goal.title_jp);
+    res.json({ ok: true, subTasks: goal.subTasks });
 });
 
 // ─── Start ────────────────────────────────────────────────────
