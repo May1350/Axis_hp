@@ -671,32 +671,50 @@
     let paCats = [];
     let paPIdx = 0;
 
+    // Full reload — resets to period 0. Only call on initial tab open or explicit Refresh.
     async function paLoadMilestones() {
         try {
             const [msRes, catsRes] = await Promise.all([
                 authFetch(`/api/projects/${projectId}/milestones`),
                 fetch('/api/milestone-categories')
             ]);
+            if (msRes.status === 401) {
+                localStorage.removeItem(TOKEN_KEY);
+                aToast('Session expired — please log in again', 'error');
+                openModal();
+                return;
+            }
             paMilestones = await msRes.json();
             paCats = await catsRes.json();
             paPIdx = 0;
-            pARenderPeriodTabs();
-            pARenderGoals();
+            paRender();
         } catch { aToast('Failed to load milestones', 'error'); }
+    }
+
+    // Render both tabs + goal list (always uses current paPIdx — never resets it)
+    function paRender() {
+        pARenderPeriodTabs();
+        pARenderGoals();
     }
 
     function pARenderPeriodTabs() {
         const el = document.getElementById('pa-milestone-period-tabs');
         if (!el) return;
+        if (!paMilestones.length) {
+            el.innerHTML = '<span style="font-size:12px;color:rgba(255,255,255,0.3)">No periods — click "+ Period" to add one</span>';
+            return;
+        }
         el.innerHTML = paMilestones.map((m, i) =>
             `<button class="milestone-period-tab${i === paPIdx ? ' active' : ''}" onclick="window.paSwitchPeriod(${i})">${m.period}</button>`
-        ).join('') || '<span style="font-size:12px;color:rgba(255,255,255,0.3)">No periods configured</span>';
+        ).join('');
     }
 
     window.paSwitchPeriod = function(idx) {
         paPIdx = idx;
-        pARenderPeriodTabs();
-        pARenderGoals();
+        // Hide goal form when switching periods
+        const f = document.getElementById('pa-goal-form');
+        if (f) f.style.display = 'none';
+        paRender();
     };
 
     function pARenderGoals() {
@@ -706,16 +724,17 @@
         if (!period) { list.innerHTML = ''; return; }
 
         const goals = period.goals || [];
-        list.innerHTML = goals.map((g, gIdx) => {
-            const cat = paCats.find(c => c.key === g.category) || { icon: '○', en: g.category };
+        let html = '';
+
+        goals.forEach((g, gIdx) => {
+            const cat = paCats.find(c => c.key === g.category) || { icon: '○', en: g.category || '' };
             const subs = g.subTasks || [];
             const done = subs.filter(s => s.status === 'completed').length;
 
             const subsHTML = subs.map((s, sIdx) => `
-                <div class="milestone-subtask-row" style="padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04)">
-                    <span style="font-size:12px;color:rgba(255,255,255,0.6);flex:1">${escH(s.title_en || s.title_jp)}</span>
-                    <span style="font-size:10px;color:rgba(255,255,255,0.35)">${escH(s.title_jp || '')}</span>
-                    <select style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:5px;padding:3px 6px;color:#fff;font-size:10px;cursor:pointer;font-family:inherit"
+                <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04)">
+                    <span style="font-size:12px;color:rgba(255,255,255,0.6);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escH(s.title_en || s.title_jp)}</span>
+                    <select style="flex-shrink:0;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:5px;padding:3px 6px;color:#fff;font-size:10px;cursor:pointer;font-family:inherit"
                         onchange="window.paUpdateSubtask(${paPIdx},${gIdx},${sIdx},this.value)">
                         <option value="planned" ${s.status==='planned'?'selected':''}>予定</option>
                         <option value="in_progress" ${s.status==='in_progress'?'selected':''}>進行中</option>
@@ -723,27 +742,31 @@
                     </select>
                 </div>`).join('');
 
-            return `<div class="milestone-goal-card status-${g.status}" style="margin-bottom:12px">
+            html += `<div class="milestone-goal-card status-${g.status}" style="margin-bottom:12px">
                 <div class="milestone-goal-header">
-                    <div>
-                        <div class="milestone-goal-title">${cat.icon} ${escH(g.title_en || g.title_jp)}</div>
-                        <div class="milestone-goal-title-jp">${escH(g.title_jp || '')}</div>
+                    <div style="min-width:0;flex:1">
+                        <div class="milestone-goal-title">${escH(cat.icon)} ${escH(g.title_en || g.title_jp)}</div>
+                        ${g.title_jp ? `<div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:2px">${escH(g.title_jp)}</div>` : ''}
                     </div>
-                    <select style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:4px 8px;color:#fff;font-size:11px;cursor:pointer;font-family:inherit"
+                    <select style="flex-shrink:0;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:4px 8px;color:#fff;font-size:11px;cursor:pointer;font-family:inherit"
                         onchange="window.paUpdateGoalStatus(${paPIdx},${gIdx},this.value)">
                         <option value="planned" ${g.status==='planned'?'selected':''}>予定 / Planned</option>
                         <option value="in_progress" ${g.status==='in_progress'?'selected':''}>進行中 / In Progress</option>
                         <option value="completed" ${g.status==='completed'?'selected':''}>完了 / Completed</option>
                     </select>
                 </div>
-                ${subs.length ? `<div style="margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.06)">${subsHTML}
+                ${subs.length ? `<div style="margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.06)">
+                    ${subsHTML}
                     <div style="font-size:10px;color:rgba(255,255,255,0.3);margin-top:8px">${done}/${subs.length} sub-tasks completed</div>
                 </div>` : ''}
             </div>`;
-        }).join('');
+        });
 
-        list.innerHTML += `<button class="btn btn--outline btn--sm" onclick="paShowGoalForm()" style="margin-top:8px;width:100%;font-size:12px">+ Add Goal</button>`;
-        if (!goals.length) list.insertAdjacentHTML('afterbegin', '<p style="font-size:13px;color:rgba(255,255,255,0.3);margin-bottom:8px">No goals in this period.</p>');
+        if (!goals.length) {
+            html = '<p style="font-size:13px;color:rgba(255,255,255,0.3);margin-bottom:8px">No goals in this period.</p>';
+        }
+        html += `<button class="btn btn--outline btn--sm" onclick="paShowGoalForm()" style="margin-top:8px;width:100%;font-size:12px;box-sizing:border-box">+ Add Goal</button>`;
+        list.innerHTML = html;
     }
 
     window.paUpdateGoalStatus = async function(pIdx, gIdx, status) {
@@ -753,7 +776,9 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ status })
             });
+            if (res.status === 401) { localStorage.removeItem(TOKEN_KEY); openModal(); return; }
             if (!res.ok) throw new Error();
+            // Update local state only — no re-fetch needed
             paMilestones[pIdx].goals[gIdx].status = status;
             pARenderGoals();
             aToast('Status updated', 'success');
@@ -762,7 +787,8 @@
     };
 
     window.paUpdateSubtask = async function(pIdx, gIdx, sIdx, status) {
-        const goal = paMilestones[pIdx].goals[gIdx];
+        const goal = paMilestones[pIdx] && paMilestones[pIdx].goals[gIdx];
+        if (!goal) return;
         const subTasks = JSON.parse(JSON.stringify(goal.subTasks || []));
         subTasks[sIdx].status = status;
         try {
@@ -771,7 +797,9 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ subTasks })
             });
+            if (res.status === 401) { localStorage.removeItem(TOKEN_KEY); openModal(); return; }
             if (!res.ok) throw new Error();
+            // Update local state only
             goal.subTasks = subTasks;
             pARenderGoals();
             aToast('Sub-task updated', 'success');
@@ -797,7 +825,7 @@
         paPickerMonth = new Date().getMonth() + 1;
         paUpdatePickerDisplay();
         const overlay = document.getElementById('pa-period-overlay');
-        if (overlay) { overlay.style.display = 'flex'; }
+        if (overlay) overlay.style.display = 'flex';
     };
 
     window.paPeriodAdjust = function(field, delta) {
@@ -818,6 +846,8 @@
 
     window.paConfirmPeriod = async function() {
         const period = `${paPickerYear}.${String(paPickerMonth).padStart(2, '0')}`;
+        const btn = document.querySelector('#pa-period-overlay button[onclick="paConfirmPeriod()"]');
+        if (btn) { btn.disabled = true; btn.textContent = '...'; }
         try {
             const res = await authFetch(`/api/projects/${projectId}/milestones/periods`, {
                 method: 'POST',
@@ -831,13 +861,20 @@
                 openModal();
                 return;
             }
-            if (!res.ok) { const d = await res.json(); throw new Error(d.error || 'Failed'); }
+            const d = await res.json();
+            if (!res.ok) throw new Error(d.error || 'Failed');
+            // Use server response directly — no extra fetch needed
+            paMilestones = d.milestones;
             paClosePeriodModal();
-            await paLoadMilestones();
             const newIdx = paMilestones.findIndex(m => m.period === period);
-            if (newIdx !== -1) { paPIdx = newIdx; pARenderPeriodTabs(); pARenderGoals(); }
+            paPIdx = newIdx !== -1 ? newIdx : 0;
+            paRender();
             aToast(`Period ${period} created`, 'success');
-        } catch (e) { aToast(e.message || 'Failed to create period', 'error'); }
+        } catch (e) {
+            aToast(e.message || 'Failed to create period', 'error');
+        } finally {
+            if (btn) { btn.disabled = false; btn.textContent = 'Add Period'; }
+        }
     };
 
     // ── Add Goal ───────────────────────────────────────────────
@@ -852,23 +889,27 @@
         ['pgf-en','pgf-jp','pgf-assignee'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
         const d = document.getElementById('pgf-date'); if (d) d.value = '';
         const s = document.getElementById('pgf-status'); if (s) s.value = 'planned';
-        document.getElementById('pa-goal-form').style.display = 'block';
-        document.getElementById('pgf-en').focus();
+        const form = document.getElementById('pa-goal-form');
+        if (form) form.style.display = 'block';
+        document.getElementById('pgf-en')?.focus();
     };
 
     window.paSaveGoal = async function() {
         const title_en = (document.getElementById('pgf-en')?.value || '').trim();
         const title_jp = (document.getElementById('pgf-jp')?.value || '').trim();
         if (!title_en && !title_jp) { aToast('Enter at least one title', 'error'); return; }
+        const saveBtn = document.querySelector('#pa-goal-form .btn--gold');
+        if (saveBtn) { saveBtn.disabled = true; saveBtn.textContent = '...'; }
         const body = {
             title_en, title_jp,
             category: document.getElementById('pgf-cat')?.value || '',
             targetDate: document.getElementById('pgf-date')?.value || '',
-            assignee: document.getElementById('pgf-assignee')?.value?.trim() || '',
+            assignee: (document.getElementById('pgf-assignee')?.value || '').trim(),
             status: document.getElementById('pgf-status')?.value || 'planned',
         };
+        const targetPIdx = paPIdx; // capture before any async operation
         try {
-            const res = await authFetch(`/api/projects/${projectId}/milestones/periods/${paPIdx}/goals`, {
+            const res = await authFetch(`/api/projects/${projectId}/milestones/periods/${targetPIdx}/goals`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body)
@@ -880,13 +921,16 @@
                 return;
             }
             if (!res.ok) throw new Error();
+            const d = await res.json(); // {ok:true, goal:{...}}
+            // Append to local state — no extra fetch, paPIdx unchanged
+            if (!paMilestones[targetPIdx].goals) paMilestones[targetPIdx].goals = [];
+            paMilestones[targetPIdx].goals.push(d.goal);
             document.getElementById('pa-goal-form').style.display = 'none';
-            await paLoadMilestones();
-            pARenderPeriodTabs();
-            pARenderGoals();
+            pARenderGoals(); // re-render current period only
             aToast('Goal added', 'success');
             if (typeof loadMilestones === 'function') loadMilestones();
         } catch { aToast('Failed to save goal', 'error'); }
+        finally { if (saveBtn) { saveBtn.disabled = false; saveBtn.textContent = 'Save Goal'; } }
     };
 
     // Load milestones when drawer tab is clicked
