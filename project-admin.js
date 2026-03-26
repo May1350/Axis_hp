@@ -779,18 +779,60 @@
         } catch { aToast('Update failed', 'error'); }
     };
 
-    // ── Add Period ──────────────────────────────────────────────
-    window.paAddPeriod = async function() {
-        const period = prompt('Enter period (YYYY.MM format, e.g. 2025.06):');
-        if (!period) return;
-        if (!/^\d{4}\.\d{2}$/.test(period)) { aToast('Period must be YYYY.MM format', 'error'); return; }
+    // ── Period Picker Modal ─────────────────────────────────────
+    let paPickerYear = new Date().getFullYear();
+    let paPickerMonth = new Date().getMonth() + 1;
+
+    function paUpdatePickerDisplay() {
+        const el = document.getElementById('pa-picker-year');
+        const mel = document.getElementById('pa-picker-month');
+        const prev = document.getElementById('pa-picker-preview');
+        if (el) el.textContent = paPickerYear;
+        if (mel) mel.textContent = String(paPickerMonth).padStart(2, '0');
+        if (prev) prev.textContent = `${paPickerYear}.${String(paPickerMonth).padStart(2, '0')}`;
+    }
+
+    window.paOpenPeriodModal = function() {
+        paPickerYear = new Date().getFullYear();
+        paPickerMonth = new Date().getMonth() + 1;
+        paUpdatePickerDisplay();
+        const overlay = document.getElementById('pa-period-overlay');
+        if (overlay) { overlay.style.display = 'flex'; }
+    };
+
+    window.paPeriodAdjust = function(field, delta) {
+        if (field === 'year') {
+            paPickerYear = Math.max(2000, Math.min(2100, paPickerYear + delta));
+        } else {
+            paPickerMonth += delta;
+            if (paPickerMonth < 1) { paPickerMonth = 12; paPickerYear--; }
+            if (paPickerMonth > 12) { paPickerMonth = 1; paPickerYear++; }
+        }
+        paUpdatePickerDisplay();
+    };
+
+    window.paClosePeriodModal = function() {
+        const overlay = document.getElementById('pa-period-overlay');
+        if (overlay) overlay.style.display = 'none';
+    };
+
+    window.paConfirmPeriod = async function() {
+        const period = `${paPickerYear}.${String(paPickerMonth).padStart(2, '0')}`;
         try {
             const res = await authFetch(`/api/projects/${projectId}/milestones/periods`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ period })
             });
-            if (!res.ok) throw new Error((await res.json()).error || 'Failed');
+            if (res.status === 401) {
+                localStorage.removeItem(TOKEN_KEY);
+                paClosePeriodModal();
+                aToast('Session expired — please log in again', 'error');
+                openModal();
+                return;
+            }
+            if (!res.ok) { const d = await res.json(); throw new Error(d.error || 'Failed'); }
+            paClosePeriodModal();
             await paLoadMilestones();
             const newIdx = paMilestones.findIndex(m => m.period === period);
             if (newIdx !== -1) { paPIdx = newIdx; pARenderPeriodTabs(); pARenderGoals(); }
@@ -831,10 +873,15 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body)
             });
+            if (res.status === 401) {
+                localStorage.removeItem(TOKEN_KEY);
+                aToast('Session expired — please log in again', 'error');
+                openModal();
+                return;
+            }
             if (!res.ok) throw new Error();
             document.getElementById('pa-goal-form').style.display = 'none';
             await paLoadMilestones();
-            pAPIdx = paPIdx; // keep current period selected
             pARenderPeriodTabs();
             pARenderGoals();
             aToast('Goal added', 'success');

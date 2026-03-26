@@ -478,7 +478,7 @@
                     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
                         <div style="font-size:13px;color:rgba(255,255,255,0.5)">Preparation Milestones</div>
                         <div style="display:flex;gap:6px">
-                            <button class="btn btn--outline btn--sm" onclick="paAddPeriod()">+ Period</button>
+                            <button class="btn btn--outline btn--sm" onclick="paOpenPeriodModal()">+ Period</button>
                             <button class="btn btn--outline btn--sm" onclick="paLoadMilestones()">↺ Refresh</button>
                         </div>
                     </div>
@@ -515,6 +515,33 @@
 
         </div><!-- /.admin-drawer-body -->
     </div><!-- /#adminDrawer -->
+
+    <!-- Period picker modal -->
+    <div id="pa-period-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:2000;display:none;align-items:center;justify-content:center">
+        <div style="background:#1a2035;border:1px solid rgba(255,255,255,0.12);border-radius:16px;padding:32px 40px;min-width:280px;text-align:center;box-shadow:0 24px 80px rgba(0,0,0,0.6)">
+            <div style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.5);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:28px">Select Period</div>
+            <div style="display:flex;align-items:center;justify-content:center;gap:24px">
+                <!-- Year -->
+                <div style="display:flex;flex-direction:column;align-items:center;gap:10px">
+                    <button onclick="paPeriodAdjust('year',1)" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:8px;width:36px;height:36px;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">▲</button>
+                    <div id="pa-picker-year" style="font-size:32px;font-weight:700;color:#fff;min-width:80px">2025</div>
+                    <button onclick="paPeriodAdjust('year',-1)" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:8px;width:36px;height:36px;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">▼</button>
+                </div>
+                <div style="font-size:32px;font-weight:300;color:rgba(255,255,255,0.3);padding-bottom:4px">.</div>
+                <!-- Month -->
+                <div style="display:flex;flex-direction:column;align-items:center;gap:10px">
+                    <button onclick="paPeriodAdjust('month',1)" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:8px;width:36px;height:36px;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">▲</button>
+                    <div id="pa-picker-month" style="font-size:32px;font-weight:700;color:#fff;min-width:52px">01</div>
+                    <button onclick="paPeriodAdjust('month',-1)" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:8px;width:36px;height:36px;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">▼</button>
+                </div>
+            </div>
+            <div style="margin-top:24px;font-size:13px;color:rgba(255,255,255,0.35)">Period: <span id="pa-picker-preview" style="color:var(--gold,#c9a84c);font-weight:600"></span></div>
+            <div style="display:flex;gap:10px;justify-content:center;margin-top:24px">
+                <button onclick="paConfirmPeriod()" style="background:var(--gold,#c9a84c);border:none;border-radius:8px;padding:10px 28px;color:#0d1428;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">Add Period</button>
+                <button onclick="paClosePeriodModal()" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:10px 20px;color:#fff;font-size:13px;cursor:pointer;font-family:inherit">Cancel</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Admin confirm dialog -->
     <div class="overlay hidden" id="aConfirmOverlay">
