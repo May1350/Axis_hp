@@ -476,10 +476,39 @@
             <div id="atab-milestones" class="admin-drawer-panel">
                 <div class="add-form-panel" style="background:transparent;padding:0;border:none;box-shadow:none">
                     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-                        <div style="font-size:13px;color:rgba(255,255,255,0.5)">Edit goal status &amp; sub-task progress</div>
-                        <button class="btn btn--outline btn--sm" onclick="paLoadMilestones()">↺ Refresh</button>
+                        <div style="font-size:13px;color:rgba(255,255,255,0.5)">Preparation Milestones</div>
+                        <div style="display:flex;gap:6px">
+                            <button class="btn btn--outline btn--sm" onclick="paAddPeriod()">+ Period</button>
+                            <button class="btn btn--outline btn--sm" onclick="paLoadMilestones()">↺ Refresh</button>
+                        </div>
                     </div>
                     <div id="pa-milestone-period-tabs" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px"></div>
+                    <!-- Add Goal Form -->
+                    <div id="pa-goal-form" style="display:none;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:16px;margin-bottom:16px">
+                        <div style="font-size:12px;font-weight:600;color:rgba(255,255,255,0.7);margin-bottom:12px">New Goal</div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+                            <div><label style="font-size:11px;color:rgba(255,255,255,0.4);display:block;margin-bottom:4px">Title (EN)</label>
+                                <input id="pgf-en" type="text" placeholder="e.g. Flight Booking" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:6px 10px;color:#fff;font-size:12px;font-family:inherit"></div>
+                            <div><label style="font-size:11px;color:rgba(255,255,255,0.4);display:block;margin-bottom:4px">タイトル (JP)</label>
+                                <input id="pgf-jp" type="text" placeholder="例: 航空券予約" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:6px 10px;color:#fff;font-size:12px;font-family:inherit"></div>
+                            <div><label style="font-size:11px;color:rgba(255,255,255,0.4);display:block;margin-bottom:4px">Category</label>
+                                <select id="pgf-cat" style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:6px 10px;color:#fff;font-size:12px;font-family:inherit"></select></div>
+                            <div><label style="font-size:11px;color:rgba(255,255,255,0.4);display:block;margin-bottom:4px">Target Date</label>
+                                <input id="pgf-date" type="date" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:6px 10px;color:#fff;font-size:12px;font-family:inherit;color-scheme:dark"></div>
+                            <div><label style="font-size:11px;color:rgba(255,255,255,0.4);display:block;margin-bottom:4px">Assignee / 担当</label>
+                                <input id="pgf-assignee" type="text" placeholder="e.g. 김민수" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:6px 10px;color:#fff;font-size:12px;font-family:inherit"></div>
+                            <div><label style="font-size:11px;color:rgba(255,255,255,0.4);display:block;margin-bottom:4px">Status</label>
+                                <select id="pgf-status" style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:6px 10px;color:#fff;font-size:12px;font-family:inherit">
+                                    <option value="planned">Planned / 予定</option>
+                                    <option value="in_progress">In Progress / 進行中</option>
+                                    <option value="completed">Completed / 完了</option>
+                                </select></div>
+                        </div>
+                        <div style="display:flex;gap:8px">
+                            <button class="btn btn--gold btn--sm" onclick="paSaveGoal()" style="font-size:12px;padding:6px 14px">Save Goal</button>
+                            <button class="btn btn--outline btn--sm" onclick="document.getElementById('pa-goal-form').style.display='none'" style="font-size:12px;padding:6px 14px">Cancel</button>
+                        </div>
+                    </div>
                     <div id="pa-milestone-goal-list"></div>
                 </div>
             </div>

@@ -682,7 +682,7 @@
             paPIdx = 0;
             pARenderPeriodTabs();
             pARenderGoals();
-        } catch { toast('Failed to load milestones', 'error'); }
+        } catch { aToast('Failed to load milestones', 'error'); }
     }
 
     function pARenderPeriodTabs() {
@@ -740,7 +740,10 @@
                     <div style="font-size:10px;color:rgba(255,255,255,0.3);margin-top:8px">${done}/${subs.length} sub-tasks completed</div>
                 </div>` : ''}
             </div>`;
-        }).join('') || '<p style="font-size:13px;color:rgba(255,255,255,0.3)">No goals in this period.</p>';
+        }).join('');
+
+        list.innerHTML += `<button class="btn btn--outline btn--sm" onclick="paShowGoalForm()" style="margin-top:8px;width:100%;font-size:12px">+ Add Goal</button>`;
+        if (!goals.length) list.insertAdjacentHTML('afterbegin', '<p style="font-size:13px;color:rgba(255,255,255,0.3);margin-bottom:8px">No goals in this period.</p>');
     }
 
     window.paUpdateGoalStatus = async function(pIdx, gIdx, status) {
@@ -753,10 +756,9 @@
             if (!res.ok) throw new Error();
             paMilestones[pIdx].goals[gIdx].status = status;
             pARenderGoals();
-            toast('Status updated', 'success');
-            // Refresh public page milestones if open
+            aToast('Status updated', 'success');
             if (typeof loadMilestones === 'function') loadMilestones();
-        } catch { toast('Update failed', 'error'); }
+        } catch { aToast('Update failed', 'error'); }
     };
 
     window.paUpdateSubtask = async function(pIdx, gIdx, sIdx, status) {
@@ -772,9 +774,72 @@
             if (!res.ok) throw new Error();
             goal.subTasks = subTasks;
             pARenderGoals();
-            toast('Sub-task updated', 'success');
+            aToast('Sub-task updated', 'success');
             if (typeof loadMilestones === 'function') loadMilestones();
-        } catch { toast('Update failed', 'error'); }
+        } catch { aToast('Update failed', 'error'); }
+    };
+
+    // ── Add Period ──────────────────────────────────────────────
+    window.paAddPeriod = async function() {
+        const period = prompt('Enter period (YYYY.MM format, e.g. 2025.06):');
+        if (!period) return;
+        if (!/^\d{4}\.\d{2}$/.test(period)) { aToast('Period must be YYYY.MM format', 'error'); return; }
+        try {
+            const res = await authFetch(`/api/projects/${projectId}/milestones/periods`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ period })
+            });
+            if (!res.ok) throw new Error((await res.json()).error || 'Failed');
+            await paLoadMilestones();
+            const newIdx = paMilestones.findIndex(m => m.period === period);
+            if (newIdx !== -1) { paPIdx = newIdx; pARenderPeriodTabs(); pARenderGoals(); }
+            aToast(`Period ${period} created`, 'success');
+        } catch (e) { aToast(e.message || 'Failed to create period', 'error'); }
+    };
+
+    // ── Add Goal ───────────────────────────────────────────────
+    window.paShowGoalForm = function() {
+        if (!paMilestones.length) { aToast('Add a period first', 'error'); return; }
+        const catSel = document.getElementById('pgf-cat');
+        if (catSel) {
+            catSel.innerHTML = paCats.map(c =>
+                `<option value="${c.key}">${c.icon} ${c.en} / ${c.jp}</option>`
+            ).join('');
+        }
+        ['pgf-en','pgf-jp','pgf-assignee'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+        const d = document.getElementById('pgf-date'); if (d) d.value = '';
+        const s = document.getElementById('pgf-status'); if (s) s.value = 'planned';
+        document.getElementById('pa-goal-form').style.display = 'block';
+        document.getElementById('pgf-en').focus();
+    };
+
+    window.paSaveGoal = async function() {
+        const title_en = (document.getElementById('pgf-en')?.value || '').trim();
+        const title_jp = (document.getElementById('pgf-jp')?.value || '').trim();
+        if (!title_en && !title_jp) { aToast('Enter at least one title', 'error'); return; }
+        const body = {
+            title_en, title_jp,
+            category: document.getElementById('pgf-cat')?.value || '',
+            targetDate: document.getElementById('pgf-date')?.value || '',
+            assignee: document.getElementById('pgf-assignee')?.value?.trim() || '',
+            status: document.getElementById('pgf-status')?.value || 'planned',
+        };
+        try {
+            const res = await authFetch(`/api/projects/${projectId}/milestones/periods/${paPIdx}/goals`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
+            if (!res.ok) throw new Error();
+            document.getElementById('pa-goal-form').style.display = 'none';
+            await paLoadMilestones();
+            pAPIdx = paPIdx; // keep current period selected
+            pARenderPeriodTabs();
+            pARenderGoals();
+            aToast('Goal added', 'success');
+            if (typeof loadMilestones === 'function') loadMilestones();
+        } catch { aToast('Failed to save goal', 'error'); }
     };
 
     // Load milestones when drawer tab is clicked
