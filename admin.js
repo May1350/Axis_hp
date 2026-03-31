@@ -1986,159 +1986,383 @@ async function _alUndoEntry(logId, btn) {
 // MILESTONES TAB
 // ═══════════════════════════════════════════════════════════════
 
-let msCategories = [];
-let msMilestones = [];
-let msCurrentPIdx = 0;
-let msEditingGoal = null; // { pIdx, gIdx } or null for new
-let msEditingSubtasks = null; // { pIdx, gIdx }
 
+let mcData = [];      // milestones array (periods with goals)
+let mcCats = [];      // milestone categories
+let mcPIdx = 0;       // currently selected period index
+let mcExpandedGoal = null; // currently expanded goal gIdx (or null)
+
+/* ── Utility: HTML escape ──────────────────────────────────── */
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+
+/* ── Risk calculation ──────────────────────────────────────── */
+function mcRisk(goal, departureDate) {
+    if (goal.status === 'completed') return 'done';
+    const today = new Date(); today.setHours(0,0,0,0);
+    const target = goal.targetDate ? new Date(goal.targetDate) : null;
+    const depart = departureDate ? new Date(departureDate) : null;
+    if (target && target < today) return 'overdue';
+    if (target && depart) {
+        const daysLeft = Math.ceil((target - today) / 86400000);
+        const totalSpan = Math.ceil((depart - today) / 86400000);
+        if (totalSpan > 0 && daysLeft <= Math.max(3, totalSpan * 0.15)) return 'at-risk';
+    }
+    if (goal.status === 'in_progress') return 'in-progress';
+    return 'planned';
+}
+
+const mcRiskLabel = { done: '完了', 'in-progress': '進行中', planned: '未着手', overdue: '期限超過', 'at-risk': '要注意' };
+const mcRiskClass = { done: 'gold', 'in-progress': 'white', planned: 'gray', overdue: 'red', 'at-risk': 'orange' };
+
+/* ── Category lookup ───────────────────────────────────────── */
+function mcCatInfo(key) { return mcCats.find(c => c.key === key) || { key, en: key, jp: key, icon: '○' }; }
+
+/* ── D-day calc ────────────────────────────────────────────── */
+function mcDaysUntil(dateStr) {
+    if (!dateStr) return null;
+    const today = new Date(); today.setHours(0,0,0,0);
+    const d = new Date(dateStr); d.setHours(0,0,0,0);
+    return Math.ceil((d - today) / 86400000);
+}
+
+/* ── Load milestones tab ───────────────────────────────────── */
 async function loadMilestonesTab() {
     try {
         const [catsRes, msRes] = await Promise.all([
             fetch('/api/milestone-categories'),
             authFetch(`/api/projects/${currentProject}/milestones`)
         ]);
-        msCategories = await catsRes.json();
-        msMilestones = await msRes.json();
-        msCurrentPIdx = 0;
-        renderMilestonePeriodTabs();
-        renderMilestoneGoals();
-        populateMgfCategorySelect();
-    } catch { toast('Failed to load milestones', 'error'); }
+        mcCats = await catsRes.json();
+        mcData = await msRes.json();
+        if (mcPIdx >= mcData.length) mcPIdx = Math.max(0, mcData.length - 1);
+        renderMC();
+    } catch (e) { toast('マイルストーンの読み込みに失敗しました', 'error'); }
 }
 
-function renderMilestonePeriodTabs() {
-    const container = document.getElementById('milestonePeriodTabs');
-    if (!container) return;
-    container.innerHTML = '';
-    if (!msMilestones.length) {
-        container.innerHTML = '<span style="font-size:12px;color:rgba(255,255,255,0.3)">No periods yet — add one →</span>';
-        return;
-    }
-    msMilestones.forEach((m, i) => {
+/* ── Main render ───────────────────────────────────────────── */
+function renderMC() {
+    const tabsEl      = document.getElementById('mcPeriodTabs');
+    const headerEl    = document.getElementById('mcHeader');
+    const attentionEl = document.getElementById('mcAttention');
+    const summaryEl   = document.getElementById('mcSummary');
+    const goalsEl     = document.getElementById('mcGoals');
+    const emptyEl     = document.getElementById('mcEmpty');
+
+    // Period tabs
+    tabsEl.innerHTML = '';
+    mcData.forEach((m, i) => {
         const btn = document.createElement('button');
-        btn.className = 'milestone-period-tab' + (i === msCurrentPIdx ? ' active' : '');
-        btn.textContent = m.period;
-        btn.onclick = () => { msCurrentPIdx = i; renderMilestonePeriodTabs(); renderMilestoneGoals(); };
-        container.appendChild(btn);
+        btn.className = 'mc-period-tab' + (i === mcPIdx ? ' active' : '');
+        btn.textContent = m.title_jp || m.title || m.period;
+        btn.onclick = () => mcSwitchPeriod(i);
+        tabsEl.appendChild(btn);
     });
-}
 
-function renderMilestoneGoals() {
-    const list = document.getElementById('milestoneGoalList');
-    if (!list) return;
-
-    const period = msMilestones[msCurrentPIdx];
-    if (!period) {
-        list.innerHTML = '<p style="color:rgba(255,255,255,0.3);font-size:13px;padding:16px 0">Select a period or create one to get started.</p>';
+    if (!mcData.length) {
+        headerEl.style.display = 'none';
+        attentionEl.style.display = 'none';
+        summaryEl.style.display = 'none';
+        goalsEl.style.display = 'none';
+        emptyEl.style.display = 'block';
         return;
     }
+    emptyEl.style.display = 'none';
 
+    const period = mcData[mcPIdx];
+    if (!period) return;
     const goals = period.goals || [];
-    let html = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-        <div style="font-size:13px;color:rgba(255,255,255,0.5)">${period.period} — ${goals.length} goal${goals.length !== 1 ? 's' : ''}</div>
-        <div style="display:flex;gap:8px">
-            <button class="btn btn--gold btn--sm" id="msAddGoalBtn">+ Add Goal</button>
-            <button class="btn btn--outline btn--sm" id="msDeletePeriodBtn" style="color:rgba(255,80,80,0.7);border-color:rgba(255,80,80,0.3)">Delete Period</button>
-        </div>
-    </div>`;
+    const dep = period.departureDate;
+    const ret = period.returnDate;
 
-    if (!goals.length) {
-        html += '<p style="color:rgba(255,255,255,0.3);font-size:13px">No goals yet. Add your first goal →</p>';
+    // Header
+    headerEl.style.display = 'block';
+    document.getElementById('mcTitle').textContent = period.title_jp || period.title || period.period;
+    const datesStr = [dep, ret].filter(Boolean).join(' → ');
+    document.getElementById('mcDates').textContent = datesStr;
+
+    const dday = mcDaysUntil(dep);
+    const ddayEl = document.getElementById('mcDday');
+    if (dday !== null) {
+        if (dday > 0) ddayEl.textContent = `D-${dday}`;
+        else if (dday === 0) ddayEl.textContent = 'D-Day!';
+        else ddayEl.textContent = `D+${Math.abs(dday)}`;
+        ddayEl.className = 'mc-dday' + (dday <= 7 && dday >= 0 ? ' urgent' : '');
     } else {
-        goals.forEach((g, gIdx) => {
-            const cat = msCategories.find(c => c.key === g.category) || { icon: '○', en: g.category };
-            const done = (g.subTasks || []).filter(s => s.status === 'completed').length;
-            const total = (g.subTasks || []).length;
-            const pct = total > 0 ? Math.round((done / total) * 100) : (g.status === 'completed' ? 100 : g.status === 'in_progress' ? 50 : 0);
-            const badgeCls = g.status === 'completed' ? 'completed' : g.status === 'in_progress' ? 'in_progress' : 'planned';
-            const badgeLabel = g.status === 'completed' ? 'Completed / 完了' : g.status === 'in_progress' ? 'In Progress / 進行中' : 'Planned / 予定';
-            html += `<div class="milestone-goal-card status-${g.status}">
-                <div class="milestone-goal-header">
-                    <div>
-                        <div class="milestone-goal-title">${cat.icon} ${g.title_en || '(no EN title)'}</div>
-                        <div class="milestone-goal-title-jp">${g.title_jp || ''}</div>
-                    </div>
-                    <div style="display:flex;align-items:center;gap:8px">
-                        <span class="milestone-status-badge ${badgeCls}">${badgeLabel}</span>
-                        <button class="btn btn--outline btn--sm" onclick="openMilestoneGoalEdit(${msCurrentPIdx},${gIdx})">Edit</button>
-                        <button class="btn btn--outline btn--sm" onclick="openMilestoneSubtasks(${msCurrentPIdx},${gIdx})">Sub-tasks (${total})</button>
-                        <button class="btn btn--outline btn--sm" onclick="deleteMilestoneGoal(${msCurrentPIdx},${gIdx})" style="color:rgba(255,80,80,0.7);border-color:rgba(255,80,80,0.3)">✕</button>
-                    </div>
-                </div>
-                <div class="milestone-goal-meta">
-                    ${g.targetDate ? `<span>Due <strong>${g.targetDate}</strong></span>` : ''}
-                    ${g.assignee ? `<span>Assignee <strong>${g.assignee}</strong></span>` : ''}
-                    ${total > 0 ? `<span>Progress <strong>${pct}%</strong> (${done}/${total})</span>` : ''}
-                </div>
-            </div>`;
-        });
+        ddayEl.textContent = '';
     }
 
-    list.innerHTML = html;
-    document.getElementById('msAddGoalBtn')?.addEventListener('click', openMilestoneGoalNew);
-    document.getElementById('msDeletePeriodBtn')?.addEventListener('click', deleteMilestonePeriod);
+    // Progress
+    const doneCount = goals.filter(g => g.status === 'completed').length;
+    const pct = goals.length ? Math.round((doneCount / goals.length) * 100) : 0;
+    document.getElementById('mcProgressFill').style.width = pct + '%';
+    document.getElementById('mcProgressLabel').textContent = `${pct}% (${doneCount}/${goals.length})`;
+
+    // Risk annotations
+    const risks = goals.map(g => ({ ...g, _risk: mcRisk(g, dep) }));
+
+    // Attention cards (overdue + at-risk)
+    const attentionGoals = risks.filter(g => g._risk === 'overdue' || g._risk === 'at-risk');
+    if (attentionGoals.length) {
+        attentionEl.style.display = 'block';
+        const cardsEl = document.getElementById('mcAttentionCards');
+        cardsEl.innerHTML = attentionGoals.map((g, i) => {
+            const cat = mcCatInfo(g.category);
+            const gIdx = goals.indexOf(goals.find(og => og.title_jp === g.title_jp && og.targetDate === g.targetDate));
+            return `<div class="mc-attention-card ${g._risk}" onclick="mcScrollToGoal(${gIdx})">
+                <span class="mc-attention-icon">${g._risk === 'overdue' ? '🔴' : '🟠'}</span>
+                <div>
+                    <div class="mc-attention-title">${esc(g.title_jp || g.title_en || g.title || '')}</div>
+                    <div class="mc-attention-meta">${cat.icon} ${esc(cat.jp)} · ${g.targetDate || '期日なし'} · ${esc(g.assignee || '未割当')}</div>
+                </div>
+                <span class="mc-risk-badge ${mcRiskClass[g._risk]}">${mcRiskLabel[g._risk]}</span>
+            </div>`;
+        }).join('');
+    } else {
+        attentionEl.style.display = 'block';
+        document.getElementById('mcAttentionCards').innerHTML = '<div class="mc-all-clear">順調に進行中 ✓</div>';
+    }
+
+    // Summary by member
+    summaryEl.style.display = 'flex';
+    const byMember = {};
+    risks.forEach(g => {
+        const a = g.assignee || '未割当';
+        if (!byMember[a]) byMember[a] = { total: 0, done: 0 };
+        byMember[a].total++;
+        if (g._risk === 'done') byMember[a].done++;
+    });
+    document.getElementById('mcByMember').innerHTML = Object.entries(byMember).map(([name, v]) => {
+        const mPct = v.total ? Math.round((v.done / v.total) * 100) : 0;
+        return `<div class="mc-summary-row">
+            <span class="mc-summary-name">${esc(name)}</span>
+            <div class="mc-summary-bar"><div class="mc-summary-bar-fill" style="width:${mPct}%"></div></div>
+            <span class="mc-summary-stat">${v.done}/${v.total}</span>
+        </div>`;
+    }).join('');
+
+    // Summary by category
+    const byCat = {};
+    risks.forEach(g => {
+        const c = g.category || 'other';
+        if (!byCat[c]) byCat[c] = { total: 0, done: 0 };
+        byCat[c].total++;
+        if (g._risk === 'done') byCat[c].done++;
+    });
+    document.getElementById('mcByCategory').innerHTML = Object.entries(byCat).map(([key, v]) => {
+        const cat = mcCatInfo(key);
+        const cPct = v.total ? Math.round((v.done / v.total) * 100) : 0;
+        return `<div class="mc-summary-row">
+            <span class="mc-summary-name">${cat.icon} ${esc(cat.jp)}</span>
+            <div class="mc-summary-bar"><div class="mc-summary-bar-fill" style="width:${cPct}%"></div></div>
+            <span class="mc-summary-stat">${v.done}/${v.total}</span>
+        </div>`;
+    }).join('');
+
+    // Goals section
+    goalsEl.style.display = 'block';
+    renderMCGoals(risks, period);
+
+    // Populate category select in goal form
+    const catSel = document.getElementById('mcgf-category');
+    if (catSel) {
+        catSel.innerHTML = mcCats.map(c => `<option value="${c.key}">${c.icon} ${esc(c.jp)}</option>`).join('');
+    }
 }
 
-function populateMgfCategorySelect() {
-    const sel = document.getElementById('mgf-category');
-    if (!sel) return;
-    sel.innerHTML = msCategories.map(c => `<option value="${c.key}">${c.icon} ${c.en} / ${c.jp}</option>`).join('');
-}
-
-function openMilestoneGoalNew() {
-    msEditingGoal = null;
-    document.getElementById('milestoneGoalFormTitle').textContent = 'New Goal';
-    document.getElementById('mgf-gIdx').value = '';
-    ['mgf-title-en','mgf-title-jp','mgf-assignee','mgf-note'].forEach(id => { document.getElementById(id).value = ''; });
-    document.getElementById('mgf-target-date').value = '';
-    document.getElementById('mgf-status').value = 'planned';
-    document.getElementById('mgf-category').value = msCategories[0]?.key || 'planning';
-    document.getElementById('milestoneSubtaskForm').style.display = 'none';
-    document.getElementById('milestoneCategoryForm').style.display = 'none';
-    document.getElementById('milestoneGoalForm').style.display = 'block';
-    document.getElementById('milestoneGoalStatus').textContent = '';
-}
-
-function openMilestoneGoalEdit(pIdx, gIdx) {
-    msEditingGoal = { pIdx, gIdx };
-    const g = msMilestones[pIdx].goals[gIdx];
-    document.getElementById('milestoneGoalFormTitle').textContent = 'Edit Goal';
-    document.getElementById('mgf-gIdx').value = gIdx;
-    document.getElementById('mgf-title-en').value = g.title_en || '';
-    document.getElementById('mgf-title-jp').value = g.title_jp || '';
-    document.getElementById('mgf-category').value = g.category || 'planning';
-    document.getElementById('mgf-target-date').value = g.targetDate || '';
-    document.getElementById('mgf-assignee').value = g.assignee || '';
-    document.getElementById('mgf-note').value = g.note || '';
-    document.getElementById('mgf-status').value = g.status || 'planned';
-    document.getElementById('milestoneSubtaskForm').style.display = 'none';
-    document.getElementById('milestoneCategoryForm').style.display = 'none';
-    document.getElementById('milestoneGoalForm').style.display = 'block';
-    document.getElementById('milestoneGoalStatus').textContent = '';
-}
-
-async function saveMilestoneGoal() {
-    const payload = {
-        title_en:   document.getElementById('mgf-title-en').value.trim(),
-        title_jp:   document.getElementById('mgf-title-jp').value.trim(),
-        category:   document.getElementById('mgf-category').value,
-        targetDate: document.getElementById('mgf-target-date').value,
-        assignee:   document.getElementById('mgf-assignee').value.trim(),
-        note:       document.getElementById('mgf-note').value.trim(),
-        status:     document.getElementById('mgf-status').value
-    };
-    if (!payload.title_en && !payload.title_jp) {
-        document.getElementById('milestoneGoalStatus').textContent = 'Title (EN or JP) is required.';
+/* ── Render goal rows ──────────────────────────────────────── */
+function renderMCGoals(goals, period) {
+    const listEl = document.getElementById('mcGoalList');
+    if (!goals.length) {
+        listEl.innerHTML = '<p class="mc-no-goals">タスクがまだありません。「+ タスク追加」で作成してください。</p>';
         return;
     }
-    const statusEl = document.getElementById('milestoneGoalStatus');
-    statusEl.textContent = 'Saving…';
 
-    const pIdx = msCurrentPIdx;
+    listEl.innerHTML = goals.map((g, gIdx) => {
+        const cat = mcCatInfo(g.category);
+        const risk = g._risk || mcRisk(g, period.departureDate);
+        const subs = g.subTasks || [];
+        const subDone = subs.filter(s => s.status === 'completed').length;
+        const expanded = mcExpandedGoal === gIdx;
+
+        let subHtml = '';
+        if (expanded && subs.length) {
+            subHtml = `<div class="mc-subtask-list">${subs.map((s, si) => {
+                const checked = s.status === 'completed' ? 'checked' : '';
+                return `<label class="mc-subtask-item">
+                    <input type="checkbox" ${checked} onchange="mcToggleSubtask(${mcPIdx},${gIdx},${si},this.checked)">
+                    <span class="${s.status === 'completed' ? 'mc-subtask-done' : ''}">${esc(s.title_jp || s.title_en || '')}</span>
+                </label>`;
+            }).join('')}
+            <button class="mc-subtask-add" onclick="mcAddSubtaskInline(${mcPIdx},${gIdx})">+ サブタスク追加</button>
+            </div>`;
+        } else if (expanded) {
+            subHtml = `<div class="mc-subtask-list">
+                <p class="mc-no-subtasks">サブタスクなし</p>
+                <button class="mc-subtask-add" onclick="mcAddSubtaskInline(${mcPIdx},${gIdx})">+ サブタスク追加</button>
+            </div>`;
+        }
+
+        return `<div class="mc-goal-row" id="mcGoal-${gIdx}">
+            <div class="mc-goal-main" onclick="mcToggleGoal(${gIdx})">
+                <span class="mc-goal-expand">${expanded ? '▼' : '▶'}</span>
+                <span class="mc-goal-cat-icon">${cat.icon}</span>
+                <div class="mc-goal-info">
+                    <span class="mc-goal-name">${esc(g.title_jp || g.title_en || g.title || '')}</span>
+                    ${g.title_en || g.title ? `<span class="mc-goal-name-en">${esc(g.title_en || g.title || '')}</span>` : ''}
+                </div>
+                <span class="mc-goal-assignee">${esc(g.assignee || '')}</span>
+                <span class="mc-goal-date">${g.targetDate || ''}</span>
+                ${subs.length ? `<span class="mc-goal-subtask-count">${subDone}/${subs.length}</span>` : ''}
+                <span class="mc-risk-badge ${mcRiskClass[risk]}">${mcRiskLabel[risk]}</span>
+                <span class="mc-goal-actions">
+                    <button class="mc-icon-btn" onclick="event.stopPropagation();mcEditGoal(${gIdx})" title="編集">✏️</button>
+                    <button class="mc-icon-btn" onclick="event.stopPropagation();mcDeleteGoal(${gIdx})" title="削除">🗑</button>
+                </span>
+            </div>
+            ${subHtml}
+        </div>`;
+    }).join('');
+}
+
+/* ── Period switching ──────────────────────────────────────── */
+function mcSwitchPeriod(idx) {
+    mcPIdx = idx;
+    mcExpandedGoal = null;
+    renderMC();
+}
+
+/* ── Goal expand/collapse ──────────────────────────────────── */
+function mcToggleGoal(gIdx) {
+    mcExpandedGoal = (mcExpandedGoal === gIdx) ? null : gIdx;
+    const period = mcData[mcPIdx];
+    if (!period) return;
+    const goals = (period.goals || []).map(g => ({ ...g, _risk: mcRisk(g, period.departureDate) }));
+    renderMCGoals(goals, period);
+}
+
+/* ── Scroll to goal ────────────────────────────────────────── */
+function mcScrollToGoal(gIdx) {
+    mcExpandedGoal = gIdx;
+    const period = mcData[mcPIdx];
+    if (!period) return;
+    const goals = (period.goals || []).map(g => ({ ...g, _risk: mcRisk(g, period.departureDate) }));
+    renderMCGoals(goals, period);
+    const el = document.getElementById('mcGoal-' + gIdx);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+/* ── Subtask toggle (PATCH) ────────────────────────────────── */
+async function mcToggleSubtask(pIdx, gIdx, sIdx, checked) {
+    const period = mcData[pIdx];
+    if (!period) return;
+    const goal = period.goals[gIdx];
+    if (!goal) return;
+    const subs = JSON.parse(JSON.stringify(goal.subTasks || []));
+    subs[sIdx].status = checked ? 'completed' : 'planned';
+
+    try {
+        const res = await authFetch(
+            `/api/projects/${currentProject}/milestones/periods/${pIdx}/goals/${gIdx}/subtasks`,
+            { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ subTasks: subs }) }
+        );
+        if (!res.ok) throw new Error((await res.json()).error);
+
+        // Auto-complete goal if all subtasks done
+        const allDone = subs.length > 0 && subs.every(s => s.status === 'completed');
+        const noneDone = subs.every(s => s.status !== 'completed');
+        let newStatus = goal.status;
+        if (allDone && goal.status !== 'completed') newStatus = 'completed';
+        else if (!allDone && goal.status === 'completed') newStatus = 'in_progress';
+        else if (!allDone && !noneDone && goal.status === 'planned') newStatus = 'in_progress';
+
+        if (newStatus !== goal.status) {
+            await authFetch(
+                `/api/projects/${currentProject}/milestones/periods/${pIdx}/goals/${gIdx}`,
+                { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: newStatus }) }
+            );
+        }
+
+        await loadMilestonesTab();
+    } catch (e) { toast(e.message || 'サブタスクの更新に失敗しました', 'error'); }
+}
+
+/* ── Add subtask inline ────────────────────────────────────── */
+async function mcAddSubtaskInline(pIdx, gIdx) {
+    const titleJp = prompt('サブタスクのタイトル:');
+    if (!titleJp || !titleJp.trim()) return;
+    const period = mcData[pIdx];
+    if (!period) return;
+    const goal = period.goals[gIdx];
+    if (!goal) return;
+    const subs = JSON.parse(JSON.stringify(goal.subTasks || []));
+    subs.push({ title_jp: titleJp.trim(), title_en: '', status: 'planned' });
+
+    try {
+        const res = await authFetch(
+            `/api/projects/${currentProject}/milestones/periods/${pIdx}/goals/${gIdx}/subtasks`,
+            { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ subTasks: subs }) }
+        );
+        if (!res.ok) throw new Error((await res.json()).error);
+        await loadMilestonesTab();
+        toast('サブタスクを追加しました', 'success');
+    } catch (e) { toast(e.message || 'サブタスクの追加に失敗しました', 'error'); }
+}
+
+/* ── Goal form: show for new ───────────────────────────────── */
+function mcShowGoalForm(editGIdx) {
+    const form = document.getElementById('mcGoalForm');
+    document.getElementById('mcPeriodForm').style.display = 'none';
+    form.style.display = 'block';
+
+    if (editGIdx !== undefined && editGIdx !== null && editGIdx >= 0) {
+        // Edit mode
+        const g = mcData[mcPIdx].goals[editGIdx];
+        document.getElementById('mcgf-gIdx').value = editGIdx;
+        document.getElementById('mcgf-title-jp').value = g.title_jp || '';
+        document.getElementById('mcgf-title').value = g.title_en || g.title || '';
+        document.getElementById('mcgf-category').value = g.category || mcCats[0]?.key || 'planning';
+        document.getElementById('mcgf-target-date').value = g.targetDate || '';
+        document.getElementById('mcgf-assignee').value = g.assignee || '';
+        document.getElementById('mcgf-status').value = g.status || 'planned';
+        document.getElementById('mcgf-note').value = g.note || '';
+    } else {
+        // New mode
+        document.getElementById('mcgf-gIdx').value = '-1';
+        document.getElementById('mcgf-title-jp').value = '';
+        document.getElementById('mcgf-title').value = '';
+        document.getElementById('mcgf-category').value = mcCats[0]?.key || 'planning';
+        document.getElementById('mcgf-target-date').value = '';
+        document.getElementById('mcgf-assignee').value = '';
+        document.getElementById('mcgf-status').value = 'planned';
+        document.getElementById('mcgf-note').value = '';
+    }
+    form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function mcEditGoal(gIdx) { mcShowGoalForm(gIdx); }
+
+/* ── Goal form: save ───────────────────────────────────────── */
+async function mcSaveGoal() {
+    const gIdx = parseInt(document.getElementById('mcgf-gIdx').value, 10);
+    const payload = {
+        title_jp:   document.getElementById('mcgf-title-jp').value.trim(),
+        title:      document.getElementById('mcgf-title').value.trim(),
+        title_en:   document.getElementById('mcgf-title').value.trim(),
+        category:   document.getElementById('mcgf-category').value,
+        targetDate: document.getElementById('mcgf-target-date').value,
+        assignee:   document.getElementById('mcgf-assignee').value.trim(),
+        note:       document.getElementById('mcgf-note').value.trim(),
+        status:     document.getElementById('mcgf-status').value
+    };
+    if (!payload.title_jp && !payload.title_en) {
+        toast('タイトルは必須です', 'error');
+        return;
+    }
+
+    const pIdx = mcPIdx;
     let url, method;
-    if (msEditingGoal) {
-        url = `/api/projects/${currentProject}/milestones/periods/${pIdx}/goals/${msEditingGoal.gIdx}`;
+    if (gIdx >= 0) {
+        url = `/api/projects/${currentProject}/milestones/periods/${pIdx}/goals/${gIdx}`;
         method = 'PATCH';
     } else {
         url = `/api/projects/${currentProject}/milestones/periods/${pIdx}/goals`;
@@ -2148,175 +2372,129 @@ async function saveMilestoneGoal() {
     try {
         const res = await authFetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
         if (!res.ok) throw new Error((await res.json()).error);
-        document.getElementById('milestoneGoalForm').style.display = 'none';
+        document.getElementById('mcGoalForm').style.display = 'none';
         await loadMilestonesTab();
-        toast('Goal saved', 'success');
-    } catch (e) {
-        statusEl.textContent = e.message || 'Save failed';
-    }
+        toast(gIdx >= 0 ? 'タスクを更新しました' : 'タスクを追加しました', 'success');
+    } catch (e) { toast(e.message || '保存に失敗しました', 'error'); }
 }
 
-async function deleteMilestoneGoal(pIdx, gIdx) {
-    if (!confirm('Delete this goal?')) return;
-    try {
-        const res = await authFetch(`/api/projects/${currentProject}/milestones/periods/${pIdx}/goals/${gIdx}`, { method: 'DELETE' });
-        if (!res.ok) throw new Error((await res.json()).error);
-        await loadMilestonesTab();
-        toast('Goal deleted', 'success');
-    } catch (e) { toast(e.message || 'Delete failed', 'error'); }
-}
-
-async function deleteMilestonePeriod() {
-    const period = msMilestones[msCurrentPIdx];
-    if (!period) return;
-    if (!confirm(`Delete period "${period.period}" and all its goals?`)) return;
-    try {
-        const res = await authFetch(`/api/projects/${currentProject}/milestones/periods/${msCurrentPIdx}`, { method: 'DELETE' });
-        if (!res.ok) throw new Error((await res.json()).error);
-        msCurrentPIdx = 0;
-        await loadMilestonesTab();
-        toast('Period deleted', 'success');
-    } catch (e) { toast(e.message || 'Delete failed', 'error'); }
-}
-
-// ── Subtask editor ────────────────────────────────────────────
-let msSubtaskBuffer = [];
-
-function openMilestoneSubtasks(pIdx, gIdx) {
-    msEditingSubtasks = { pIdx, gIdx };
-    const g = msMilestones[pIdx].goals[gIdx];
-    msSubtaskBuffer = JSON.parse(JSON.stringify(g.subTasks || []));
-    document.getElementById('milestoneSubtaskGoalTitle').textContent = g.title_en || g.title_jp;
-    document.getElementById('milestoneGoalForm').style.display = 'none';
-    document.getElementById('milestoneCategoryForm').style.display = 'none';
-    document.getElementById('milestoneSubtaskStatus').textContent = '';
-    renderSubtaskEditor();
-    document.getElementById('milestoneSubtaskForm').style.display = 'block';
-}
-
-function renderSubtaskEditor() {
-    const list = document.getElementById('milestoneSubtaskList');
-    list.innerHTML = msSubtaskBuffer.map((s, i) => `
-        <div class="milestone-subtask-row">
-            <input type="text" placeholder="Title (EN)" value="${escHtml(s.title_en || '')}" oninput="msSubtaskBuffer[${i}].title_en=this.value">
-            <input type="text" placeholder="タイトル (JP)" value="${escHtml(s.title_jp || '')}" oninput="msSubtaskBuffer[${i}].title_jp=this.value">
-            <select onchange="msSubtaskBuffer[${i}].status=this.value">
-                <option value="planned" ${s.status === 'planned' ? 'selected' : ''}>予定</option>
-                <option value="in_progress" ${s.status === 'in_progress' ? 'selected' : ''}>進行中</option>
-                <option value="completed" ${s.status === 'completed' ? 'selected' : ''}>完了</option>
-            </select>
-            <button class="btn btn--outline btn--sm" onclick="msSubtaskBuffer.splice(${i},1);renderSubtaskEditor()" style="color:rgba(255,80,80,0.7)">✕</button>
-        </div>`).join('');
-}
-
-function escHtml(str) { return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-
-async function saveSubtasks() {
-    if (!msEditingSubtasks) return;
-    const { pIdx, gIdx } = msEditingSubtasks;
-    const statusEl = document.getElementById('milestoneSubtaskStatus');
-    statusEl.textContent = 'Saving…';
+/* ── Goal: delete ──────────────────────────────────────────── */
+async function mcDeleteGoal(gIdx) {
+    if (!confirm('このタスクを削除しますか？')) return;
     try {
         const res = await authFetch(
-            `/api/projects/${currentProject}/milestones/periods/${pIdx}/goals/${gIdx}/subtasks`,
-            { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ subTasks: msSubtaskBuffer }) }
+            `/api/projects/${currentProject}/milestones/periods/${mcPIdx}/goals/${gIdx}`,
+            { method: 'DELETE' }
         );
         if (!res.ok) throw new Error((await res.json()).error);
-        document.getElementById('milestoneSubtaskForm').style.display = 'none';
+        mcExpandedGoal = null;
         await loadMilestonesTab();
-        toast('Sub-tasks saved', 'success');
-    } catch (e) { statusEl.textContent = e.message || 'Save failed'; }
+        toast('タスクを削除しました', 'success');
+    } catch (e) { toast(e.message || '削除に失敗しました', 'error'); }
 }
 
-// ── Add Period ────────────────────────────────────────────────
-async function addMilestonePeriod() {
-    const period = prompt('Enter period (YYYY.MM format, e.g. 2025.06):');
-    if (!period) return;
-    if (!/^\d{4}\.\d{2}$/.test(period)) { toast('Period must be YYYY.MM format', 'error'); return; }
+/* ── Period form: show ─────────────────────────────────────── */
+function mcShowPeriodForm(editMode) {
+    const form = document.getElementById('mcPeriodForm');
+    document.getElementById('mcGoalForm').style.display = 'none';
+    form.style.display = 'block';
+
+    const delBtn = document.getElementById('mcPeriodDeleteBtn');
+    if (editMode && mcData[mcPIdx]) {
+        const p = mcData[mcPIdx];
+        document.getElementById('mcpf-period').value = p.period || '';
+        document.getElementById('mcpf-title-jp').value = p.title_jp || '';
+        document.getElementById('mcpf-title').value = p.title || '';
+        document.getElementById('mcpf-departure').value = p.departureDate || '';
+        document.getElementById('mcpf-return').value = p.returnDate || '';
+        delBtn.style.display = 'inline-block';
+        form.dataset.editPIdx = mcPIdx;
+    } else {
+        document.getElementById('mcpf-period').value = '';
+        document.getElementById('mcpf-title-jp').value = '';
+        document.getElementById('mcpf-title').value = '';
+        document.getElementById('mcpf-departure').value = '';
+        document.getElementById('mcpf-return').value = '';
+        delBtn.style.display = 'none';
+        form.dataset.editPIdx = '-1';
+    }
+    form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+/* ── Period form: save ─────────────────────────────────────── */
+async function mcSavePeriod() {
+    const editPIdx = parseInt(document.getElementById('mcPeriodForm').dataset.editPIdx || '-1', 10);
+    const payload = {
+        period:        document.getElementById('mcpf-period').value.trim(),
+        title_jp:      document.getElementById('mcpf-title-jp').value.trim(),
+        title:         document.getElementById('mcpf-title').value.trim(),
+        departureDate: document.getElementById('mcpf-departure').value,
+        returnDate:    document.getElementById('mcpf-return').value
+    };
+    if (!payload.period) {
+        toast('期間は必須です (例: 2025.08)', 'error');
+        return;
+    }
+    if (!/^\d{4}\.\d{2}$/.test(payload.period)) {
+        toast('期間はYYYY.MM形式で入力してください', 'error');
+        return;
+    }
+
+    let url, method;
+    if (editPIdx >= 0) {
+        url = `/api/projects/${currentProject}/milestones/periods/${editPIdx}`;
+        method = 'PATCH';
+    } else {
+        url = `/api/projects/${currentProject}/milestones/periods`;
+        method = 'POST';
+    }
+
     try {
-        const res = await authFetch(`/api/projects/${currentProject}/milestones/periods`, {
-            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ period })
-        });
+        const res = await authFetch(url, { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
         if (!res.ok) throw new Error((await res.json()).error);
+        document.getElementById('mcPeriodForm').style.display = 'none';
+        if (method === 'POST') {
+            // Select new period after reload
+            await loadMilestonesTab();
+            const newIdx = mcData.findIndex(m => m.period === payload.period);
+            if (newIdx !== -1) { mcPIdx = newIdx; renderMC(); }
+        } else {
+            await loadMilestonesTab();
+        }
+        toast(editPIdx >= 0 ? 'ミッションを更新しました' : 'ミッションを作成しました', 'success');
+    } catch (e) { toast(e.message || '保存に失敗しました', 'error'); }
+}
+
+/* ── Period: delete ────────────────────────────────────────── */
+async function mcDeletePeriod() {
+    const p = mcData[mcPIdx];
+    if (!p) return;
+    if (!confirm(`ミッション「${p.title_jp || p.period}」と全タスクを削除しますか？`)) return;
+    try {
+        const res = await authFetch(
+            `/api/projects/${currentProject}/milestones/periods/${mcPIdx}`,
+            { method: 'DELETE' }
+        );
+        if (!res.ok) throw new Error((await res.json()).error);
+        document.getElementById('mcPeriodForm').style.display = 'none';
+        mcPIdx = 0;
         await loadMilestonesTab();
-        // Select the new period
-        const newIdx = msMilestones.findIndex(m => m.period === period);
-        if (newIdx !== -1) { msCurrentPIdx = newIdx; renderMilestonePeriodTabs(); renderMilestoneGoals(); }
-        toast(`Period ${period} created`, 'success');
-    } catch (e) { toast(e.message || 'Failed', 'error'); }
+        toast('ミッションを削除しました', 'success');
+    } catch (e) { toast(e.message || '削除に失敗しました', 'error'); }
 }
 
-// ── Category Manager ──────────────────────────────────────────
-async function loadCategoryManager() {
-    const list = document.getElementById('milestoneCategoryList');
-    list.innerHTML = msCategories.map(c => `
-        <div class="milestone-cat-row ${c.is_custom ? 'is-custom' : 'is-builtin'}">
-            <span class="cat-icon">${c.icon}</span>
-            <span class="cat-en">${c.en}</span>
-            <span class="cat-jp">${c.jp}</span>
-            ${c.is_custom ? `<span class="cat-delete" onclick="deleteMilestoneCategory('${c.key}')">✕</span>` : '<span style="margin-left:auto;font-size:10px;color:rgba(255,255,255,0.2)">built-in</span>'}
-        </div>`).join('');
-}
-
-async function deleteMilestoneCategory(key) {
-    if (!confirm(`Delete category "${key}"?`)) return;
-    try {
-        const res = await authFetch(`/api/milestone-categories/${key}`, { method: 'DELETE' });
-        if (!res.ok) throw new Error((await res.json()).error);
-        const catsRes = await fetch('/api/milestone-categories');
-        msCategories = await catsRes.json();
-        loadCategoryManager();
-        populateMgfCategorySelect();
-        toast('Category deleted', 'success');
-    } catch (e) { toast(e.message || 'Failed', 'error'); }
-}
-
-async function addMilestoneCategory() {
-    const key  = document.getElementById('mcf-key').value.trim();
-    const en   = document.getElementById('mcf-en').value.trim();
-    const jp   = document.getElementById('mcf-jp').value.trim();
-    const icon = document.getElementById('mcf-icon').value.trim();
-    const statusEl = document.getElementById('milestoneCategoryStatus');
-    if (!key || !en || !jp || !icon) { statusEl.textContent = 'All fields required.'; return; }
-    statusEl.textContent = 'Saving…';
-    try {
-        const res = await authFetch('/api/milestone-categories', {
-            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key, en, jp, icon })
-        });
-        if (!res.ok) throw new Error((await res.json()).error);
-        const catsRes = await fetch('/api/milestone-categories');
-        msCategories = await catsRes.json();
-        ['mcf-key','mcf-en','mcf-jp','mcf-icon'].forEach(id => { document.getElementById(id).value = ''; });
-        statusEl.textContent = '';
-        loadCategoryManager();
-        populateMgfCategorySelect();
-        toast('Category added', 'success');
-    } catch (e) { statusEl.textContent = e.message || 'Failed'; }
-}
-
-// ── Event bindings (run once after DOM ready) ─────────────────
+/* ── Event bindings (run once after DOM ready) ─────────────── */
 document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('milestoneAddPeriodBtn')?.addEventListener('click', addMilestonePeriod);
-    document.getElementById('milestoneGoalSaveBtn')?.addEventListener('click', saveMilestoneGoal);
-    document.getElementById('milestoneGoalCancelBtn')?.addEventListener('click', () => {
-        document.getElementById('milestoneGoalForm').style.display = 'none';
+    document.getElementById('mcAddPeriodBtn')?.addEventListener('click', () => mcShowPeriodForm(false));
+    document.getElementById('mcEditPeriodBtn')?.addEventListener('click', () => mcShowPeriodForm(true));
+    document.getElementById('mcAddGoalBtn')?.addEventListener('click', () => mcShowGoalForm());
+    document.getElementById('mcGoalSaveBtn')?.addEventListener('click', mcSaveGoal);
+    document.getElementById('mcGoalCancelBtn')?.addEventListener('click', () => {
+        document.getElementById('mcGoalForm').style.display = 'none';
     });
-    document.getElementById('milestoneSubtaskAddBtn')?.addEventListener('click', () => {
-        msSubtaskBuffer.push({ title_en: '', title_jp: '', status: 'planned' });
-        renderSubtaskEditor();
+    document.getElementById('mcPeriodSaveBtn')?.addEventListener('click', mcSavePeriod);
+    document.getElementById('mcPeriodCancelBtn')?.addEventListener('click', () => {
+        document.getElementById('mcPeriodForm').style.display = 'none';
     });
-    document.getElementById('milestoneSubtaskSaveBtn')?.addEventListener('click', saveSubtasks);
-    document.getElementById('milestoneSubtaskCancelBtn')?.addEventListener('click', () => {
-        document.getElementById('milestoneSubtaskForm').style.display = 'none';
-    });
-    document.getElementById('milestoneCategoryBtn')?.addEventListener('click', () => {
-        document.getElementById('milestoneGoalForm').style.display = 'none';
-        document.getElementById('milestoneSubtaskForm').style.display = 'none';
-        document.getElementById('milestoneCategoryForm').style.display = 'block';
-        loadCategoryManager();
-    });
-    document.getElementById('milestoneCategoryAddBtn')?.addEventListener('click', addMilestoneCategory);
-    document.getElementById('milestoneCategoryCloseBtn')?.addEventListener('click', () => {
-        document.getElementById('milestoneCategoryForm').style.display = 'none';
-    });
+    document.getElementById('mcPeriodDeleteBtn')?.addEventListener('click', mcDeletePeriod);
 });
