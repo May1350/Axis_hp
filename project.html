@@ -10,6 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200..800&family=Inter:wght@300..700&display=swap"
         rel="stylesheet">
+    <link rel="icon" type="image/png" href="input_file_1.png">
     <link rel="stylesheet" href="project.css">
     <link rel="stylesheet" href="admin.css">
 </head>
@@ -145,43 +146,23 @@
         </div>
     </div>
 
-    <!-- ═══════════════════════════════════════
-         TAB: MILESTONES
-    ═══════════════════════════════════════ -->
+    <!-- ─── Milestones ─────────────────────────────────────── -->
     <div class="tab-content" id="tab-milestones">
-        <span class="section-label">Preparation</span>
-        <h2 class="section-title">Milestones</h2>
-        <div id="milestonesSection">
-            <!-- Period selector -->
-            <div class="ms-period-selector" id="msPeriodSelector"></div>
-
-            <!-- Period label + progress -->
-            <div class="ms-track-header" id="msTrackHeader" style="display:none">
-                <div class="ms-track-period-label" id="msTrackPeriodLabel"></div>
-                <div class="ms-track-pct" id="msTrackPct"></div>
-            </div>
-
-            <!-- Horizontal timeline track -->
-            <div class="ms-h-track-outer" id="msHTrackOuter" style="display:none">
-                <div class="ms-h-track" id="msHTrack"></div>
-                <div class="ms-h-line-wrap" id="msHLineWrap">
-                    <div class="ms-h-line-base"></div>
-                    <div class="ms-h-line-fill" id="msHLineFill"></div>
-                    <div class="ms-h-line-arrow" id="msHLineArrow"></div>
+        <div class="pub-ms-period-selector" id="pubMsPeriods"></div>
+        <div class="pub-ms-container" id="pubMsContainer" style="display:none;">
+            <div class="pub-ms-header">
+                <div class="pub-ms-header-left">
+                    <h3 class="pub-ms-title" id="pubMsTitle"></h3>
+                </div>
+                <div class="pub-ms-header-right">
+                    <span class="pub-ms-dday" id="pubMsDday"></span>
+                    <span class="pub-ms-pct" id="pubMsPct"></span>
                 </div>
             </div>
-
-            <!-- Vertical detail panel -->
-            <div class="ms-detail-panel" id="msDetailPanel">
-                <div class="ms-detail-inner" id="msDetailInner"></div>
-            </div>
-
-            <div id="msEmptyState" class="empty-state" style="display:none">
-                <div class="empty-icon">◻</div>
-                <h3>No milestones yet</h3>
-                <p>Preparation milestones will appear here once set by the team.</p>
-            </div>
+            <div class="pub-ms-progress"><div class="pub-ms-progress-fill" id="pubMsFill"></div></div>
+            <div class="pub-ms-goals" id="pubMsGoals"></div>
         </div>
+        <div class="pub-ms-empty" id="pubMsEmpty">No milestones yet.</div>
     </div>
 
     <!-- ═══════════════════════════════════════
@@ -204,7 +185,7 @@
                 <img src="input_file_1.png" alt="Axis Logo">
                 AXIS
             </div>
-            <span class="p-footer-copy">© 2024 Axis — Association of Exchange and International Service</span>
+            <span class="p-footer-copy">© 2025–2026 Axis — Association of Exchange and International Service</span>
             <a href="admin.html"
                 style="font-size:12px;color:rgba(255,255,255,0.2);text-decoration:none;margin-left:12px;">Admin
                 Panel</a>
