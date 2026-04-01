@@ -83,7 +83,6 @@
             <button class="tab-btn" data-tab="reports">Activity Reports</button>
             <button class="tab-btn" data-tab="gallery">Photo Gallery</button>
             <button class="tab-btn" data-tab="interviews">Member Voices</button>
-            <button class="tab-btn" data-tab="milestones">Milestones</button>
             <button class="tab-btn admin-open-btn" id="adminFab" title="Admin Panel"
                 aria-label="Open Admin Panel">＋</button>
         </div>
@@ -144,25 +143,6 @@
                 <h3>Loading interviews…</h3>
             </div>
         </div>
-    </div>
-
-    <!-- ─── Milestones ─────────────────────────────────────── -->
-    <div class="tab-content" id="tab-milestones">
-        <div class="pub-ms-period-selector" id="pubMsPeriods"></div>
-        <div class="pub-ms-container" id="pubMsContainer" style="display:none;">
-            <div class="pub-ms-header">
-                <div class="pub-ms-header-left">
-                    <h3 class="pub-ms-title" id="pubMsTitle"></h3>
-                </div>
-                <div class="pub-ms-header-right">
-                    <span class="pub-ms-dday" id="pubMsDday"></span>
-                    <span class="pub-ms-pct" id="pubMsPct"></span>
-                </div>
-            </div>
-            <div class="pub-ms-progress"><div class="pub-ms-progress-fill" id="pubMsFill"></div></div>
-            <div class="pub-ms-goals" id="pubMsGoals"></div>
-        </div>
-        <div class="pub-ms-empty" id="pubMsEmpty">No milestones yet.</div>
     </div>
 
     <!-- ═══════════════════════════════════════
@@ -238,7 +218,6 @@
             <button class="admin-drawer-tab" data-atab="gallery">Gallery</button>
             <button class="admin-drawer-tab" data-atab="interviews">Voices</button>
             <button class="admin-drawer-tab" data-atab="stats">Stats</button>
-            <button class="admin-drawer-tab" data-atab="milestones">Milestones</button>
         </div>
 
         <!-- Drawer Content -->
@@ -453,76 +432,8 @@
                 </div>
             </div>
 
-            <!-- ── MILESTONES (inline admin) ── -->
-            <div id="atab-milestones" class="admin-drawer-panel">
-                <div class="add-form-panel" style="background:transparent;padding:0;border:none;box-shadow:none">
-                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
-                        <div style="font-size:13px;color:rgba(255,255,255,0.5)">Preparation Milestones</div>
-                        <div style="display:flex;gap:6px">
-                            <button class="btn btn--outline btn--sm" onclick="paOpenPeriodModal()">+ Period</button>
-                            <button class="btn btn--outline btn--sm" onclick="paLoadMilestones()">↺ Refresh</button>
-                        </div>
-                    </div>
-                    <div id="pa-milestone-period-tabs" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px"></div>
-                    <!-- Add Goal Form -->
-                    <div id="pa-goal-form" style="display:none;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:16px;margin-bottom:16px">
-                        <div style="font-size:12px;font-weight:600;color:rgba(255,255,255,0.7);margin-bottom:12px">New Goal</div>
-                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
-                            <div><label style="font-size:11px;color:rgba(255,255,255,0.4);display:block;margin-bottom:4px">Title (EN)</label>
-                                <input id="pgf-en" type="text" placeholder="e.g. Flight Booking" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:6px 10px;color:#fff;font-size:12px;font-family:inherit"></div>
-                            <div><label style="font-size:11px;color:rgba(255,255,255,0.4);display:block;margin-bottom:4px">タイトル (JP)</label>
-                                <input id="pgf-jp" type="text" placeholder="例: 航空券予約" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:6px 10px;color:#fff;font-size:12px;font-family:inherit"></div>
-                            <div><label style="font-size:11px;color:rgba(255,255,255,0.4);display:block;margin-bottom:4px">Category</label>
-                                <select id="pgf-cat" style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:6px 10px;color:#fff;font-size:12px;font-family:inherit"></select></div>
-                            <div><label style="font-size:11px;color:rgba(255,255,255,0.4);display:block;margin-bottom:4px">Target Date</label>
-                                <input id="pgf-date" type="date" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:6px 10px;color:#fff;font-size:12px;font-family:inherit;color-scheme:dark"></div>
-                            <div><label style="font-size:11px;color:rgba(255,255,255,0.4);display:block;margin-bottom:4px">Assignee / 担当</label>
-                                <input id="pgf-assignee" type="text" placeholder="e.g. 김민수" style="width:100%;box-sizing:border-box;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:6px 10px;color:#fff;font-size:12px;font-family:inherit"></div>
-                            <div><label style="font-size:11px;color:rgba(255,255,255,0.4);display:block;margin-bottom:4px">Status</label>
-                                <select id="pgf-status" style="width:100%;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:6px 10px;color:#fff;font-size:12px;font-family:inherit">
-                                    <option value="planned">Planned / 予定</option>
-                                    <option value="in_progress">In Progress / 進行中</option>
-                                    <option value="completed">Completed / 完了</option>
-                                </select></div>
-                        </div>
-                        <div style="display:flex;gap:8px">
-                            <button class="btn btn--gold btn--sm" onclick="paSaveGoal()" style="font-size:12px;padding:6px 14px">Save Goal</button>
-                            <button class="btn btn--outline btn--sm" onclick="document.getElementById('pa-goal-form').style.display='none'" style="font-size:12px;padding:6px 14px">Cancel</button>
-                        </div>
-                    </div>
-                    <div id="pa-milestone-goal-list"></div>
-                </div>
-            </div>
-
         </div><!-- /.admin-drawer-body -->
     </div><!-- /#adminDrawer -->
-
-    <!-- Period picker modal -->
-    <div id="pa-period-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:2000;display:none;align-items:center;justify-content:center">
-        <div style="background:#1a2035;border:1px solid rgba(255,255,255,0.12);border-radius:16px;padding:32px 40px;min-width:280px;text-align:center;box-shadow:0 24px 80px rgba(0,0,0,0.6)">
-            <div style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.5);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:28px">Select Period</div>
-            <div style="display:flex;align-items:center;justify-content:center;gap:24px">
-                <!-- Year -->
-                <div style="display:flex;flex-direction:column;align-items:center;gap:10px">
-                    <button onclick="paPeriodAdjust('year',1)" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:8px;width:36px;height:36px;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">▲</button>
-                    <div id="pa-picker-year" style="font-size:32px;font-weight:700;color:#fff;min-width:80px">2025</div>
-                    <button onclick="paPeriodAdjust('year',-1)" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:8px;width:36px;height:36px;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">▼</button>
-                </div>
-                <div style="font-size:32px;font-weight:300;color:rgba(255,255,255,0.3);padding-bottom:4px">.</div>
-                <!-- Month -->
-                <div style="display:flex;flex-direction:column;align-items:center;gap:10px">
-                    <button onclick="paPeriodAdjust('month',1)" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:8px;width:36px;height:36px;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">▲</button>
-                    <div id="pa-picker-month" style="font-size:32px;font-weight:700;color:#fff;min-width:52px">01</div>
-                    <button onclick="paPeriodAdjust('month',-1)" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:8px;width:36px;height:36px;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center">▼</button>
-                </div>
-            </div>
-            <div style="margin-top:24px;font-size:13px;color:rgba(255,255,255,0.35)">Period: <span id="pa-picker-preview" style="color:var(--gold,#c9a84c);font-weight:600"></span></div>
-            <div style="display:flex;gap:10px;justify-content:center;margin-top:24px">
-                <button onclick="paConfirmPeriod()" style="background:var(--gold,#c9a84c);border:none;border-radius:8px;padding:10px 28px;color:#0d1428;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">Add Period</button>
-                <button onclick="paClosePeriodModal()" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:10px 20px;color:#fff;font-size:13px;cursor:pointer;font-family:inherit">Cancel</button>
-            </div>
-        </div>
-    </div>
 
     <!-- Admin confirm dialog -->
     <div class="overlay hidden" id="aConfirmOverlay">
