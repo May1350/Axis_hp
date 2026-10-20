@@ -53,6 +53,16 @@ app.use(helmet({ contentSecurityPolicy: false }));
 app.use(express.json({ limit: '1mb' }));
 // Note: express.static is NOT used here — Vercel serves static files.
 
+// CDN cache for public GET requests — runs AFTER helmet so it overrides
+app.use('/api', (req, res, next) => {
+    if (req.method === 'GET' && !req.headers.authorization) {
+        res.removeHeader('Cache-Control');
+        res.set('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300');
+        res.set('CDN-Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300');
+    }
+    next();
+});
+
 // ─── Health check ────────────────────────────────────────────
 app.get('/api/health', async (_req, res) => {
     const { error } = await supabase.from('kv').select('key').limit(1);

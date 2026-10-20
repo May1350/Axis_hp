@@ -635,8 +635,8 @@ p {
    S3 — IMPACT NUMBERS
    ══════════════════════════════════════════════════════════ */
 .impact-section {
-    background: var(--surface-light);
-    color: var(--text-on-light);
+    background: var(--navy-mid);
+    color: var(--text-on-dark);
 }
 
 .impact-section .section-header {
@@ -644,11 +644,11 @@ p {
 }
 
 .impact-section .section-header h2 {
-    color: var(--navy-deep);
+    color: #fff;
 }
 
 .impact-section .section-header p {
-    color: var(--text-sub-light);
+    color: var(--text-sub-dark);
 }
 
 .stats-grid {
@@ -703,7 +703,7 @@ p {
     align-items: flex-start;
     gap: 12px;
     font-size: 15px;
-    color: var(--text-sub-light);
+    color: var(--text-sub-dark);
 }
 
 .impact-bullet::before {
@@ -803,8 +803,8 @@ p {
     position: absolute;
     bottom: -20px;
     right: -20px;
-    width: 76px;
-    height: 76px;
+    width: 140px;
+    height: 140px;
     object-fit: contain;
     background: #fff;
     border-radius: 50%;
@@ -813,6 +813,7 @@ p {
     z-index: 2;
     pointer-events: none;
     transition: transform 0.3s var(--ease-out);
+    clip-path: circle(43.5% at center);
 }
 
 .project-block:hover .project-country-seal {
@@ -1051,12 +1052,12 @@ p {
    S6 — ABOUT / HISTORY
    ══════════════════════════════════════════════════════════ */
 .about-section {
-    background: var(--navy-mid);
-    color: var(--text-on-dark);
+    background: var(--surface-light);
+    color: var(--text-on-light);
 }
 
 .about-section .label {
-    color: var(--gold);
+    color: var(--navy-mid);
 }
 
 .about-grid {
@@ -1067,13 +1068,13 @@ p {
 }
 
 .about-text h2 {
-    color: var(--text-on-dark);
+    color: var(--navy-deep);
     margin-bottom: 24px;
 }
 
 .about-text p {
     font-size: 16px;
-    color: var(--text-sub-dark);
+    color: var(--text-sub-light);
     margin-bottom: 20px;
     line-height: 1.8;
 }
@@ -1142,7 +1143,7 @@ p {
     height: 10px;
     border-radius: 50%;
     background: var(--gold);
-    border: 2px solid var(--navy-mid);
+    border: 2px solid var(--surface-light);
     box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.25);
 }
 
@@ -1157,14 +1158,14 @@ p {
 }
 
 .timeline-item h4 {
-    color: var(--text-on-dark);
+    color: var(--navy-deep);
     font-size: 17px;
     margin-bottom: 6px;
 }
 
 .timeline-item p {
     font-size: 14px;
-    color: var(--text-sub-dark);
+    color: var(--text-sub-light);
     line-height: 1.6;
 }
 

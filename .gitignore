@@ -13,6 +13,9 @@ data/uploads/
 # Superpowers brainstorm files
 .superpowers/
 
+# Vercel
+.vercel
+
 # System files
 .DS_Store
 *.log

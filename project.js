@@ -16,7 +16,37 @@ window.addEventListener('scroll', () => {
 }, { passive: true });
 document.getElementById('navbar').classList.add('scrolled'); // always frosted on detail page
 
-// ─── FETCH JSON ──────────────────────────────────────────────
+// ─── INSTANT RENDER FROM CACHE ───────────────────────────────
+(function() {
+    // Try sessionStorage first (from main page click), then localStorage (repeat visit)
+    let cached = null;
+    try {
+        const ss = sessionStorage.getItem(`proj_${projectId}`);
+        if (ss) { cached = JSON.parse(ss); sessionStorage.removeItem(`proj_${projectId}`); }
+        if (!cached) {
+            const ls = localStorage.getItem(`proj_${projectId}`);
+            if (ls) cached = JSON.parse(ls);
+        }
+    } catch {}
+    if (cached && cached.name) {
+        document.getElementById('heroName').textContent = cached.name;
+        document.title = `Axis — ${cached.name} Project`;
+        if (cached.tag) document.getElementById('heroTag').textContent = cached.tag;
+        if (cached.since) document.getElementById('heroSince').textContent = `Since ${cached.since}`;
+        if (cached.slogan) document.getElementById('heroSlogan').textContent = cached.slogan;
+        if (cached.hero_image) {
+            const ph = document.getElementById('heroBgPlaceholder');
+            if (ph) { const img = document.createElement('img'); img.src = cached.hero_image; img.alt = cached.name; ph.parentNode.replaceChild(img, ph); }
+        }
+        if (cached.seal_image) {
+            const seal = document.getElementById('heroSeal');
+            if (seal) { seal.src = cached.seal_image; seal.alt = cached.name; }
+        }
+        if (cached.stats) renderStats(cached);
+    }
+})();
+
+// ─── FETCH FULL DATA ─────────────────────────────────────────
 fetch(`/api/projects/${projectId}`)
     .then(r => {
         if (!r.ok) throw new Error(`Project "${projectId}" not found`);
@@ -30,6 +60,11 @@ fetch(`/api/projects/${projectId}`)
         renderGallery(data.gallery || []);
         renderInterviews(data.interviews || []);
         document.title = `Axis — ${data.name} Project`;
+        // Save to localStorage for next visit
+        try { localStorage.setItem(`proj_${projectId}`, JSON.stringify({
+            name: data.name, tag: data.tag, since: data.since, slogan: data.slogan,
+            hero_image: data.hero_image, seal_image: data.seal_image, stats: data.stats
+        })); } catch {}
     })
     .catch(err => {
         document.getElementById('heroName').textContent = 'Project not found';

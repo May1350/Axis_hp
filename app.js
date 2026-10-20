@@ -155,7 +155,7 @@ function renderCardHTML(id, card) {
         ${card.lead ? `<p class="lead">${escCard(card.lead)}</p>` : ''}
         ${card.body ? `<p>${escCard(card.body)}</p>` : ''}
         ${meta ? `<div class="project-meta-row">${meta}</div>` : ''}
-        <a href="project.html?id=${id}" class="project-link">View Project</a>
+        <a href="project.html?id=${id}" class="project-link" onclick="sessionStorage.setItem('proj_${id}',JSON.stringify(window._projCache&&window._projCache['${id}']||{}))">View Project</a>
         ${card.instagram_url ? `<a href="${escCard(card.instagram_url)}" target="_blank" rel="noopener" class="insta-link">${escCard(card.instagram_handle || card.instagram_url)}</a>` : ''}
     `;
 }
@@ -225,9 +225,11 @@ async function loadProjectCards() {
         const cardResults = await Promise.all(
             projects.map(p => fetch(`/api/projects/${p.id}/card`).then(r => r.ok ? r.json() : null).catch(() => null))
         );
+        // Cache project data for instant loading on project page
+        window._projCache = window._projCache || {};
         projects.forEach((p, i) => {
-            // merge hero_image & seal_image from project data if card fetch succeeded
             if (cardResults[i]) renderCardHTML(p.id, cardResults[i]);
+            window._projCache[p.id] = { ...p, card: cardResults[i] };
         });
 
         // 5. Populate impact-bullets dynamically from projects list
@@ -277,4 +279,3 @@ async function loadHistory() {
     } catch { /* silently fall back — skeleton placeholder remains */ }
 }
 
-loadHistory();

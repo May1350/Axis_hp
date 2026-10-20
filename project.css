@@ -210,11 +210,12 @@ button {
     position: absolute;
     right: 60px;
     bottom: 40px;
-    width: 90px;
-    height: 90px;
+    width: 200px;
+    height: 200px;
     object-fit: contain;
     filter: drop-shadow(0 4px 20px rgba(0, 0, 0, 0.4));
     opacity: 0.9;
+    clip-path: circle(43.5% at center);
 }
 
 /* ─── STATS BAR ──────────────────────────────────────────── */
@@ -2040,3 +2041,4 @@ body.admin-drawer-open::before {
     margin: 0 auto;
     padding: 48px 40px;
 }
+
